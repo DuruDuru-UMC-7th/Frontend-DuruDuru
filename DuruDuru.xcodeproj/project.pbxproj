@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		42A6CAE22D29548200F49352 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 42A6CAE12D29548200F49352 /* SnapKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		42124F6C2D26CB3E0095E058 /* DuruDuru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuruDuru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42A6CAE22D29548200F49352 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = DuruDuru;
 			packageProductDependencies = (
+				42A6CAE12D29548200F49352 /* SnapKit */,
 			);
 			productName = DuruDuru;
 			productReference = 42124F6C2D26CB3E0095E058 /* DuruDuru.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 42124F632D26CB3E0095E058;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				42A6CAE02D29548200F49352 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 42124F6D2D26CB3E0095E058 /* Products */;
 			projectDirPath = "";
@@ -331,6 +340,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		42A6CAE02D29548200F49352 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit?tab=readme-ov-file#installation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		42A6CAE12D29548200F49352 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42A6CAE02D29548200F49352 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 42124F642D26CB3E0095E058 /* Project object */;
 }

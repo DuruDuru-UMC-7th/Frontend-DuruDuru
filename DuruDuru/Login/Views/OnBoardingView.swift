@@ -27,14 +27,12 @@ class OnBoardingView: UIView {
     
     // MARK: -Property
     
-    /// 두루두루 그림
-    public lazy var duruDuruImage: UIImageView = imageView(name: "두루두루그림")
+    /// 왼쪽 그림(두)
+    private lazy var duImage: UIImageView = imageView(name: "Du")
     
-    /// 두루두루 글자
-    public lazy var titleImage: UIImageView = imageView(name: "Title")
+    /// 오른쪽 그림(루)
+    private lazy var ruImage: UIImageView = imageView(name: "Ru")
     
-    /// 아래 글자
-    public lazy var subTitleImage: UIImageView = imageView(name: "SubTitle")
     
     
     
@@ -56,32 +54,24 @@ class OnBoardingView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        self.addSubview(duruDuruImage)
-        self.addSubview(titleImage)
-        self.addSubview(subTitleImage)
+        self.addSubview(duImage)
+        self.addSubview(ruImage)
     }
     
     /// 오토레이아웃 설정
     private func constraints(){
-        duruDuruImage.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(138)
-            $0.width.equalTo(116.84)
-            $0.height.equalTo(116.79)
-            $0.top.equalToSuperview().offset(292)
+        duImage.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(70)
+            $0.width.equalTo(126)
+            $0.height.equalTo(126)
+            $0.top.equalToSuperview().offset(363)
         }
         
-        titleImage.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(127.5)
-            $0.width.equalTo(138.5)
-            $0.height.equalTo(56.49)
-            $0.top.equalTo(duruDuruImage.snp.bottom).offset(17.21)
-        }
-        
-        subTitleImage.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(143)
-            $0.width.equalTo(108)
-            $0.height.equalTo(22)
-            $0.top.equalTo(titleImage.snp.bottom)
+        ruImage.snp.makeConstraints {
+            $0.left.equalTo(duImage.snp.right).offset(7)
+            $0.width.equalTo(126)
+            $0.height.equalTo(126)
+            $0.top.equalToSuperview().offset(363)
         }
     }
 }

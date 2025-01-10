@@ -9,7 +9,12 @@ import UIKit
 
 class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     
+    // MARK: - Properties
+    
     private var myCookingView: MyCookingView!
+    let data = IngredientCategoryModel.dummy()
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,9 +27,14 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     private func setupDelegate(){
         myCookingView.ingredientCategoryCollectionView.dataSource = self
         myCookingView.ingredientCategoryCollectionView.delegate = self
+        myCookingView.ingredientsTableView.dataSource = self
     }
     
 }
+
+
+
+// MARK: - UICollectionViewDataSource
 
 extension MyCookingViewController: UICollectionViewDataSource {
     
@@ -51,5 +61,24 @@ extension MyCookingViewController: UICollectionViewDataSource {
         }
         return UICollectionViewCell()
     }
+}
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
+
+extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        data.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: IngredientsTableViewCell.identifier, for: indexPath) as? IngredientsTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        cell.configure(model: data[indexPath.row])
+        
+        return cell
+    }
+
 }
     

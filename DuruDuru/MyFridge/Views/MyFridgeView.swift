@@ -22,7 +22,7 @@ class MyFridgeView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Property
+    // MARK: - Components
     
     /// 세그먼트
     let segmentedControl = UISegmentedControl(items: ["식재료 목록", "나만의 요리"]).then {

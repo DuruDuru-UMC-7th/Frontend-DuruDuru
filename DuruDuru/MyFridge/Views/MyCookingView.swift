@@ -8,7 +8,7 @@
 import UIKit
 
 class MyCookingView: UIView {
-
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -23,12 +23,23 @@ class MyCookingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Property
-
+    // MARK: - Components
+    
     /// 내 식재료를 활용한 레시피
     private let myRecipe = UILabel().then {
         $0.text = "내 식재료를 활용한 레시피"
         $0.font = .boldSystemFont(ofSize: 18)
+    }
+    
+    /// 드롭다운 메뉴
+    private let dropdownButton = UIButton().then {
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "Arrow")
+        $0.configuration?.imagePlacement = .trailing // 이미지를 텍스트 오른쪽에 배치
+        $0.configuration?.imagePadding = 8 // 텍스트와 이미지 간격 조정
+        $0.configuration?.baseForegroundColor = .gray
+        $0.configuration?.attributedTitle = AttributedString("인기순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
     }
     
     let allButton = UIButton().then {
@@ -49,13 +60,21 @@ class MyCookingView: UIView {
         $0.showsHorizontalScrollIndicator = false
     }
     
+    /// 식재료 테이블 뷰
+    public let ingredientsTableView = UITableView().then {
+        $0.register(IngredientsTableViewCell.self, forCellReuseIdentifier: IngredientsTableViewCell.identifier)
+        $0.separatorStyle = .singleLine
+    }
+    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
     private func addComponents() {
         addSubview(myRecipe)
+        addSubview(dropdownButton)
         addSubview(allButton)
         addSubview(ingredientCategoryCollectionView)
+        addSubview(ingredientsTableView)
     }
     
     /// 오토레이아웃 설정
@@ -63,6 +82,11 @@ class MyCookingView: UIView {
         myRecipe.snp.makeConstraints {
             $0.top.equalToSuperview().offset(28)
             $0.leading.equalToSuperview().offset(16)
+        }
+        
+        dropdownButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(28)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         allButton.snp.makeConstraints {
@@ -76,6 +100,11 @@ class MyCookingView: UIView {
             $0.left.equalTo(allButton.snp.right).offset(8)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
+        }
+        
+        ingredientsTableView.snp.makeConstraints {
+            $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom)
+            $0.left.right.bottom.equalToSuperview()
         }
     }
 }

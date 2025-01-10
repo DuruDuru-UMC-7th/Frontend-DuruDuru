@@ -25,7 +25,7 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Property
+    // MARK: - Components
     
     /// 아이콘
     let icon = UIImageView().then {

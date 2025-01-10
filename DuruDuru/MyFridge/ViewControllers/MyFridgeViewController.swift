@@ -9,9 +9,13 @@ import UIKit
 
 class MyFridgeViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private var myFridgeView: MyFridgeView!
     private var ingredientVC: IngredientsViewController!
     private var cookingVC: MyCookingViewController!
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +29,8 @@ class MyFridgeViewController: UIViewController {
         
         setupAction()
     }
+    
+    // MARK: - Function
     
     private func setupAction() {
         /// segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정

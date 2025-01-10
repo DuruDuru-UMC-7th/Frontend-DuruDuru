@@ -10,13 +10,19 @@ import UIKit
 class MyFridgeViewController: UIViewController {
     
     private var myFridgeView: MyFridgeView!
+    private var ingredientVC: IngredientsViewController!
+    private var cookingVC: MyCookingViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         /// MyFridgeView 초기화 및 추가
         myFridgeView = MyFridgeView(frame: self.view.bounds)
         self.view.addSubview(myFridgeView)
+        ingredientVC = IngredientsViewController()
+        cookingVC = MyCookingViewController()
+        add(asChildViewController: ingredientVC)
+        
         setupAction()
     }
     
@@ -32,11 +38,9 @@ class MyFridgeViewController: UIViewController {
     @objc
     private func segmentChanged(segment: UISegmentedControl) {
         if segment.selectedSegmentIndex == 0 {
-            myFridgeView.ingredientsView.isHidden = false /// 식재료 목록 뷰 보이기
-            myFridgeView.myCookingView.isHidden = true /// 나만의 요리 뷰 숨기기
+            switchToChildViewController(ingredientVC)
         } else {
-            myFridgeView.ingredientsView.isHidden = true  /// 식재료 목록 뷰 숨기기
-            myFridgeView.myCookingView.isHidden = false  /// 나만의 요리 뷰 보이기
+            switchToChildViewController(cookingVC)
         }
         
         /// 세그먼트의 너비 계산
@@ -52,4 +56,26 @@ class MyFridgeViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
+    
+    /// 자식 뷰 컨트롤러 바꾸기
+    private func switchToChildViewController(_ child: UIViewController) {
+        /// 현재 자식 뷰 컨트롤러 제거
+        for childVC in children {
+                childVC.willMove(toParent: nil)
+                childVC.view.removeFromSuperview()
+                childVC.removeFromParent()
+            }
+        /// 새 자식 뷰 컨트롤러 추가
+        add(asChildViewController: child)
+    }
+    
+    /// 자식 뷰 컨트롤러 추가
+    private func add(asChildViewController viewController: UIViewController) {
+        addChild(viewController)
+        viewController.view.frame = myFridgeView.containerView.bounds
+        myFridgeView.containerView.addSubview(viewController.view)
+        viewController.didMove(toParent: self)
+    }
+    
+    
 }

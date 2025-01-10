@@ -22,7 +22,7 @@ class MyFridgeView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Property
+    // MARK: - Components
     
     /// 세그먼트
     let segmentedControl = UISegmentedControl(items: ["식재료 목록", "나만의 요리"]).then {
@@ -51,6 +51,8 @@ class MyFridgeView: UIView {
     let underline = UIView().then {
         $0.backgroundColor = .black
     }
+    
+    let containerView = UIView()
 
     /// 식재료 목록 뷰
     let ingredientsView = IngredientsView()
@@ -64,10 +66,7 @@ class MyFridgeView: UIView {
     private func addComponents() {
         addSubview(segmentedControl)
         addSubview(underline)
-        addSubview(ingredientsView)
-        addSubview(myCookingView)
-        ingredientsView.isHidden = false
-        myCookingView.isHidden = true
+        addSubview(containerView)
     }
     
     /// 오토레이아웃 설정
@@ -86,15 +85,11 @@ class MyFridgeView: UIView {
             $0.left.equalTo(segmentedControl.snp.left)
         }
         
-        ingredientsView.snp.makeConstraints {
+        containerView.snp.makeConstraints {
             $0.top.equalTo(underline.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        myCookingView.snp.makeConstraints {
-            $0.top.equalTo(underline.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
     }
     
 }

@@ -75,6 +75,7 @@ class MyCookingView: UIView {
         addSubview(allButton)
         addSubview(ingredientCategoryCollectionView)
         addSubview(ingredientsTableView)
+        
     }
     
     /// 오토레이아웃 설정

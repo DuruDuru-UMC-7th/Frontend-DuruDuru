@@ -9,10 +9,12 @@ import UIKit
 
 class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     
+    
     // MARK: - Properties
     
     private var myCookingView: MyCookingView!
     let data = IngredientCategoryModel.dummy()
+    weak var delegate: MyCookingViewControllerDelegate?  /// delegate 변수
     
     // MARK: - Lifecycle
     
@@ -29,14 +31,12 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
         myCookingView.ingredientCategoryCollectionView.delegate = self
         myCookingView.ingredientsTableView.dataSource = self
     }
-    
 }
-
-
 
 // MARK: - UICollectionViewDataSource
 
 extension MyCookingViewController: UICollectionViewDataSource {
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == myCookingView.ingredientCategoryCollectionView {
@@ -74,11 +74,26 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: IngredientsTableViewCell.identifier, for: indexPath) as? IngredientsTableViewCell else {
             return UITableViewCell()
         }
-        
         cell.configure(model: data[indexPath.row])
+        cell.cellDelegate = self
+        cell.indexPath = indexPath
         
         return cell
     }
-
 }
-    
+
+extension MyCookingViewController: IngredientsTableViewCellDelegate {
+    func recipeViewButtonTapped(at indexPath: IndexPath) {
+        let selectedIngredientName = data[indexPath.row].categoryName
+        
+        let recipeViewController = RecipeViewController()
+        recipeViewController.ingredientName = selectedIngredientName 
+        navigationController?.pushViewController(recipeViewController, animated: true)
+    }
+}
+
+/// 레시피 화면 전환을 위한 delegate 프로토콜
+protocol MyCookingViewControllerDelegate: AnyObject {
+    func didTapRecipeViewButton()
+}
+

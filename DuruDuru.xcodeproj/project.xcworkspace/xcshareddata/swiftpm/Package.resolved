@@ -1,6 +1,15 @@
 {
-  "originHash" : "181e1a09d26a4a7ec1fc6e6998bb10631f0845b72c0884e361edf1146d927fe9",
+  "originHash" : "98bd467392d8ca9f873a64316ee4377de59cc89c3d226b0d1f76044c6ec23b79",
   "pins" : [
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "revision" : "e6749919f9761d573d37a7d7e78b1b854c191d7f",
+        "version" : "8.1.3"
+      }
+    },
     {
       "identity" : "snapkit?tab=readme-ov-file#installation",
       "kind" : "remoteSourceControl",

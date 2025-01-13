@@ -44,36 +44,42 @@ class LoginView: UIView {
     /// 배경 이미지
     private lazy var backgroundImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Background")
+        imageView.image = UIImage(named: "LoginBackground")
         imageView.contentMode = .scaleAspectFill // 이미지가 전체를 덮음
         imageView.clipsToBounds = true
         return imageView
     }()
     
     /// 카카오로 계속하기 버튼
-    public lazy var kakaoBtn = continueButton(title: "카카오로 계속하기", backgroundColorHex: 0x272727, borderColorHex: 0x272727)
+    public lazy var kakaoBtn = continueButton(title: "카카오로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFAE301, borderColorHex: 0xFAE301)
     
     /// 네이버로 계속하기 버튼
-    public lazy var naverBtn = continueButton(title: "네이버로 계속하기", backgroundColorHex: 0x272727, borderColorHex: 0x272727)
+    public lazy var naverBtn = continueButton(title: "네이버로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: 0x1DC800, borderColorHex: 0x1DC800)
     
     /// Apple로 계속하기 버튼
-    public lazy var appleBtn = continueButton(title: "Apple로 계속하기", backgroundColorHex: 0x272727, borderColorHex: 0x272727)
+    public lazy var appleBtn = continueButton(title: "Apple로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFFFFFF, borderColorHex: 0xFFFFFF)
     
     /// 이메일로 계속하기 버튼(투명)
-    public lazy var emailBtn = continueButton(title: "이메일로 계속하기", backgroundColorHex: nil, borderColorHex: 0xBEBEBE)
+    public lazy var emailBtn = continueButton(title: "이메일로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: nil, borderColorHex: 0xFFFFFF)
     
     
     
     // MARK: MakeFunction
     
     /// 계속하기 버튼 함수
-    private func continueButton(title: String, backgroundColorHex: Int?, borderColorHex: Int?) -> UIButton {
+    private func continueButton(title: String, titleColorHex: Int?, backgroundColorHex: Int?, borderColorHex: Int?) -> UIButton {
         let btn = UIButton()
         
         // 버튼 제목
         btn.setTitle(title, for: .normal)
         btn.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        btn.setTitleColor(.white, for: .normal)
+        
+        // 제목 색깔 (Hex값 또는 기본값)
+        if let titleColorHex = titleColorHex {
+            btn.setTitleColor(UIColor(hex: titleColorHex), for: .normal)
+        } else {
+            btn.setTitleColor(.white, for: .normal)
+        }
         
         // 배경 색깔 (Hex값 또는 .clear)
         if let backgroundColorHex = backgroundColorHex {

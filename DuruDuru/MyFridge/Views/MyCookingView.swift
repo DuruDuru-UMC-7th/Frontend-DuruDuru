@@ -48,17 +48,17 @@ class MyCookingView: UIView {
     let allButton = UIButton().then {
         $0.setImage(.allCategory, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
-        $0.backgroundColor = UIColor(ciColor: CIColor(red: 225/255, green: 225/255, blue: 225/255, alpha: 1.0))
-        $0.layer.cornerRadius = 10
+        $0.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        $0.layer.cornerRadius = 4
     }
     
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
-        $0.estimatedItemSize = .init(width: 66, height: 26)
-        $0.minimumInteritemSpacing = 8
+        $0.estimatedItemSize = .init(width: 60, height: 26)
+        $0.minimumInteritemSpacing = 7
     }).then {
         $0.backgroundColor = .clear
-        $0.isScrollEnabled = true
+        $0.isScrollEnabled = false
         $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
         $0.showsHorizontalScrollIndicator = false
     }
@@ -72,7 +72,7 @@ class MyCookingView: UIView {
     /// 식재료 테이블 뷰
     public let ingredientsTableView = UITableView().then {
         $0.register(IngredientsTableViewCell.self, forCellReuseIdentifier: IngredientsTableViewCell.identifier)
-        $0.separatorStyle = .singleLine
+        $0.separatorStyle = .none
         $0.allowsSelection = false
     }
     
@@ -118,7 +118,7 @@ class MyCookingView: UIView {
         
         ingredientCategoryCollectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(10)
-            $0.left.equalTo(allButton.snp.right).offset(8)
+            $0.left.equalTo(allButton.snp.right).offset(7)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
         }

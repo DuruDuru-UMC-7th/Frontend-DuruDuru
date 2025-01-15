@@ -49,7 +49,7 @@ class MyFridgeView: UIView {
     
     /// 세그먼트 밑줄
     let underline = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
     }
     
     let containerView = UIView()

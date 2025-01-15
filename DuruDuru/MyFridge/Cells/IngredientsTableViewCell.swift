@@ -44,20 +44,14 @@ class IngredientsTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.icon.image = nil
         self.ingredientName.text = nil
     }
     
     // MARK: - Components
     
-    /// 아이콘
-    let icon = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
-    }
-    
-    /// 카테고리 이름
+    /// 식재료 이름
     let ingredientName = UILabel().then {
-        $0.font = .systemFont(ofSize: 16)
+        $0.font = .boldSystemFont(ofSize: 20)
         $0.textColor = .black
     }
     
@@ -78,26 +72,27 @@ class IngredientsTableViewCell: UITableViewCell {
         $0.showsHorizontalScrollIndicator = false
     }
     
+    /// 구분 선
+    let dividedLine = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0xDCDCDC, alpha: 1.0)
+    }
+    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(icon)
         addSubview(ingredientName)
         addSubview(recipeViewButton)
         addSubview(recipeCollectionView)
+        addSubview(dividedLine)
     }
     
     /// 오토레이아웃 설정
     private func constraints() {
-        icon.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
-            $0.left.equalToSuperview().offset(16)
-        }
         
         ingredientName.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(24)
-            $0.left.equalTo(icon.snp.right).offset(7)
+            $0.top.equalToSuperview().offset(16)
+            $0.left.equalToSuperview().offset(16)
         }
         
         recipeViewButton.snp.makeConstraints {
@@ -113,13 +108,19 @@ class IngredientsTableViewCell: UITableViewCell {
             $0.height.equalTo(135)
         }
         
+        dividedLine.snp.makeConstraints {
+            $0.height.equalTo(1)
+            $0.top.equalTo(recipeCollectionView.snp.bottom).offset(16.25)
+            $0.left.right.equalToSuperview().inset(16)
+            
+        }
+        
     }
     
     // MARK: - Configuration
     
     ///  임시로 재료 카테고리 모델 사용
     public func configure(model: IngredientCategoryModel) {
-        self.icon.image = model.icon
         self.ingredientName.text = model.categoryName
     }
     

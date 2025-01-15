@@ -15,8 +15,8 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor(ciColor: CIColor(red: 225/255, green: 225/255, blue: 225/255, alpha: 1.0))
-        layer.cornerRadius = 10
+        backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        layer.cornerRadius = 4
         addComponents()
         constraints()
     }
@@ -59,7 +59,7 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
         categoryName.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.right.equalToSuperview()
-            $0.left.equalTo(icon.snp.right).offset(2)
+            $0.left.equalTo(icon.snp.right).offset(4)
         }
         
         container.snp.makeConstraints {

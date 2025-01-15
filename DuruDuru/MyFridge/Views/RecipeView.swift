@@ -116,7 +116,6 @@ class RecipeView: UIView {
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(36)
-            
         }
         
         searchImageView.snp.makeConstraints {

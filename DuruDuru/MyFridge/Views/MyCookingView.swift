@@ -25,21 +25,24 @@ class MyCookingView: UIView {
     
     // MARK: - Components
     
-    /// 내 식재료를 활용한 레시피
-    private let myRecipe = UILabel().then {
-        $0.text = "내 식재료를 활용한 레시피"
-        $0.font = .boldSystemFont(ofSize: 18)
+    /// 검색창 라벨
+    let searchBarLabel = UILabel().then {
+        $0.text = "사용할 식재료를 검색하세요"
+        $0.font = UIFont.systemFont(ofSize: 14)
+        $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
     }
     
-    /// 드롭다운 메뉴
-    private let dropdownButton = UIButton().then {
-        let configuration = UIButton.Configuration.plain()
-        $0.configuration = configuration
-        $0.configuration?.image = UIImage(named: "Arrow")
-        $0.configuration?.imagePlacement = .trailing // 이미지를 텍스트 오른쪽에 배치
-        $0.configuration?.imagePadding = 8 // 텍스트와 이미지 간격 조정
-        $0.configuration?.baseForegroundColor = .gray
-        $0.configuration?.attributedTitle = AttributedString("인기순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+    /// 검색창
+    let searchBar = UITextField().then {
+        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
+        $0.layer.cornerRadius = 10
+    }
+    
+    /// 검색창 이미지
+    let searchImageView = UIImageView().then {
+        $0.image = UIImage(named: "Search")
+        $0.contentMode = .scaleAspectFit
+        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     let allButton = UIButton().then {
@@ -60,6 +63,12 @@ class MyCookingView: UIView {
         $0.showsHorizontalScrollIndicator = false
     }
     
+    /// 내 식재료를 활용한 레시피
+    private let myRecipe = UILabel().then {
+        $0.text = "내 식재료를 활용한 레시피"
+        $0.font = .boldSystemFont(ofSize: 18)
+    }
+    
     /// 식재료 테이블 뷰
     public let ingredientsTableView = UITableView().then {
         $0.register(IngredientsTableViewCell.self, forCellReuseIdentifier: IngredientsTableViewCell.identifier)
@@ -71,40 +80,56 @@ class MyCookingView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(myRecipe)
-        addSubview(dropdownButton)
+        addSubview(searchBar)
+        searchBar.addSubview(searchImageView)
+        searchBar.addSubview(searchBarLabel)
         addSubview(allButton)
         addSubview(ingredientCategoryCollectionView)
+        addSubview(myRecipe)
         addSubview(ingredientsTableView)
     }
     
     /// 오토레이아웃 설정
     private func constraints() {
-        myRecipe.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
-            $0.leading.equalToSuperview().offset(16)
+        searchBar.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(36)
         }
         
-        dropdownButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
-            $0.trailing.equalToSuperview().offset(-16)
+        searchImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(7)
+            $0.bottom.equalToSuperview().offset(-7)
+            $0.left.equalToSuperview().offset(8)
+        }
+        
+        searchBarLabel.snp.makeConstraints {
+            $0.left.equalTo(searchImageView.snp.right).offset(5)
+            $0.top.equalToSuperview().offset(7)
+            $0.bottom.equalToSuperview().offset(-7)
         }
         
         allButton.snp.makeConstraints {
-            $0.top.equalTo(myRecipe.snp.bottom).offset(24)
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
             $0.left.equalToSuperview().offset(16)
             $0.height.width.equalTo(26)
         }
         
         ingredientCategoryCollectionView.snp.makeConstraints {
-            $0.top.equalTo(myRecipe.snp.bottom).offset(24)
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
             $0.left.equalTo(allButton.snp.right).offset(8)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
         }
         
+        myRecipe.snp.makeConstraints {
+            $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(16)
+        }
+        
         ingredientsTableView.snp.makeConstraints {
-            $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom)
+            $0.top.equalTo(myRecipe.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
     }

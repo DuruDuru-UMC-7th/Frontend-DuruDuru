@@ -20,7 +20,7 @@ class RecipeTableViewCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
+        selectionStyle = .default
         // Configure the view for the selected state
     }
     
@@ -57,8 +57,7 @@ class RecipeTableViewCell: UITableViewCell {
     
     /// 좋아요 버튼
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "heart"), for: .normal)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.setImage(UIImage(named: "Heart"), for: .normal)
     }
     
     /// 레시피 이름
@@ -92,8 +91,8 @@ class RecipeTableViewCell: UITableViewCell {
         }
         
         likeButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(5)
-            $0.trailing.equalToSuperview().offset(-5)
+            $0.top.equalToSuperview().offset(13)
+            $0.trailing.equalToSuperview().offset(-11.6)
             $0.width.height.equalTo(20)
         }
         

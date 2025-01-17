@@ -24,21 +24,6 @@ class RecipeView: UIView {
     
     // MARK: - Components
     
-    /// 재료 이름
-    let ingredientName = UILabel().then {
-        $0.font = .systemFont(ofSize: 16)
-        $0.textColor = .black
-    }
-    
-    /// 를 사용하는 레시피.
-    private let recipeLable = UILabel().then {
-        $0.text = "을 사용하는 레시피"
-        $0.font = .systemFont(ofSize: 16)
-        $0.textColor = .black
-    }
-    
-    let labelContainer = UIView()
-    
     /// 검색창 라벨
     let searchBarLabel = UILabel().then {
         $0.text = "먹어보고 싶은 요리를 검색해보세요!"
@@ -75,15 +60,14 @@ class RecipeView: UIView {
     public let recipeTableView = UITableView().then {
         $0.register(RecipeTableViewCell.self, forCellReuseIdentifier: RecipeTableViewCell.identifier)
         $0.separatorStyle = .singleLine
+        $0.allowsSelection = true
+        $0.isUserInteractionEnabled = true
     }
     
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(labelContainer)
-        labelContainer.addSubview(ingredientName)
-        labelContainer.addSubview(recipeLable)
         addSubview(searchBar)
         searchBar.addSubview(searchImageView)
         searchBar.addSubview(searchBarLabel)
@@ -93,26 +77,8 @@ class RecipeView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints() {
-        labelContainer.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(66)
-            $0.centerX.equalToSuperview()
-        }
-        
-        ingredientName.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.equalToSuperview()
-            $0.bottom.equalToSuperview()
-        }
-        
-        recipeLable.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.equalTo(ingredientName.snp.right)
-            $0.bottom.equalToSuperview()
-            $0.right.equalToSuperview()
-        }
-        
         searchBar.snp.makeConstraints {
-            $0.top.equalTo(labelContainer.snp.bottom).offset(21)
+            $0.top.equalToSuperview().offset(110)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(36)

@@ -72,7 +72,6 @@ class MyCookingView: UIView {
     public let ingredientsTableView = UITableView().then {
         $0.register(IngredientsTableViewCell.self, forCellReuseIdentifier: IngredientsTableViewCell.identifier)
         $0.separatorStyle = .none
-        $0.allowsSelection = false
     }
     
     // MARK: - Constaints & Add Function

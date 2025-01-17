@@ -15,8 +15,6 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor(ciColor: CIColor(red: 225/255, green: 225/255, blue: 225/255, alpha: 1.0))
-        layer.cornerRadius = 10
         addComponents()
         constraints()
     }
@@ -30,12 +28,16 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     /// 레시피 대표 이미지
     let titleImage = UIImageView().then {
         $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 10
     }
     
-    let container = UIView()
+    let container = UIView().then {
+        $0.layer.cornerRadius = 10
+    }
     
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "heart"), for: .normal)
+        $0.setImage(UIImage(named: "HeartButton"), for: .normal)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -55,13 +57,26 @@ class RecipeCollectionViewCell: UICollectionViewCell {
         }
         
         titleImage.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.left.equalToSuperview()
+            $0.right.equalToSuperview()
         }
         
         likeButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(5) // 상단 여백
-            $0.trailing.equalToSuperview().offset(-5) // 우측 여백
-            $0.width.height.equalTo(20) 
+            $0.top.equalToSuperview().offset(5)
+            $0.trailing.equalToSuperview().offset(-5)
+            $0.width.height.equalTo(20)
         }
+    }
+    
+    // MARK: - Configuration
+    
+    public func configure(imageURL: String) {
+        guard let url = URL(string: imageURL) else {
+            titleImage.image = nil 
+            return
+        }
+        titleImage.kf.setImage(with: url)
     }
 }

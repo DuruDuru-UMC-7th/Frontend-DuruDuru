@@ -68,4 +68,11 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
             $0.bottom.equalToSuperview().offset(7)
         }
     }
+    
+    // MARK: - Configuration
+    
+    public func configure(model: IngredientCategoryModel) {
+        self.icon.image = model.icon
+        self.categoryName.text = model.categoryName
+    }
 }

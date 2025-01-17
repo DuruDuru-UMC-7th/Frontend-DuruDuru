@@ -13,8 +13,10 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     // MARK: - Properties
     
     private var myCookingView: MyCookingView!
-    let data = IngredientCategoryModel.dummy()
-    weak var delegate: MyCookingViewControllerDelegate?  /// delegate 변수
+    let data = IngredientModel.dummy()
+    let ingredientCategoryList = IngredientCategoryModel.dummy()
+    weak var delegate: MyCookingViewControllerDelegate?  ///delegate 변수
+    
     
     // MARK: - Lifecycle
     
@@ -53,9 +55,7 @@ extension MyCookingViewController: UICollectionViewDataSource {
             ) as? IngredientCategoryCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let list = IngredientCategoryModel.dummy()
-            cell.icon.image = list[indexPath.row].icon
-            cell.categoryName.text = list[indexPath.row].categoryName
+            cell.configure(model: ingredientCategoryList[indexPath.row])
             return cell
             
         }
@@ -83,11 +83,13 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension MyCookingViewController: IngredientsTableViewCellDelegate {
+    /// 버튼 눌렀을 때 레시피 화면으로 데이터 전달
     func recipeViewButtonTapped(at indexPath: IndexPath) {
-        let selectedIngredientName = data[indexPath.row].categoryName
+        let selectedIngredientName = data[indexPath.row].name
         
         let recipeViewController = RecipeViewController()
-        recipeViewController.ingredientName = selectedIngredientName 
+        recipeViewController.ingredientName = selectedIngredientName
+        recipeViewController.recipes = data[indexPath.row].recipes
         navigationController?.pushViewController(recipeViewController, animated: true)
     }
 }

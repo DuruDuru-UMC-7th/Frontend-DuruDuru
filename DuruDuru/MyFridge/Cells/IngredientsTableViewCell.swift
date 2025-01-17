@@ -14,7 +14,7 @@ class IngredientsTableViewCell: UITableViewCell {
     static let identifier: String = "IngredientsTableViewCell"
     weak var cellDelegate: IngredientsTableViewCellDelegate?
     var indexPath: IndexPath?  /// 셀 인덱스
-    var recipes: [RecipeModel] = [] /// 레시피 더미데이터 변수
+    var recipes: [RecipeModel] = [] /// 레시피 데이터 변수
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -142,14 +142,13 @@ extension IngredientsTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return recipes.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeCollectionViewCell.identifier, for: indexPath) as! RecipeCollectionViewCell
         
-        if let imageURL = URL(string: recipes[indexPath.row].titleImage) {
-            cell.titleImage.kf.setImage(with: imageURL)
-        }
-
+        let imageURL = recipes[indexPath.row].titleImage
+        cell.configure(imageURL: imageURL)
+        
         return cell
     }
 }

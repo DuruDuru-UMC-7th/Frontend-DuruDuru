@@ -65,8 +65,18 @@ class RecipeCollectionViewCell: UICollectionViewCell {
         
         likeButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(5)
-            $0.trailing.equalToSuperview().offset(-5) 
-            $0.width.height.equalTo(20) 
+            $0.trailing.equalToSuperview().offset(-5)
+            $0.width.height.equalTo(20)
         }
+    }
+    
+    // MARK: - Configuration
+    
+    public func configure(imageURL: String) {
+        guard let url = URL(string: imageURL) else {
+            titleImage.image = nil 
+            return
+        }
+        titleImage.kf.setImage(with: url)
     }
 }

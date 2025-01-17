@@ -23,14 +23,13 @@ class RecipeViewController: UIViewController {
             let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
             self.navigationItem.leftBarButtonItem = backButton
         }
-        print("전달받은 ingredientName: \(ingredientName ?? "없음")")
+        self.title = (ingredientName ?? "없음") + "을 사용하는 레시피"
         setupDelegate()
     }
     
     private func setupDelegate(){
         recipeView.recipeTableView.dataSource = self
-        recipeView.ingredientName.text = ingredientName
-        //self.recipes =
+        recipeView.recipeTableView.delegate = self
     }
     
     @objc func backButtonTapped() {
@@ -57,4 +56,19 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            // 선택된 셀의 레시피 정보를 가져옵니다.
+            let selectedRecipe = recipes[indexPath.row]
+            // RecipeDetailViewController를 인스턴스화합니다.
+            let recipeDetailVC = RecipeDetailViewController()
+            
+            // 선택된 레시피 정보를 전달합니다.
+//            recipeDetailVC.recipe = selectedRecipe
+            
+            // 화면 전환을 수행합니다.
+            navigationController?.pushViewController(recipeDetailVC, animated: true)
+        }
+    
+    
 }

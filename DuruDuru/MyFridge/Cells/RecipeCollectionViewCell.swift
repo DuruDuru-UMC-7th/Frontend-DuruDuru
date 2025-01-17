@@ -37,8 +37,7 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     }
     
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "HeartButton"), for: .normal)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.setImage(UIImage(named: "Heart"), for: .normal)
     }
     
     // MARK: - Constaints & Add Function
@@ -64,8 +63,8 @@ class RecipeCollectionViewCell: UICollectionViewCell {
         }
         
         likeButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(5)
-            $0.trailing.equalToSuperview().offset(-5)
+            $0.top.equalToSuperview().offset(13)
+            $0.trailing.equalToSuperview().offset(-11.6)
             $0.width.height.equalTo(20)
         }
     }

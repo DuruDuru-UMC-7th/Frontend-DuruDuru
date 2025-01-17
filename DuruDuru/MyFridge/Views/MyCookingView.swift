@@ -16,7 +16,6 @@ class MyCookingView: UIView {
         self.backgroundColor = .white
         addComponents()
         constraints()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -130,7 +129,8 @@ class MyCookingView: UIView {
         
         ingredientsTableView.snp.makeConstraints {
             $0.top.equalTo(myRecipe.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-70)
         }
     }
 }

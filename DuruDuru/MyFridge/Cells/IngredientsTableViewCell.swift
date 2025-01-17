@@ -13,17 +13,20 @@ class IngredientsTableViewCell: UITableViewCell {
     
     static let identifier: String = "IngredientsTableViewCell"
     weak var cellDelegate: IngredientsTableViewCellDelegate?
-    var indexPath: IndexPath?  /// 셀으 인덱스
+    var indexPath: IndexPath?  /// 셀 인덱스
+    var recipes: [RecipeModel] = [] /// 레시피 더미데이터 변수
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+    }
+    
+    private func setupDelegate(){
+        recipeCollectionView.delegate = self
+        recipeCollectionView.dataSource = self
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -34,7 +37,7 @@ class IngredientsTableViewCell: UITableViewCell {
         self.contentView.clipsToBounds = false
         addComponents()
         constraints()
-        
+        setupDelegate()
         self.recipeViewButton.addTarget(self, action: #selector(recipeViewButtonClicked), for: .touchUpInside)
     }
     
@@ -64,9 +67,10 @@ class IngredientsTableViewCell: UITableViewCell {
     /// 레시피
     let recipeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
-        $0.estimatedItemSize = .init(width: 173, height: 135)
-        $0.minimumInteritemSpacing = 8
+        $0.itemSize = CGSize(width: 173, height: 130)
+        $0.minimumInteritemSpacing = 16
     }).then {
+        $0.backgroundColor = .clear
         $0.isScrollEnabled = true
         $0.register(RecipeCollectionViewCell.self, forCellWithReuseIdentifier: RecipeCollectionViewCell.identifier)
         $0.showsHorizontalScrollIndicator = false
@@ -104,31 +108,28 @@ class IngredientsTableViewCell: UITableViewCell {
             $0.top.equalTo(recipeViewButton.snp.bottom).offset(10)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-22)
-            $0.height.equalTo(135)
+            $0.height.equalTo(130)
         }
         
         dividedLine.snp.makeConstraints {
             $0.height.equalTo(1)
             $0.top.equalTo(recipeCollectionView.snp.bottom).offset(16.25)
             $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
             
         }
-        
     }
-    
-    // MARK: - Configuration
-    
-    ///  임시로 재료 카테고리 모델 사용
-    public func configure(model: IngredientCategoryModel) {
-        self.ingredientName.text = model.categoryName
-    }
-    
-    // MARK: - Function
     
     @objc func recipeViewButtonClicked() {
         guard let indexPath = indexPath else { return }
         cellDelegate?.recipeViewButtonTapped(at: indexPath)
+    }
+    
+    // MARK: - Configuration
+    
+    public func configure(model: IngredientModel) {
+        self.recipes = model.recipes
+        self.ingredientName.text = model.name
     }
     
 }
@@ -136,4 +137,21 @@ class IngredientsTableViewCell: UITableViewCell {
 protocol IngredientsTableViewCellDelegate: AnyObject {
     func recipeViewButtonTapped(at indexPath: IndexPath)
 }
+
+extension IngredientsTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return recipes.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeCollectionViewCell.identifier, for: indexPath) as! RecipeCollectionViewCell
+        
+        if let imageURL = URL(string: recipes[indexPath.row].titleImage) {
+            cell.titleImage.kf.setImage(with: imageURL)
+        }
+
+        return cell
+    }
+}
+
 

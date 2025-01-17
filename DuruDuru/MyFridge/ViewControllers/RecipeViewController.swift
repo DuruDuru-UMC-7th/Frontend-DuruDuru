@@ -12,7 +12,7 @@ class RecipeViewController: UIViewController {
     
     private var recipeView: RecipeView!
     var ingredientName: String?  /// 전달 받은 재료 이름
-    let data = RecipeModel.dummy()
+    var recipes = [RecipeModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +30,7 @@ class RecipeViewController: UIViewController {
     private func setupDelegate(){
         recipeView.recipeTableView.dataSource = self
         recipeView.ingredientName.text = ingredientName
+        //self.recipes =
     }
     
     @objc func backButtonTapped() {
@@ -40,7 +41,7 @@ class RecipeViewController: UIViewController {
 
 extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data.count
+        recipes.count
     }
     
     
@@ -48,10 +49,10 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipeTableViewCell.identifier, for: indexPath) as? RecipeTableViewCell else {
             return UITableViewCell()
         }
-        if let imageURL = URL(string: data[indexPath.row].titleImage) {
+        if let imageURL = URL(string: recipes[indexPath.row].titleImage) {
             cell.titleImage.kf.setImage(with: imageURL)
         }
-        cell.recipeName.text = data[indexPath.row].recipeName
+        cell.recipeName.text = recipes[indexPath.row].recipeName
         
         
         return cell

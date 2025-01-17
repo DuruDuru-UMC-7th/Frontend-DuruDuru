@@ -13,7 +13,7 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     // MARK: - Properties
     
     private var myCookingView: MyCookingView!
-    let data = IngredientCategoryModel.dummy()
+    let data = IngredientModel.dummy()
     weak var delegate: MyCookingViewControllerDelegate?  /// delegate 변수
     
     // MARK: - Lifecycle
@@ -84,10 +84,11 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
 
 extension MyCookingViewController: IngredientsTableViewCellDelegate {
     func recipeViewButtonTapped(at indexPath: IndexPath) {
-        let selectedIngredientName = data[indexPath.row].categoryName
+        let selectedIngredientName = data[indexPath.row].name
         
         let recipeViewController = RecipeViewController()
-        recipeViewController.ingredientName = selectedIngredientName 
+        recipeViewController.ingredientName = selectedIngredientName
+        recipeViewController.recipes = data[indexPath.row].recipes
         navigationController?.pushViewController(recipeViewController, animated: true)
     }
 }

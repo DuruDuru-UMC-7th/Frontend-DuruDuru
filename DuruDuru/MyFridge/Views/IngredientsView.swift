@@ -27,13 +27,10 @@ class IngredientsView: UIView {
     
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
-        $0.estimatedItemSize = .init(width: 66, height: 26)
-        $0.minimumInteritemSpacing = 8
+        $0.estimatedItemSize = CGSize(width: 66, height: 26)
     }).then {
-        $0.backgroundColor = .clear
-        $0.isScrollEnabled = true
-        $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
         $0.showsHorizontalScrollIndicator = false
+        $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
     }
     
     // 소비기한 드롭다운 버튼
@@ -56,7 +53,47 @@ class IngredientsView: UIView {
         $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)
         $0.showsVerticalScrollIndicator = false
     }
-
+    
+    
+    /// 플로팅 버튼
+    let floatingButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "floating"), for: .normal) // floating.png 이미지
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowRadius = 4
+        return button
+    }()
+    
+    /// 팝업 버튼 1
+    let receiptButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("영수증으로 추가하기", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.backgroundColor = .systemGreen
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
+        button.isHidden = true // 초기 상태 숨김
+        return button
+    }()
+    
+    /// 팝업 버튼 2
+    let manualButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("직접 추가하기", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.backgroundColor = .systemGreen
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
+        button.isHidden = true // 초기 상태 숨김
+        return button
+    }()
+    
+    
+    
+    
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -79,6 +116,9 @@ class IngredientsView: UIView {
         addSubview(ingredientCategoryCollectionView)
         addSubview(expiryDropdownButton)
         addSubview(ingredientsCircleCollectionView)
+        addSubview(floatingButton)
+        addSubview(receiptButton)
+        addSubview(manualButton)
     }
     
     // MARK: - Setup Constraints
@@ -113,6 +153,27 @@ class IngredientsView: UIView {
         ingredientsCircleCollectionView.snp.makeConstraints {
             $0.top.equalTo(expiryDropdownButton.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview().inset(16)
+        }
+        
+        
+        floatingButton.snp.makeConstraints {
+            $0.width.height.equalTo(68)
+            $0.trailing.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-80)
+        }
+        
+        manualButton.snp.makeConstraints {
+            $0.trailing.equalTo(floatingButton.snp.trailing).offset(-16)
+            $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
+            $0.width.equalTo(162)
+            $0.height.equalTo(40)
+        }
+
+        receiptButton.snp.makeConstraints {
+            $0.trailing.equalTo(floatingButton.snp.trailing).offset(-16)
+            $0.bottom.equalTo(manualButton.snp.top).offset(-10)
+            $0.width.equalTo(162)
+            $0.height.equalTo(40)
         }
     }
 }

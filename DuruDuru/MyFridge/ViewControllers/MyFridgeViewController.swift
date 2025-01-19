@@ -30,6 +30,7 @@ class MyFridgeViewController: UIViewController {
         setupAction()
     }
     
+    
     // MARK: - Function
     
     private func setupAction() {

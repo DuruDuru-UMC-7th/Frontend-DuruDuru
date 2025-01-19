@@ -7,15 +7,12 @@
 
 import UIKit
 
-// import UIKit
-
 class IngredientsViewController: UIViewController, UICollectionViewDelegate {
 
     private var ingredientsView: IngredientsView!
     let data = IngredientCategoryModel.dummy()
     let ingredientData = IngredientModel.dummy()
 
-    
     
     
     // MARK: - Lifecycle
@@ -26,6 +23,8 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
         ingredientsView = IngredientsView(frame: self.view.bounds)
         self.view = ingredientsView
         setupDelegate()
+        setupFloatingButtonActions()
+        
     }
 
     private func setupDelegate() {
@@ -34,6 +33,34 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
         ingredientsView.ingredientsCircleCollectionView.dataSource = self
         ingredientsView.ingredientsCircleCollectionView.delegate = self
     }
+    
+    private func setupFloatingButtonActions() {
+        // 플로팅 버튼 클릭 시
+        ingredientsView.floatingButton.addTarget(self, action: #selector(togglePopupButtons), for: .touchUpInside)
+        // 직접 추가 버튼 클릭 시
+        ingredientsView.manualButton.addTarget(self, action: #selector(didTapDirectAddButton), for: .touchUpInside)
+        // 영수증 추가 버튼 클릭 시
+        ingredientsView.receiptButton.addTarget(self, action: #selector(didTapReceiptAddButton), for: .touchUpInside)
+    }
+
+    @objc private func togglePopupButtons() {
+        let isHidden = ingredientsView.receiptButton.isHidden
+        ingredientsView.receiptButton.isHidden = !isHidden
+        ingredientsView.manualButton.isHidden = !isHidden
+    }
+
+    @objc private func didTapDirectAddButton() {
+        let addIngredientVC = AddIngredientViewController()
+        addIngredientVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(addIngredientVC, animated: true)
+    }
+
+    @objc private func didTapReceiptAddButton() {
+        print("영수증으로 추가하기 버튼 클릭")
+        // 영수증 관련 화면 구현 예정
+    }
+
+
 }
 
 // MARK: - UICollectionViewDataSource
@@ -93,7 +120,7 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
             // 동그란 식재료 셀 크기 설정 (한 줄에 3개 배치)
             let spacing: CGFloat = 8
-            let totalSpacing = spacing * 2 + (spacing * 2)
+            let totalSpacing = spacing * 4
             let cellWidth = (collectionView.frame.width - totalSpacing) / 3
             return CGSize(width: cellWidth, height: cellWidth)
         }

@@ -57,20 +57,6 @@ class IngredientsView: UIView {
         $0.showsVerticalScrollIndicator = false
     }
 
-    
-    
-    //    /// 카테고리 필터 CollectionView
-    //    let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
-    //        $0.scrollDirection = .horizontal
-    //        $0.estimatedItemSize = .init(width: 66, height: 26)
-    //        $0.minimumInteritemSpacing = 8
-    //    }).then {
-    //        $0.backgroundColor = .clear
-    //        $0.showsHorizontalScrollIndicator = false
-    //        $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
-    //    }
-    
-    
     // MARK: - Init
     
     override init(frame: CGRect) {

@@ -67,20 +67,27 @@ class MyFridgeViewController: UIViewController {
     private func switchToChildViewController(_ child: UIViewController) {
         /// 현재 자식 뷰 컨트롤러 제거
         for childVC in children {
-                childVC.willMove(toParent: nil)
-                childVC.view.removeFromSuperview()
-                childVC.removeFromParent()
-            }
+            childVC.willMove(toParent: nil)
+            childVC.view.removeFromSuperview()
+            childVC.removeFromParent()
+        }
         /// 새 자식 뷰 컨트롤러 추가
         add(asChildViewController: child)
     }
     
-    /// 자식 뷰 컨트롤러 추가
     private func add(asChildViewController viewController: UIViewController) {
         addChild(viewController)
-        viewController.view.frame = myFridgeView.containerView.bounds
         myFridgeView.containerView.addSubview(viewController.view)
-        print(myFridgeView.containerView.bounds)
+        
+        // Auto Layout을 사용할 수 있도록 제약 조건 설정
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            viewController.view.topAnchor.constraint(equalTo: myFridgeView.containerView.topAnchor),
+            viewController.view.leadingAnchor.constraint(equalTo: myFridgeView.containerView.leadingAnchor),
+            viewController.view.trailingAnchor.constraint(equalTo: myFridgeView.containerView.trailingAnchor),
+            viewController.view.bottomAnchor.constraint(equalTo: myFridgeView.containerView.bottomAnchor)
+        ])
+        
         viewController.didMove(toParent: self)
     }
     
@@ -89,7 +96,7 @@ class MyFridgeViewController: UIViewController {
 
 extension MyFridgeViewController: MyCookingViewControllerDelegate{
     func didTapRecipeViewButton() {
-            let recipeViewController = RecipeViewController()
-            navigationController?.pushViewController(recipeViewController, animated: true)
-        }
+        let recipeViewController = RecipeViewController()
+        navigationController?.pushViewController(recipeViewController, animated: true)
+    }
 }

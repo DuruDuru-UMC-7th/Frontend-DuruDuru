@@ -147,7 +147,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Configure Cell
     
-    func configure(with model: IngredientModel) {
+    func configure(with model: IngredientsModel) {
         expiryLabel.text = model.daysRemaining // e.g., "D-3"
         ingredientNameLabel.text = model.name // e.g., "콩나물"
     }

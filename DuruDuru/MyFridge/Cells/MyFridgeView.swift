@@ -16,6 +16,7 @@ class MyFridgeView: UIView {
         super.init(frame: frame)
         addComponents()
         constraints()
+        
     }
     
     required init?(coder: NSCoder) {

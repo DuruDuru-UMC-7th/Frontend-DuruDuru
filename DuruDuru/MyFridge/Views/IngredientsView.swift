@@ -99,6 +99,7 @@ class IngredientsView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
+
         addComponents()
         setupConstraints()
     }
@@ -129,23 +130,24 @@ class IngredientsView: UIView {
         searchBar.snp.makeConstraints {
             $0.top.equalToSuperview().offset(17)
             $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(36)
         }
         
         allButton.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(20)
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
             $0.width.height.equalTo(26)
         }
         
         ingredientCategoryCollectionView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(20)
-            $0.left.equalTo(allButton.snp.right).offset(8)
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
+            $0.left.equalTo(allButton.snp.right).offset(7)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
         }
         
         expiryDropdownButton.snp.makeConstraints {
-            $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom).offset(11)
+            $0.top.equalTo(searchBar.snp.bottom).offset(11)
             $0.trailing.equalToSuperview().offset(-16)
             
         }

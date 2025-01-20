@@ -226,7 +226,7 @@ class SignUpSecondView: UIView {
         }
         
         nextBtn.snp.makeConstraints {
-            $0.top.equalTo(numberTextField.snp.bottom).offset(214.5)
+            $0.top.equalToSuperview().offset(787)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(370)
             $0.height.equalTo(47)

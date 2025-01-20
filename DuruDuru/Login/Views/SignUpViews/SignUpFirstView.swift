@@ -213,7 +213,7 @@ class SignUpFirstView: UIView {
         }
         
         nextBtn.snp.makeConstraints {
-            $0.top.equalTo(passwordLabel.snp.bottom).offset(290)
+            $0.top.equalToSuperview().offset(787)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(361)
             $0.height.equalTo(47)

@@ -27,12 +27,11 @@ class OnBoardingView: UIView {
     
     // MARK: -Property
     
-    /// 왼쪽 그림(두)
-    private lazy var duImage: UIImageView = imageView(name: "Du")
+    /// 두루두루 그림
+    private lazy var duruduruImage: UIImageView = imageView(name: "DuruDuruImage")
     
-    /// 오른쪽 그림(루)
-    private lazy var ruImage: UIImageView = imageView(name: "Ru")
-    
+    /// 두루두루 라벨
+    private lazy var duruduruLabel: UIImageView = imageView(name: "DuruDuruLabel")
     
     
     
@@ -54,24 +53,24 @@ class OnBoardingView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        self.addSubview(duImage)
-        self.addSubview(ruImage)
+        self.addSubview(duruduruImage)
+        self.addSubview(duruduruLabel)
     }
     
     /// 오토레이아웃 설정
     private func constraints(){
-        duImage.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(70)
-            $0.width.equalTo(126)
+        duruduruImage.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(73)
+            $0.width.equalTo(256)
             $0.height.equalTo(126)
-            $0.top.equalToSuperview().offset(363)
+            $0.top.equalToSuperview().offset(387)
         }
         
-        ruImage.snp.makeConstraints {
-            $0.left.equalTo(duImage.snp.right).offset(7)
-            $0.width.equalTo(126)
-            $0.height.equalTo(126)
-            $0.top.equalToSuperview().offset(363)
+        duruduruLabel.snp.makeConstraints {
+            $0.top.equalTo(duruduruImage.snp.bottom).offset(10)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(109)
+            $0.height.equalTo(46)
         }
     }
 }

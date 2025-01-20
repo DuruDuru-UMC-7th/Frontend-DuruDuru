@@ -50,6 +50,26 @@ class LoginView: UIView {
         return imageView
     }()
     
+    /// 5초 가입 말풍선
+    private lazy var balloonImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Balloon")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    /// 5초 가입 라벨
+    private lazy var balloonLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textAlignment = .center
+        label.text = "5초만에 간편하게 가입하기!"
+        return label
+    }()
+    
+    
     /// 카카오로 계속하기 버튼
     public lazy var kakaoBtn = continueButton(title: "카카오로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFAE301, borderColorHex: 0xFAE301)
     
@@ -109,6 +129,8 @@ class LoginView: UIView {
     /// 컴포넌트 생성
     private func addComponents() {
         self.addSubview(backgroundImageView) //젤 위에 와야함 (배경 먼저 깔고 -> 아래 버튼 까는거임)
+        self.addSubview(balloonImageView)
+        self.addSubview(balloonLabel)
         self.addSubview(kakaoBtn)
         self.addSubview(naverBtn)
         self.addSubview(appleBtn)
@@ -119,6 +141,20 @@ class LoginView: UIView {
     private func constraints(){
         backgroundImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        balloonImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(488)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(221)
+            $0.height.equalTo(51.3)
+        }
+        
+        balloonLabel.snp.makeConstraints {
+            $0.top.equalTo(balloonImageView.snp.top).offset(9.15)
+            $0.left.equalTo(balloonImageView.snp.left).offset(33)
+            $0.width.greaterThanOrEqualTo(153)
+            $0.height.equalTo(22)
         }
         
         kakaoBtn.snp.makeConstraints {

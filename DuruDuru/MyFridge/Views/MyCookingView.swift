@@ -3,7 +3,6 @@
 //  DuruDuru
 //
 //  Created by 임효진 on 1/8/25.
-//
 
 import UIKit
 

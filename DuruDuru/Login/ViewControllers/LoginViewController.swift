@@ -9,14 +9,12 @@ import UIKit
 
 class LoginViewController: UIViewController {
 
-    // LoginView를 소유하고 초기화
-    private var loginView: LoginView!
-
+    /// 앱 실행 단계
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // LoginView 초기화 및 화면에 추가
-        loginView = LoginView(frame: self.view.bounds)
-        self.view.addSubview(loginView)
+        self.view = LoginView()
     }
+    
+    // MARK: - Property
+    
 }

@@ -29,7 +29,7 @@ class SignUpSecondView: UIView {
     /// 뒤로가기
     public lazy var backImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Back")
+        imageView.image = UIImage(named: "Left")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -45,11 +45,10 @@ class SignUpSecondView: UIView {
     }()
     
     /// 경계선
-    private lazy var lineImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "Line2")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    private lazy var borderLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: 0x00C269)
+        return view
     }()
     
     /// "휴대폰 번호" 라벨
@@ -57,7 +56,7 @@ class SignUpSecondView: UIView {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 15, weight: .medium)
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.text = "휴대폰 번호"
         return label
     }()
@@ -144,10 +143,10 @@ class SignUpSecondView: UIView {
         btn.setTitleColor(.white, for: .normal)
         
         // 배경 색깔 (Hex값)
-        btn.backgroundColor = UIColor(hex: 0x272727)
+        btn.backgroundColor = UIColor(hex: 0x00C269)
         
         // 테두리 색깔
-        btn.layer.borderColor = UIColor(hex: 0x272727)?.cgColor
+        btn.layer.borderColor = UIColor(hex: 0x00C269)?.cgColor
         btn.layer.borderWidth = 1.0
         
         // 모서리 둥글둥글
@@ -166,7 +165,7 @@ class SignUpSecondView: UIView {
     private func addComponents() {
         self.addSubview(backImage)
         self.addSubview(titleLabel)
-        self.addSubview(lineImage)
+        self.addSubview(borderLine)
         self.addSubview(phoneLabel)
         self.addSubview(phoneTextField)
         self.addSubview(applyBtn)
@@ -178,31 +177,30 @@ class SignUpSecondView: UIView {
     /// 오토레이아웃 설정
     private func constraints(){
         backImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(57)
+            $0.top.equalToSuperview().offset(95)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(7)
-            $0.height.equalTo(14)
+            $0.width.equalTo(24)
+            $0.height.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(53)
-            $0.left.equalTo(backImage.snp.right).offset(146)
-            $0.width.equalTo(56)
+            $0.top.equalToSuperview().offset(95)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(115)
             $0.height.equalTo(22)
         }
         
-        lineImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(90)
+        borderLine.snp.makeConstraints {
+            $0.top.equalTo(backImage.snp.bottom).offset(9)
             $0.left.equalToSuperview()
-            $0.right.equalToSuperview()
-            //$0.width.equalTo(393)
-            $0.height.equalTo(1)
+            $0.width.equalTo(402)
+            $0.height.equalTo(2)
         }
         
         phoneLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(326)
+            $0.top.equalTo(borderLine.snp.bottom).offset(244.5)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(69)
+            $0.width.equalTo(370)
             $0.height.equalTo(22)
         }
         
@@ -221,16 +219,16 @@ class SignUpSecondView: UIView {
         }
         
         numberTextField.snp.makeConstraints{
-            $0.top.equalTo(phoneTextField.snp.bottom).offset(12)
+            $0.top.equalTo(phoneTextField.snp.bottom).offset(11)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(361)
+            $0.width.equalTo(370)
             $0.height.equalTo(52)
         }
         
         nextBtn.snp.makeConstraints {
-            $0.top.equalTo(numberTextField.snp.bottom).offset(292)
+            $0.top.equalTo(numberTextField.snp.bottom).offset(214.5)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(361)
+            $0.width.equalTo(370)
             $0.height.equalTo(47)
         }
         

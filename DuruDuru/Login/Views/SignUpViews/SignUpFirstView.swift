@@ -68,7 +68,7 @@ class SignUpFirstView: UIView {
     public lazy var emailTextField: UITextField = textField(text: "이메일을 입력하세요")
     
     /// 비밀번호 텍스트필드
-    public lazy var passwordTextField: UITextField = textField(text: "비밀번호를 입력하세요 (8자 이상)")
+    public lazy var passwordTextField: InputTextfield = InputTextfield()
     
     /// 다음으로 버튼
     public lazy var nextBtn: UIButton = {

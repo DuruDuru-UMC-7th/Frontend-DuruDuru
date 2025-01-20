@@ -27,7 +27,13 @@ class EmailLoginView: UIView {
     // MARK: -Property
     
     /// 뒤로가기
-    public lazy var backImage: UIImageView = imageView(name: "Left")
+    public lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Left"), for: .normal) // 버튼 이미지 설정
+        button.contentMode = .scaleAspectFit // 이미지 비율 유지
+        button.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 시 필수
+        return button
+    }()
     
     /// "이메일로 계속하기" 라벨
     private lazy var titleLabel: UILabel = {
@@ -48,8 +54,8 @@ class EmailLoginView: UIView {
     /// 비밀번호 라벨
     private lazy var passwordLabel: UILabel = makeLabel(title: "비밀번호")
     
-    /// 비밀번호 입력 텍스트필드 -> 눈알 구현해야함
-    public lazy var passwordTextField: UITextField = textField(text: "비밀번호를 입력하세요")
+    /// 비밀번호 입력 텍스트필드
+    public lazy var passwordTextField: InputTextfield = InputTextfield()
 
     
     /// 아직 회원이 아니신가요? 라벨
@@ -168,7 +174,7 @@ class EmailLoginView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        self.addSubview(backImage)
+        self.addSubview(backButton)
         self.addSubview(titleLabel)
         self.addSubview(emailLabel)
         self.addSubview(emailTextField)
@@ -182,7 +188,7 @@ class EmailLoginView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints(){
-        backImage.snp.makeConstraints {
+        backButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(95)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
@@ -253,10 +259,4 @@ class EmailLoginView: UIView {
         }
         
     }
-}
-
-
-
-#Preview {
-    EmailLoginView()
 }

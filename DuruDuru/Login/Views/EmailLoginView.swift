@@ -62,14 +62,20 @@ class EmailLoginView: UIView {
         return label
     }()
     
-    /// 회원가입(초록색) 라벨 -> 눌리도록 만들어야함
-    private lazy var signUpLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor(hex: 0x00C269)
-        label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.textAlignment = .center
-        label.text = "회원가입"
-        return label
+    /// 회원가입(초록색) 버튼 -> 텍스트만 보이도록 설정
+    private lazy var signUpButton: UIButton = {
+        var config = UIButton.Configuration.plain() // plain 스타일 사용
+        config.title = "회원가입" // 버튼 텍스트
+        config.titleAlignment = .center
+        config.baseForegroundColor = UIColor(hex: 0x00C269) // 텍스트 색상
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var attributes = incoming
+            attributes.font = UIFont.systemFont(ofSize: 13, weight: .regular) // 텍스트 폰트
+            return attributes
+        }
+
+        let button = UIButton(configuration: config)
+        return button
     }()
     
     /// 계정 찾기/비밀번호 찾기
@@ -169,7 +175,7 @@ class EmailLoginView: UIView {
         self.addSubview(passwordLabel)
         self.addSubview(passwordTextField)
         self.addSubview(notMemberLabel)
-        self.addSubview(signUpLabel)
+        self.addSubview(signUpButton)
         self.addSubview(searchLabel)
         self.addSubview(loginBtn)
     }
@@ -220,12 +226,12 @@ class EmailLoginView: UIView {
         
         notMemberLabel.snp.makeConstraints {
             $0.top.equalTo(passwordTextField.snp.bottom).offset(197)
-            $0.left.equalToSuperview().offset(110)
+            $0.left.equalToSuperview().offset(102)
             $0.width.greaterThanOrEqualTo(130)
             $0.height.equalTo(22)
         }
         
-        signUpLabel.snp.makeConstraints {
+        signUpButton.snp.makeConstraints {
             $0.top.equalTo(passwordTextField.snp.bottom).offset(197)
             $0.left.equalTo(notMemberLabel.snp.right)
             $0.width.greaterThanOrEqualTo(34)
@@ -247,4 +253,10 @@ class EmailLoginView: UIView {
         }
         
     }
+}
+
+
+
+#Preview {
+    EmailLoginView()
 }

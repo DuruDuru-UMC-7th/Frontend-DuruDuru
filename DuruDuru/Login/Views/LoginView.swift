@@ -71,23 +71,29 @@ class LoginView: UIView {
     
     
     /// 카카오로 계속하기 버튼
-    public lazy var kakaoBtn = continueButton(title: "카카오로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFAE301, borderColorHex: 0xFAE301)
+    public lazy var kakaoBtn = continueButton(title: "카카오로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFAE301, borderColorHex: 0xFAE301, imageName: "KakaoLogo")
     
     /// 네이버로 계속하기 버튼
-    public lazy var naverBtn = continueButton(title: "네이버로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: 0x1DC800, borderColorHex: 0x1DC800)
+    public lazy var naverBtn = continueButton(title: "네이버로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: 0x1DC800, borderColorHex: 0x1DC800, imageName: "NaverLogo")
     
     /// Apple로 계속하기 버튼
-    public lazy var appleBtn = continueButton(title: "Apple로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFFFFFF, borderColorHex: 0xFFFFFF)
+    public lazy var appleBtn = continueButton(title: "Apple로 계속하기", titleColorHex: 0x3B1F1E, backgroundColorHex: 0xFFFFFF, borderColorHex: 0xFFFFFF, imageName: "AppleLogo")
     
     /// 이메일로 계속하기 버튼(투명)
-    public lazy var emailBtn = continueButton(title: "이메일로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: nil, borderColorHex: 0xFFFFFF)
+    public lazy var emailBtn = continueButton(title: "이메일로 계속하기", titleColorHex: 0xFFFFFF, backgroundColorHex: nil, borderColorHex: 0xFFFFFF, imageName: "EmailLogo")
     
     
     
     // MARK: MakeFunction
     
-    /// 계속하기 버튼 함수
-    private func continueButton(title: String, titleColorHex: Int?, backgroundColorHex: Int?, borderColorHex: Int?) -> UIButton {
+    /// 계속하기 버튼
+    private func continueButton(
+        title: String,
+        titleColorHex: Int?,
+        backgroundColorHex: Int?,
+        borderColorHex: Int?,
+        imageName: String?
+    ) -> UIButton {
         let btn = UIButton()
         
         // 버튼 제목
@@ -113,6 +119,18 @@ class LoginView: UIView {
             btn.layer.borderColor = UIColor(hex: borderColorHex)?.cgColor
             btn.layer.borderWidth = 1.0
         }
+        
+        // 이미지 추가 (왼쪽)
+        if let imageName = imageName, let image = UIImage(named: imageName) {
+            btn.setImage(image, for: .normal)
+            
+            // 이미지와 텍스트 간의 간격 조정
+            btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8) // 이미지의 위치
+            btn.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8) // 텍스트의 위치
+        }
+        
+        // 패딩 조정
+        btn.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
         // 모서리 둥글둥글
         btn.clipsToBounds = true

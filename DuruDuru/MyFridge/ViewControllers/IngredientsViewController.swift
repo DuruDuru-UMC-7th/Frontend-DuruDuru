@@ -11,7 +11,7 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
 
     private var ingredientsView: IngredientsView!
     let data = IngredientCategoryModel.dummy()
-    let ingredientData = IngredientModel.dummy()
+    let ingredientData = IngredientsModel.dummy()
 
     
     
@@ -19,7 +19,7 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        print("ingredientController")
         ingredientsView = IngredientsView(frame: self.view.bounds)
         self.view = ingredientsView
         setupDelegate()

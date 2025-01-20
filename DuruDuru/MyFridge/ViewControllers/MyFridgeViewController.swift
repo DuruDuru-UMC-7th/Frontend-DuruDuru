@@ -22,15 +22,13 @@ class MyFridgeViewController: UIViewController {
         
         /// MyFridgeView 초기화 및 추가
         myFridgeView = MyFridgeView(frame: self.view.bounds)
-        self.view.addSubview(myFridgeView)
+        self.view = myFridgeView
+        setupAction()
         ingredientVC = IngredientsViewController()
         cookingVC = MyCookingViewController()
         cookingVC.delegate = self
         add(asChildViewController: ingredientVC)
-        
-        setupAction()
     }
-    
     
     // MARK: - Function
     
@@ -82,6 +80,7 @@ class MyFridgeViewController: UIViewController {
         addChild(viewController)
         viewController.view.frame = myFridgeView.containerView.bounds
         myFridgeView.containerView.addSubview(viewController.view)
+        print(myFridgeView.containerView.bounds)
         viewController.didMove(toParent: self)
     }
     

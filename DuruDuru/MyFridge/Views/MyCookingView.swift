@@ -57,7 +57,7 @@ class MyCookingView: UIView {
         $0.minimumInteritemSpacing = 7
     }).then {
         $0.backgroundColor = .clear
-        $0.isScrollEnabled = false
+        $0.isScrollEnabled = true
         $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
         $0.showsHorizontalScrollIndicator = false
     }
@@ -85,7 +85,6 @@ class MyCookingView: UIView {
         addSubview(ingredientCategoryCollectionView)
         addSubview(myRecipe)
         addSubview(ingredientsTableView)
-        
     }
     
     /// 오토레이아웃 설정
@@ -130,7 +129,7 @@ class MyCookingView: UIView {
         ingredientsTableView.snp.makeConstraints {
             $0.top.equalTo(myRecipe.snp.bottom)
             $0.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-70)
+            $0.bottom.equalToSuperview()
         }
     }
 }

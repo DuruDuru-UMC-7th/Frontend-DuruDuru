@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RecipeTableViewCell: UITableViewCell {
+class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
     // MARK: - Init
     
@@ -30,6 +30,7 @@ class RecipeTableViewCell: UITableViewCell {
         selectionStyle = .none
         addComponents()
         constraints()
+        setBasicTag()
     }
     
     required init?(coder: NSCoder) {
@@ -66,14 +67,31 @@ class RecipeTableViewCell: UITableViewCell {
         $0.textColor = .black
     }
     
+    let tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .horizontal
+        $0.minimumInteritemSpacing = 8 // 좌우 간격
+        $0.estimatedItemSize = .init(width: 45, height: 22)// 셀 크기
+    }).then {
+        $0.backgroundColor = .clear
+        $0.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: TagCollectionViewCell.identifier)
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    /// 구분 선
+    let dividedLine = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0xDCDCDC, alpha: 1.0)
+    }
+    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
     private func addComponents() {
         addSubview(container)
         addSubview(recipeName)
+        addSubview(tagCollectionView)
         container.addSubview(titleImage)
         container.addSubview(likeButton)
+        addSubview(dividedLine)
     }
     
     /// 오토레이아웃 설정
@@ -99,8 +117,59 @@ class RecipeTableViewCell: UITableViewCell {
         recipeName.snp.makeConstraints {
             $0.top.equalTo(container.snp.bottom).offset(12)
             $0.left.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-56)
         }
+        
+        tagCollectionView.snp.makeConstraints {
+            $0.top.equalTo(recipeName.snp.bottom).offset(2)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(22)
+        }
+        
+        dividedLine.snp.makeConstraints {
+            $0.height.equalTo(1)
+            $0.top.equalTo(tagCollectionView.snp.bottom).offset(23)
+            $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
+            
+        }
+    }
+    
+    let tagList = ["쿠앤크","메로나","아몬드 빼빼로","콘칩","나쵸","꼬깔콘","빙그레 바나나","액셀런트","더위사냥","꿀꽈배기","버터와플","새우칩","스프링클","하리보","새콤달콤","푸딩","에이스","홈런볼","바밤바","허쉬","ABC 초콜릿"]
+    
+    var tagOnOffArray: [Bool] = []
+    
+    func setBasicTag(){
+        tagCollectionView.delegate = self
+        tagCollectionView.dataSource = self
+        self.createBtnArray()
+    }
+    
+    // Tag 갯수 만큼 제작
+    func createBtnArray() {
+        for _ in 0..<self.tagList.count {
+            self.tagOnOffArray.append(false)
+        }
+    }
+    
+    // MARK: 콜렉션 뷰 데이터
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return tagList.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TagCollectionViewCell.identifier, for: indexPath) as! TagCollectionViewCell
+        cell.configure(tag: tagList[indexPath.row])
+        return cell
+    }
+    
+    func getClickList() -> String {
+        var result: String = ""
+        for i in 0..<self.tagList.count {
+            if self.tagOnOffArray[i] {
+                result += (" " + self.tagList[i])
+            }
+        }
+        return result
     }
     
 }

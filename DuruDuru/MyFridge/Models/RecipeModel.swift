@@ -25,6 +25,8 @@ extension IngredientModel{
             IngredientModel(name:"우유", recipes: [
                 RecipeModel(titleImage: "https://i.pinimg.com/736x/14/2d/17/142d17d25981c516a8b07c9919da2459.jpg", recipeName: "우유 레시피1"),
                 RecipeModel(titleImage: "https://i.pinimg.com/474x/a0/e1/f7/a0e1f7e365bb3ccda6eb0f7e930bc6e2.jpg", recipeName: "우유 레시피2"),
+                RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3"),
+                RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3"),
                 RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3")
             ]),
             IngredientModel(name:"계란", recipes: [

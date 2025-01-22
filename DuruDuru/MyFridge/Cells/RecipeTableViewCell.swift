@@ -20,11 +20,6 @@ class RecipeTableViewCell: UITableViewCell {
         // Initialization code
     }
     
-//    private func setupDelegate(){
-//        tagCollectionView.delegate = self
-//        tagCollectionView.dataSource = self
-//    }
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         selectionStyle = .default
@@ -37,17 +32,11 @@ class RecipeTableViewCell: UITableViewCell {
         selectionStyle = .none
         addComponents()
         constraints()
-//        setupDelegate()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        updateCollectionViewHeight()
-//    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -78,17 +67,6 @@ class RecipeTableViewCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 15)
         $0.textColor = .black
     }
-    
-//    /// 태그
-//    let tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
-//        $0.minimumInteritemSpacing = 4
-//        $0.minimumLineSpacing = 4
-//        $0.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-//    }).then {
-//        $0.translatesAutoresizingMaskIntoConstraints = false
-//        $0.backgroundColor = .clear
-//        $0.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: TagCollectionViewCell.identifier)
-//    }
     
     /// 태크 스택 뷰
     let tagsStackView = UIStackView().then {
@@ -190,37 +168,3 @@ class RecipeTableViewCell: UITableViewCell {
         return containerView
     }
 }
-
-//extension RecipeTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return tags.count
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TagCollectionViewCell.identifier, for: indexPath) as! TagCollectionViewCell
-//        cell.tagLabel.text = tags[indexPath.item]
-//        return cell
-//    }
-//    
-//    // UICollectionViewDelegateFlowLayout
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let text = tags[indexPath.item]
-//        let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width + 16 // Padding 추가
-//        return CGSize(width: width, height: 22) // 높이는 고정
-//    }
-//    
-//    func updateCollectionViewHeight() {
-//        // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
-//        tagCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
-//        let contentHeight = tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-//        
-//        tagCollectionView.snp.updateConstraints { make in
-//            make.height.equalTo(contentHeight) // 콘텐츠 높이에 맞게 높이 설정
-//        }
-//    }
-//    
-//    func collectionViewHeight() -> CGFloat {
-//        return tagCollectionView.collectionViewLayout.collectionViewContentSize.height
-//    }
-//}

@@ -24,6 +24,11 @@ class RecipeDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateCollectionViewHeight() // 높이 업데이트
+    }
+    
     // MARK: - Components
     
     /// 스크롤 뷰
@@ -123,11 +128,15 @@ class RecipeDetailView: UIView {
         $0.font = .systemFont(ofSize: 12)
         $0.textColor = .black
     }
-    
-    /// 주요 재료  스택 뷰
-    let mainIngredientsStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 10
+       
+    let mainIngredientCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
+        $0.minimumInteritemSpacing = 10
+        $0.minimumLineSpacing = 10
+        $0.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }).then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = .clear
+        $0.register(RecipeDetailIngredientsCollectionViewCell.self, forCellWithReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier)
     }
     
     ///  '부가 재료'
@@ -179,7 +188,7 @@ class RecipeDetailView: UIView {
             singleServingLabel,
             ingredientLabel,
             mainIngredientLabel,
-            mainIngredientsStackView,
+            mainIngredientCollectionView,
             subIngredientLabel,
             subIngredientStackView,
             recipeInstructionsLabel,
@@ -192,13 +201,13 @@ class RecipeDetailView: UIView {
     private func constraints() {
         
         scrollView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(9)
-            $0.edges.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(9)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
+            $0.top.bottom.leading.trailing.equalToSuperview()
+            $0.width.equalTo(scrollView)
         }
         
         titleImageView.snp.makeConstraints {
@@ -275,13 +284,15 @@ class RecipeDetailView: UIView {
             $0.left.equalToSuperview().inset(16)
         }
         
-        mainIngredientsStackView.snp.makeConstraints {
+        mainIngredientCollectionView.snp.makeConstraints {
             $0.top.equalTo(mainIngredientLabel.snp.bottom).offset(6)
             $0.left.equalToSuperview().inset(16)
+            $0.right.equalToSuperview().inset(16)
+            $0.height.equalTo(30)
         }
         
         subIngredientLabel.snp.makeConstraints {
-            $0.top.equalTo(mainIngredientsStackView.snp.bottom).offset(26)
+            $0.top.equalTo(mainIngredientCollectionView.snp.bottom).offset(26)
             $0.left.equalToSuperview().inset(16)
         }
         
@@ -302,6 +313,16 @@ class RecipeDetailView: UIView {
         }
     }
     
+    func updateCollectionViewHeight() {
+        // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
+        mainIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
+        let contentHeight = mainIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
+        
+        mainIngredientCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(contentHeight) // 콘텐츠 높이에 맞게 높이 설정
+        }
+    }
+    
     private func configureData() {
         recipeName.text = "황금계란볶음밥"
         time.text = "15분"
@@ -312,13 +333,6 @@ class RecipeDetailView: UIView {
         for tag in tags {
             let tagLabel = createTagLabel(text: tag)
             tagsStackView.addArrangedSubview(tagLabel)
-        }
-        
-        // 주 재료 설정
-        let mainIngredients = ["계란 2알", "양파 2알", "대파 1/2단", "밥 1공기", "당근 1/2개", "어너머냐ㅐ머", "ㅇ노ㅑㅗㅁ"]
-        for ingredient in mainIngredients {
-            let paddedLabel = createIngredientStackLabel(text: ingredient)
-            mainIngredientsStackView.addArrangedSubview(paddedLabel)
         }
         
         // 부 재료 설정

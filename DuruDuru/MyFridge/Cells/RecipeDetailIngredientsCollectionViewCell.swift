@@ -7,11 +7,11 @@
 
 import UIKit
 
-class TagCollectionViewCell: UICollectionViewCell {
+class RecipeDetailIngredientsCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Init
     
-    static let identifier = "TagCollectionViewCell"
+    static let identifier = "RecipeDetailIngredientsCollectionViewCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,8 +42,8 @@ class TagCollectionViewCell: UICollectionViewCell {
     /// 오토레이아웃 설정
     private func constraints() {
         tagLabel.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(4)
-            $0.right.left.equalToSuperview().inset(6)
+            $0.top.bottom.equalToSuperview().inset(6)
+            $0.right.left.equalToSuperview().inset(12)
         }
     }
     

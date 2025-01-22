@@ -26,29 +26,28 @@ class TagCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Components
-
-    let tagLbl = UILabel().then {
-        $0.textColor = .black
-        $0.font = .boldSystemFont(ofSize: 11)
-        
+    
+    let tagLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.clipsToBounds = true
+        $0.font = .systemFont(ofSize: 11)
     }
     
     // MARK: - Constaints & Add Function
     
     private func addComponents() {
-        addSubview(tagLbl)
+        addSubview(tagLabel)
     }
     
     /// 오토레이아웃 설정
     private func constraints() {
-        tagLbl.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        tagLabel.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.right.left.equalToSuperview().inset(6)
         }
     }
     
-    // MARK: - Configuration
-    
     public func configure(tag: String) {
-        self.tagLbl.text = tag
+        tagLabel.text = tag
     }
 }

@@ -6,17 +6,24 @@
 //
 
 import UIKit
+import SwiftUI
 
-class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+class RecipeTableViewCell: UITableViewCell {
     
     // MARK: - Init
     
     static let identifier: String = "recipeTableViewCell"
+    var tags = [String]()
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
+    
+//    private func setupDelegate(){
+//        tagCollectionView.delegate = self
+//        tagCollectionView.dataSource = self
+//    }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -30,12 +37,17 @@ class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         selectionStyle = .none
         addComponents()
         constraints()
-        setBasicTag()
+//        setupDelegate()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+//    override func layoutSubviews() {
+//        super.layoutSubviews()
+//        updateCollectionViewHeight()
+//    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -67,14 +79,21 @@ class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         $0.textColor = .black
     }
     
-    let tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
-        $0.scrollDirection = .horizontal
-        $0.minimumInteritemSpacing = 8 // 좌우 간격
-        $0.estimatedItemSize = .init(width: 45, height: 22)// 셀 크기
-    }).then {
-        $0.backgroundColor = .clear
-        $0.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: TagCollectionViewCell.identifier)
-        $0.showsVerticalScrollIndicator = false
+//    /// 태그
+//    let tagCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
+//        $0.minimumInteritemSpacing = 4
+//        $0.minimumLineSpacing = 4
+//        $0.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//    }).then {
+//        $0.translatesAutoresizingMaskIntoConstraints = false
+//        $0.backgroundColor = .clear
+//        $0.register(TagCollectionViewCell.self, forCellWithReuseIdentifier: TagCollectionViewCell.identifier)
+//    }
+    
+    /// 태크 스택 뷰
+    let tagsStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
     }
     
     /// 구분 선
@@ -88,7 +107,7 @@ class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
     private func addComponents() {
         addSubview(container)
         addSubview(recipeName)
-        addSubview(tagCollectionView)
+        addSubview(tagsStackView)
         container.addSubview(titleImage)
         container.addSubview(likeButton)
         addSubview(dividedLine)
@@ -97,10 +116,9 @@ class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
     /// 오토레이아웃 설정
     private func constraints() {
         container.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().offset(20)
             $0.left.equalToSuperview()
             $0.right.equalToSuperview()
-            $0.width.equalTo(370)
             $0.height.equalTo(158.57)
         }
         
@@ -119,57 +137,90 @@ class RecipeTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
             $0.left.equalToSuperview()
         }
         
-        tagCollectionView.snp.makeConstraints {
-            $0.top.equalTo(recipeName.snp.bottom).offset(2)
-            $0.left.right.equalToSuperview()
-            $0.height.equalTo(22)
+        tagsStackView.snp.makeConstraints {
+            $0.top.equalTo(recipeName.snp.bottom).offset(5)
+            $0.left.equalToSuperview()
         }
         
         dividedLine.snp.makeConstraints {
             $0.height.equalTo(1)
-            $0.top.equalTo(tagCollectionView.snp.bottom).offset(23)
-            $0.left.right.equalToSuperview().inset(16)
+            $0.top.equalTo(tagsStackView.snp.bottom).offset(23)
+            $0.left.right.equalToSuperview()
             $0.bottom.equalToSuperview()
             
         }
     }
     
-    let tagList = ["쿠앤크","메로나","아몬드 빼빼로","콘칩","나쵸","꼬깔콘","빙그레 바나나","액셀런트","더위사냥","꿀꽈배기","버터와플","새우칩","스프링클","하리보","새콤달콤","푸딩","에이스","홈런볼","바밤바","허쉬","ABC 초콜릿"]
-    
-    var tagOnOffArray: [Bool] = []
-    
-    func setBasicTag(){
-        tagCollectionView.delegate = self
-        tagCollectionView.dataSource = self
-        self.createBtnArray()
-    }
-    
-    // Tag 갯수 만큼 제작
-    func createBtnArray() {
-        for _ in 0..<self.tagList.count {
-            self.tagOnOffArray.append(false)
+    public func configure(recipe: RecipeModel) {
+        if let imageURL = URL(string: recipe.titleImage) {
+            titleImage.kf.setImage(with: imageURL)
+        }
+        recipeName.text = recipe.recipeName
+        tags = recipe.tags
+        
+        for tag in tags {
+            let tagLabel = createTagLabel(text: tag)
+            tagsStackView.addArrangedSubview(tagLabel)
         }
     }
     
-    // MARK: 콜렉션 뷰 데이터
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tagList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TagCollectionViewCell.identifier, for: indexPath) as! TagCollectionViewCell
-        cell.configure(tag: tagList[indexPath.row])
-        return cell
-    }
-    
-    func getClickList() -> String {
-        var result: String = ""
-        for i in 0..<self.tagList.count {
-            if self.tagOnOffArray[i] {
-                result += (" " + self.tagList[i])
-            }
+    private func createTagLabel(text: String) -> UIView {
+        let containerView = UIView().then {
+            $0.backgroundColor = UIColor(hex: 0xEAEBEC)
+            $0.layer.cornerRadius = 4
+            $0.layer.masksToBounds = true
         }
-        return result
+        
+        let label = UILabel().then {
+            $0.text = text
+            $0.font = .systemFont(ofSize: 11)
+            $0.textAlignment = .center
+        }
+        
+        containerView.addSubview(label)
+        
+        /// 레이블의 패딩 설정
+        label.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(6)
+            $0.trailing.equalToSuperview().offset(-6)
+            $0.top.equalToSuperview().offset(4)
+            $0.bottom.equalToSuperview().offset(-4)
+        }
+        
+        return containerView
     }
-    
 }
+
+//extension RecipeTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+//    
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return tags.count
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TagCollectionViewCell.identifier, for: indexPath) as! TagCollectionViewCell
+//        cell.tagLabel.text = tags[indexPath.item]
+//        return cell
+//    }
+//    
+//    // UICollectionViewDelegateFlowLayout
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let text = tags[indexPath.item]
+//        let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width + 16 // Padding 추가
+//        return CGSize(width: width, height: 22) // 높이는 고정
+//    }
+//    
+//    func updateCollectionViewHeight() {
+//        // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
+//        tagCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
+//        let contentHeight = tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+//        
+//        tagCollectionView.snp.updateConstraints { make in
+//            make.height.equalTo(contentHeight) // 콘텐츠 높이에 맞게 높이 설정
+//        }
+//    }
+//    
+//    func collectionViewHeight() -> CGFloat {
+//        return tagCollectionView.collectionViewLayout.collectionViewContentSize.height
+//    }
+//}

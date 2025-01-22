@@ -11,10 +11,10 @@ class RecipeDetailViewController: UIViewController {
     
     
     private var recipeDetailView: RecipeDetailView!
-//    var recipe = RecipeModel(titleImage: String, recipeName: String)
+    //    var recipe = RecipeModel(titleImage: String, recipeName: String)
     let mainIngredients = ["계란 2알", "양파 2알", "대파 1/2단", "밥 1공기", "당근 1/2개", "김치 1/2단", "계란 2알", "대파 1/2단"]
     let subIngredients = ["참기름", "깨", "간장", "소금", "식초", "물 1L", "백종원", "소고기 180g"]
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -22,17 +22,29 @@ class RecipeDetailViewController: UIViewController {
         recipeDetailView = RecipeDetailView(frame: self.view.bounds)
         self.view = recipeDetailView
         self.title = "한식 식사"
-        if let backImage = UIImage(named: "Arrow3")?.withRenderingMode(.alwaysOriginal) {
-            let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
-            self.navigationItem.leftBarButtonItem = backButton
-        }
+        
+        /// 뒤로 가기 버튼
+        let backImage = UIImage(named: "Arrow3")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
+        /// 내보내기 이미지
+        let image = UIImage(named: "export")
+        let imageButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(imageButtonTapped))
+        imageButton.tintColor = .black
+        self.navigationItem.rightBarButtonItem = imageButton
         setupDelegate()
     }
     
-// MARK: - Function
+    // MARK: - Function
     
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func imageButtonTapped() {
+        print("내보내기 버튼 눌림")
     }
     
     private func setupDelegate(){
@@ -46,7 +58,7 @@ class RecipeDetailViewController: UIViewController {
 // MARK: - UICollectionView
 
 extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == recipeDetailView.mainIngredientCollectionView {
             return mainIngredients.count
@@ -55,7 +67,7 @@ extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionView
         }
         return 0
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == recipeDetailView.mainIngredientCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
@@ -68,10 +80,10 @@ extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionView
         }
         return UICollectionViewCell()
     }
-
+    
     // UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == recipeDetailView.mainIngredientCollectionView { 
+        if collectionView == recipeDetailView.mainIngredientCollectionView {
             let text = mainIngredients[indexPath.item]
             let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
             return CGSize(width: width, height: 26) // 높이는 고정

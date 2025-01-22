@@ -12,7 +12,9 @@ class RecipeDetailViewController: UIViewController {
     
     private var recipeDetailView: RecipeDetailView!
 //    var recipe = RecipeModel(titleImage: String, recipeName: String)
-    let mainIngredients = ["계란 2알", "양파 2알", "대파 1/2단", "밥 1공기", "당근 1/2개와 스폰지밥", "계란 2알", "대파 1/2단"]
+    let mainIngredients = ["계란 2알", "양파 2알", "대파 1/2단", "밥 1공기", "당근 1/2개", "김치 1/2단", "계란 2알", "대파 1/2단"]
+    
+    let subIngredients = ["참기름", "깨", "간장", "소금", "식초", "물 1L", "백종원", "소고기 180g"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,25 +36,46 @@ class RecipeDetailViewController: UIViewController {
     private func setupDelegate(){
         recipeDetailView.mainIngredientCollectionView.delegate = self
         recipeDetailView.mainIngredientCollectionView.dataSource = self
+        recipeDetailView.subIngredientCollectionView.delegate = self
+        recipeDetailView.subIngredientCollectionView.dataSource = self
     }
 }
 
 extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mainIngredients.count
+        if collectionView == recipeDetailView.mainIngredientCollectionView {
+            return mainIngredients.count
+        }else if collectionView == recipeDetailView.subIngredientCollectionView {
+            return subIngredients.count
+        }
+        return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
-        cell.tagLabel.text = mainIngredients[indexPath.item]
-        return cell
+        if collectionView == recipeDetailView.mainIngredientCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
+            cell.tagLabel.text = mainIngredients[indexPath.item]
+            return cell
+        } else if collectionView == recipeDetailView.subIngredientCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
+            cell.tagLabel.text = subIngredients[indexPath.item]
+            return cell
+        }
+        return UICollectionViewCell()
     }
 
     // UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let text = mainIngredients[indexPath.item]
-        let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width 
-        return CGSize(width: width, height: 26) // 높이는 고정
+        if collectionView == recipeDetailView.mainIngredientCollectionView {
+            let text = mainIngredients[indexPath.item]
+            let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
+            return CGSize(width: width, height: 26) // 높이는 고정
+        } else if collectionView == recipeDetailView.subIngredientCollectionView {
+            let text = subIngredients[indexPath.item]
+            let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
+            return CGSize(width: width, height: 26)
+        }
+        return CGSize(width: 45, height: 26)
     }
 }

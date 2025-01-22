@@ -128,7 +128,8 @@ class RecipeDetailView: UIView {
         $0.font = .systemFont(ofSize: 12)
         $0.textColor = .black
     }
-       
+    
+    /// 메인 재료 collectionView
     let mainIngredientCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
         $0.minimumInteritemSpacing = 10
         $0.minimumLineSpacing = 10
@@ -146,10 +147,15 @@ class RecipeDetailView: UIView {
         $0.textColor = .black
     }
     
-    /// 부가 재료 스택 뷰
-    let subIngredientStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 10
+    /// 부가 재료 collectionView
+    let subIngredientCollectionView = UICollectionView(frame: .zero, collectionViewLayout: LeftAlignedCollectionViewFlowLayout().then {
+        $0.minimumInteritemSpacing = 10
+        $0.minimumLineSpacing = 10
+        $0.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }).then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundColor = .clear
+        $0.register(RecipeDetailIngredientsCollectionViewCell.self, forCellWithReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier)
     }
     
     ///  '조리법'
@@ -190,7 +196,7 @@ class RecipeDetailView: UIView {
             mainIngredientLabel,
             mainIngredientCollectionView,
             subIngredientLabel,
-            subIngredientStackView,
+            subIngredientCollectionView,
             recipeInstructionsLabel,
             instructionsStackView
         ].forEach {
@@ -296,13 +302,15 @@ class RecipeDetailView: UIView {
             $0.left.equalToSuperview().inset(16)
         }
         
-        subIngredientStackView.snp.makeConstraints {
+        subIngredientCollectionView.snp.makeConstraints {
             $0.top.equalTo(subIngredientLabel.snp.bottom).offset(6)
             $0.left.equalToSuperview().inset(16)
+            $0.right.equalToSuperview().inset(16)
+            $0.height.equalTo(30)
         }
         
         recipeInstructionsLabel.snp.makeConstraints {
-            $0.top.equalTo(subIngredientStackView.snp.bottom).offset(13)
+            $0.top.equalTo(subIngredientCollectionView.snp.bottom).offset(13)
             $0.left.equalToSuperview().inset(16)
         }
         
@@ -316,10 +324,15 @@ class RecipeDetailView: UIView {
     func updateCollectionViewHeight() {
         // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
         mainIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
-        let contentHeight = mainIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
+        subIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
+        let mainContentHeight = mainIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
+        let subContentHeight = subIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
         
         mainIngredientCollectionView.snp.updateConstraints { make in
-            make.height.equalTo(contentHeight) // 콘텐츠 높이에 맞게 높이 설정
+            make.height.equalTo(mainContentHeight) // 콘텐츠 높이에 맞게 높이 설정
+        }
+        subIngredientCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(subContentHeight) // 콘텐츠 높이에 맞게 높이 설정
         }
     }
     
@@ -333,13 +346,6 @@ class RecipeDetailView: UIView {
         for tag in tags {
             let tagLabel = createTagLabel(text: tag)
             tagsStackView.addArrangedSubview(tagLabel)
-        }
-        
-        // 부 재료 설정
-        let subIngredients = ["참기름 1t", "깨 0.5t", "소금 1t", "간장 2t", "후추"]
-        for ingredient in subIngredients {
-            let paddedLabel = createIngredientStackLabel(text: ingredient)
-            subIngredientStackView.addArrangedSubview(paddedLabel)
         }
         
         // 조리법 단계 설정
@@ -392,32 +398,6 @@ class RecipeDetailView: UIView {
         label.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(6)
             $0.trailing.equalToSuperview().offset(-6)
-            $0.top.equalToSuperview().offset(4)
-            $0.bottom.equalToSuperview().offset(-4)
-        }
-        
-        return containerView
-    }
-    
-    private func createIngredientStackLabel(text: String) -> UIView {
-        let containerView = UIView().then {
-            $0.backgroundColor = UIColor(hex: 0xEAEBEC)
-            $0.layer.cornerRadius = 4
-            $0.layer.masksToBounds = true
-        }
-        
-        let label = UILabel().then {
-            $0.text = text
-            $0.font = .systemFont(ofSize: 12)
-            $0.textAlignment = .center
-        }
-        
-        containerView.addSubview(label)
-        
-        /// 레이블의 패딩 설정
-        label.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(8)
-            $0.trailing.equalToSuperview().offset(-8)
             $0.top.equalToSuperview().offset(4)
             $0.bottom.equalToSuperview().offset(-4)
         }

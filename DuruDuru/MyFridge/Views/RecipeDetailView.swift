@@ -24,9 +24,10 @@ class RecipeDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// collectionView  높이 업데이트
     override func layoutSubviews() {
         super.layoutSubviews()
-        updateCollectionViewHeight() // 높이 업데이트
+        updateCollectionViewHeight()
     }
     
     // MARK: - Components
@@ -324,15 +325,16 @@ class RecipeDetailView: UIView {
     func updateCollectionViewHeight() {
         // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
         mainIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
-        subIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
+        subIngredientCollectionView.layoutIfNeeded()
+        
         let mainContentHeight = mainIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
         let subContentHeight = subIngredientCollectionView.collectionViewLayout.collectionViewContentSize.height
         
         mainIngredientCollectionView.snp.updateConstraints { make in
-            make.height.equalTo(mainContentHeight) // 콘텐츠 높이에 맞게 높이 설정
+            make.height.equalTo(mainContentHeight)
         }
         subIngredientCollectionView.snp.updateConstraints { make in
-            make.height.equalTo(subContentHeight) // 콘텐츠 높이에 맞게 높이 설정
+            make.height.equalTo(subContentHeight)
         }
     }
     
@@ -379,6 +381,7 @@ class RecipeDetailView: UIView {
         }
     }
     
+    /// 태그 라벨
     private func createTagLabel(text: String) -> UIView {
         let containerView = UIView().then {
             $0.backgroundColor = UIColor(hex: 0xEAEBEC)
@@ -405,6 +408,7 @@ class RecipeDetailView: UIView {
         return containerView
     }
     
+    /// 조리법 라벨
     private func createInstructionLabel(text: String, index: Int) -> UIView {
         let containerView = UIView().then {
             $0.backgroundColor = UIColor(hex: 0xEAEBEC)

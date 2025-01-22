@@ -13,9 +13,10 @@ class RecipeDetailViewController: UIViewController {
     private var recipeDetailView: RecipeDetailView!
 //    var recipe = RecipeModel(titleImage: String, recipeName: String)
     let mainIngredients = ["계란 2알", "양파 2알", "대파 1/2단", "밥 1공기", "당근 1/2개", "김치 1/2단", "계란 2알", "대파 1/2단"]
-    
     let subIngredients = ["참기름", "깨", "간장", "소금", "식초", "물 1L", "백종원", "소고기 180g"]
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         recipeDetailView = RecipeDetailView(frame: self.view.bounds)
@@ -26,8 +27,9 @@ class RecipeDetailViewController: UIViewController {
             self.navigationItem.leftBarButtonItem = backButton
         }
         setupDelegate()
-        // Do any additional setup after loading the view.
     }
+    
+// MARK: - Function
     
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
@@ -40,6 +42,8 @@ class RecipeDetailViewController: UIViewController {
         recipeDetailView.subIngredientCollectionView.dataSource = self
     }
 }
+
+// MARK: - UICollectionView
 
 extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -67,11 +71,11 @@ extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionView
 
     // UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == recipeDetailView.mainIngredientCollectionView {
+        if collectionView == recipeDetailView.mainIngredientCollectionView { 
             let text = mainIngredients[indexPath.item]
             let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
             return CGSize(width: width, height: 26) // 높이는 고정
-        } else if collectionView == recipeDetailView.subIngredientCollectionView {
+        } else if collectionView ==  recipeDetailView.subIngredientCollectionView {
             let text = subIngredients[indexPath.item]
             let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
             return CGSize(width: width, height: 26)

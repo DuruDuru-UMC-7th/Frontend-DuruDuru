@@ -79,7 +79,7 @@ class RecipeTableViewCell: UITableViewCell {
         $0.backgroundColor = UIColor(hex: 0xDCDCDC, alpha: 1.0)
     }
     
-    // MARK: - Constaints & Add Function
+    // MARK: - Function
     
     /// 컴포넌트 생성
     private func addComponents() {
@@ -142,6 +142,7 @@ class RecipeTableViewCell: UITableViewCell {
         }
     }
     
+    /// 태그 라벨
     private func createTagLabel(text: String) -> UIView {
         let containerView = UIView().then {
             $0.backgroundColor = UIColor(hex: 0xEAEBEC)

@@ -26,7 +26,6 @@ class MyFridgeViewController: UIViewController {
         setupAction()
         ingredientVC = IngredientsViewController()
         cookingVC = MyCookingViewController()
-        cookingVC.delegate = self
         add(asChildViewController: ingredientVC)
     }
     

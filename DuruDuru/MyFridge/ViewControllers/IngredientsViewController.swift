@@ -85,10 +85,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
             ) as? IngredientCategoryCollectionViewCell else {
                 return UICollectionViewCell()
             }
-
-            let category = data[indexPath.item]
-            cell.icon.image = category.icon
-            cell.categoryName.text = category.categoryName
+            cell.configure(model: data[indexPath.row])
             return cell
 
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {

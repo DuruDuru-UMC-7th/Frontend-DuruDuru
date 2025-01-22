@@ -42,7 +42,7 @@ class IngredientsView: UIView {
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
         $0.estimatedItemSize = .init(width: 60, height: 26)
-        $0.minimumInteritemSpacing = 7
+        $0.minimumInteritemSpacing = 8
     }).then {
         $0.backgroundColor = .clear
         $0.isScrollEnabled = true
@@ -174,7 +174,7 @@ class IngredientsView: UIView {
         
         ingredientCategoryCollectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(10)
-            $0.left.equalTo(allButton.snp.right).offset(7)
+            $0.left.equalTo(allButton.snp.right).offset(8)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
         }
@@ -190,7 +190,6 @@ class IngredientsView: UIView {
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalToSuperview()
-//            $0.height.greaterThanOrEqualTo(200)
         }
         
         

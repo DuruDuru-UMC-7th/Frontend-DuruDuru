@@ -42,7 +42,7 @@ extension MyCookingViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == myCookingView.ingredientCategoryCollectionView {
-            return IngredientCategoryModel.dummy().count
+            return ingredientCategoryList.count
         }
         return 0
     }
@@ -88,6 +88,7 @@ extension MyCookingViewController: IngredientsTableViewCellDelegate {
         let selectedIngredientName = data[indexPath.row].name
         
         let recipeViewController = RecipeViewController()
+        recipeViewController.hidesBottomBarWhenPushed = true
         recipeViewController.ingredientName = selectedIngredientName
         recipeViewController.recipes = data[indexPath.row].recipes
         navigationController?.pushViewController(recipeViewController, animated: true)

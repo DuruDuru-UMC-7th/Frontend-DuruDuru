@@ -29,7 +29,7 @@ class MainTabBarController: UITabBarController {
         let fridgeVC = UINavigationController(rootViewController: MyFridgeViewController())
         fridgeVC.tabBarItem = UITabBarItem(title: "나의냉장고", image: UIImage(named: "MyFridge"), tag: 2)
         
-        let exchangeVC = UINavigationController(rootViewController: ExchangeViewController())
+        let exchangeVC = UINavigationController(rootViewController: MainExchangeViewController())
         exchangeVC.tabBarItem = UITabBarItem(title: "품앗이", image: UIImage(named: "Exchange"), tag: 3)
         
         let chattingVC = UINavigationController(rootViewController: ChattingViewController())

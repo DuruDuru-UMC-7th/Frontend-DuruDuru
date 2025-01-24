@@ -17,7 +17,6 @@ class RecipeDetailView: UIView {
         addComponents()
         constraints()
         configureData()
-        backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {

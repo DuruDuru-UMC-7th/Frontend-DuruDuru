@@ -1,18 +1,25 @@
 //
-//  ExchangeViewController.swift
+//  EatTogetherViewController.swift
 //  DuruDuru
 //
-//  Created by 이은찬 on 1/8/25.
+//  Created by 임효진 on 1/23/25.
 //
 
 import UIKit
 
-class ExchangeViewController: UIViewController {
+class EatTogetherViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        view.addSubview(label)
+        label.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+    }
+    
+    let label = UILabel().then {
+        $0.text = "함께 먹자"
     }
     
 

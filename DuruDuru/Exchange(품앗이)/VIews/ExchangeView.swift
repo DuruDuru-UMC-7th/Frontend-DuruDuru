@@ -8,14 +8,13 @@
 import UIKit
 
 class ExchangeView: UIView {
-
+    
     // MARK: - Init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addComponents()
         constraints()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -48,7 +47,7 @@ class ExchangeView: UIView {
         $0.register(MyExchangeCollectionViewCell.self, forCellWithReuseIdentifier: MyExchangeCollectionViewCell.identifier)
         $0.showsVerticalScrollIndicator = false
     }
-
+    
     /// 구분선
     let dividedLine = UIView().then {
         $0.backgroundColor = UIColor(hex: 0xDCDCDC, alpha: 1.0)
@@ -82,6 +81,7 @@ class ExchangeView: UIView {
     public let exchangeTableView = UITableView().then {
         $0.register(ExchangeTableViewCell.self, forCellReuseIdentifier: ExchangeTableViewCell.identifier)
         $0.separatorStyle = .none
+        $0.isScrollEnabled = false
     }
     
     /// 플로팅 버튼
@@ -116,16 +116,14 @@ class ExchangeView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints() {
-        
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.edges.equalTo(safeAreaLayoutGuide)
         }
         
         contentView.snp.makeConstraints {
-            $0.top.leading.bottom.trailing.equalToSuperview()
+            $0.edges.equalToSuperview()
             $0.width.equalTo(scrollView)
-            $0.height.equalTo(3000)
+            $0.bottom.equalTo(exchangeTableView.snp.bottom).offset(20)
         }
         
         myExchageLabel.snp.makeConstraints {
@@ -168,13 +166,21 @@ class ExchangeView: UIView {
         exchangeTableView.snp.makeConstraints {
             $0.top.equalTo(exchangeButton.snp.bottom).offset(10)
             $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.height.equalTo(600)
+            $0.bottom.equalToSuperview().offset(-20)
         }
         
         floatingButton.snp.makeConstraints {
             $0.width.height.equalTo(68)
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-5)
+        }
+    }
+    
+    func updateTableViewHeight(dataCnt: Int) {
+        exchangeTableView.layoutIfNeeded()
+        exchangeTableView.snp.updateConstraints {
+            $0.height.equalTo(160 * dataCnt)
         }
     }
 }

@@ -39,7 +39,6 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
 
 extension MyCookingViewController: UICollectionViewDataSource {
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == myCookingView.ingredientCategoryCollectionView {
             return ingredientCategoryList.count

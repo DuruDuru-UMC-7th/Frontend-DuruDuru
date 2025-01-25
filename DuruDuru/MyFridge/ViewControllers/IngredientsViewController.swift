@@ -47,6 +47,9 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
         let isHidden = ingredientsView.receiptButton.isHidden
         ingredientsView.receiptButton.isHidden = !isHidden
         ingredientsView.manualButton.isHidden = !isHidden
+        // 플로팅 버튼 이미지 변경
+        let newImage = isHidden ? UIImage(named: "close") : UIImage(named: "exchangeFloating")
+        ingredientsView.floatingButton.setImage(newImage, for: .normal)
     }
 
     @objc private func didTapDirectAddButton() {

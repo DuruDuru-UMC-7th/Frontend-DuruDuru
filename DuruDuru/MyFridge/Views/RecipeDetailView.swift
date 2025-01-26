@@ -410,7 +410,7 @@ class RecipeDetailView: UIView {
     /// 조리법 라벨
     private func createInstructionLabel(text: String, index: Int) -> UIView {
         let containerView = UIView().then {
-            $0.backgroundColor = UIColor(hex: 0xEAEBEC)
+            $0.backgroundColor = UIColor(hex: 0x00C269, alpha: 0.05)
             $0.layer.cornerRadius = 10
             $0.layer.masksToBounds = true
         }

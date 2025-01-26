@@ -28,7 +28,7 @@ class ExchangeTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = .white
-        selectionStyle = .default
+        selectionStyle = .none
         self.clipsToBounds = false
         self.contentView.clipsToBounds = false
         addComponents()
@@ -92,14 +92,7 @@ class ExchangeTableViewCell: UITableViewCell {
     let count = UILabel().then {
         $0.textColor = UIColor(hex: 0x7E7E7E, alpha: 1.0)
         $0.font = .systemFont(ofSize: 10)
-        $0.text = "10"
-    }
-    
-    /// '개'
-    let countUnitLabel = UILabel().then {
-        $0.text = "개"
-        $0.font = .systemFont(ofSize: 12)
-        $0.textColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        $0.text = "10개"
     }
     
     /// '남은 소비기한'
@@ -133,7 +126,6 @@ class ExchangeTableViewCell: UITableViewCell {
             isChange,
             quantity,
             count,
-            countUnitLabel,
             remain,
             remainDate,
             dividedLine
@@ -181,18 +173,13 @@ class ExchangeTableViewCell: UITableViewCell {
             $0.left.equalTo(quantity.snp.right).offset(10)
         }
         
-        countUnitLabel.snp.makeConstraints {
-            $0.top.equalTo(isChange.snp.bottom).offset(10)
-            $0.left.equalTo(count.snp.right)
-        }
-        
         remain.snp.makeConstraints {
-            $0.top.equalTo(countUnitLabel.snp.bottom).offset(5)
+            $0.top.equalTo(count.snp.bottom).offset(5)
             $0.left.equalTo(titleImage.snp.right).offset(15)
         }
         
         remainDate.snp.makeConstraints {
-            $0.top.equalTo(countUnitLabel.snp.bottom).offset(5)
+            $0.top.equalTo(count.snp.bottom).offset(5)
             $0.left.equalTo(remain.snp.right).offset(10)
         }
         

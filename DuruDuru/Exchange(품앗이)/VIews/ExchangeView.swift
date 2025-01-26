@@ -63,7 +63,7 @@ class ExchangeView: UIView {
     let shareButton = UIButton().then {
         $0.setTitle("나눔", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor(hex: 0x171719, alpha: 0.76)
+        $0.backgroundColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
         $0.layer.cornerRadius = 6
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 13)
     }
@@ -72,7 +72,7 @@ class ExchangeView: UIView {
     let exchangeButton = UIButton().then {
         $0.setTitle("교환", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor(hex: 0x171719, alpha: 0.76)
+        $0.backgroundColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
         $0.layer.cornerRadius = 6
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 13)
     }
@@ -82,6 +82,7 @@ class ExchangeView: UIView {
         $0.register(ExchangeTableViewCell.self, forCellReuseIdentifier: ExchangeTableViewCell.identifier)
         $0.separatorStyle = .none
         $0.isScrollEnabled = false
+
     }
     
     /// 플로팅 버튼

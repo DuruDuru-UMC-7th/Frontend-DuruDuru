@@ -17,6 +17,14 @@ class ExchangeDetailView: UIView {
     
     // MARK: - Components
     
+    /// 스크롤뷰
+    let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = true
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    let contentView = UIView()
+    
     /// 이미지
     let imageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
@@ -166,9 +174,23 @@ class ExchangeDetailView: UIView {
         $0.font = .boldSystemFont(ofSize: 18)
     }
     
+    /// 다른 품앗이 collectionView
+    let otherExchangeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+        $0.minimumInteritemSpacing = 24
+        $0.minimumLineSpacing = 14
+        $0.itemSize = .init(width: 173, height: 130)
+    }).then {
+        $0.register(OtherExchangeCollectionViewCell.self, forCellWithReuseIdentifier: OtherExchangeCollectionViewCell.identifier)
+        $0.showsHorizontalScrollIndicator = false
+        $0.isScrollEnabled = false
+    }
+    
     // MARK: - Function
     
     func addComponents() {
+        addSubview(scrollView)
+        addSubview(bottomBar)
+        scrollView.addSubview(contentView)
         
         [
             imageCollectionView,
@@ -181,10 +203,10 @@ class ExchangeDetailView: UIView {
             remain,
             remainDate,
             dividedLine,
-            bottomBar,
-            otherExchange
+            otherExchange,
+            otherExchangeCollectionView
         ].forEach {
-            addSubview($0)
+            contentView.addSubview($0)
         }
         
         [
@@ -207,6 +229,16 @@ class ExchangeDetailView: UIView {
     }
     
     func constraints() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalTo(safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(scrollView)
+            $0.bottom.equalTo(otherExchangeCollectionView.snp.bottom).offset(20)
+        }
+        
         imageCollectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.top.equalToSuperview()
@@ -315,6 +347,20 @@ class ExchangeDetailView: UIView {
         otherExchange.snp.makeConstraints {
             $0.top.equalTo(dividedLine.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(26.5)
+        }
+        
+        otherExchangeCollectionView.snp.makeConstraints {
+            $0.top.equalTo(otherExchange.snp.bottom).offset(20)
+            $0.left.right.equalToSuperview().inset(16)
+            $0.height.equalTo(600)
+            $0.bottom.equalToSuperview().offset(-20)
+        }
+    }
+    
+    func updateOtherExchangeViewHeight(dataCnt: Int) {
+        otherExchangeCollectionView.layoutIfNeeded()
+        otherExchangeCollectionView.snp.updateConstraints {
+            $0.height.equalTo(144 * round(Double(dataCnt) / 2) + 45)
         }
     }
 }

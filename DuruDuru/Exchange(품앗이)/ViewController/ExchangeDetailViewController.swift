@@ -42,6 +42,7 @@ class ExchangeDetailViewController: UIViewController {
         self.navigationItem.rightBarButtonItems = [space2, moreButton, exportButton]
         
         setUpdelegate()
+        exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10)
         exchangeDetailView.pageControl.numberOfPages = images.count
     }
     
@@ -60,38 +61,67 @@ class ExchangeDetailViewController: UIViewController {
     func setUpdelegate() {
         exchangeDetailView.imageCollectionView.dataSource = self
         exchangeDetailView.imageCollectionView.delegate = self
+        exchangeDetailView.otherExchangeCollectionView.dataSource = self
+        exchangeDetailView.otherExchangeCollectionView.delegate = self
     }
 }
 
 extension ExchangeDetailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        if collectionView == exchangeDetailView.imageCollectionView {
+            return 1
+        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+            return 1
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        if collectionView == exchangeDetailView.imageCollectionView {
+            return images.count
+        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+            return 10
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        
-        _ = UIImageView(image: images[indexPath.item]).then {
-            $0.contentMode = .scaleAspectFill
-            $0.clipsToBounds = true
-            cell.contentView.addSubview($0)
-            $0.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
+        if collectionView == exchangeDetailView.imageCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            
+            cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+            
+            _ = UIImageView(image: images[indexPath.item]).then {
+                $0.contentMode = .scaleAspectFill
+                $0.clipsToBounds = true
+                cell.contentView.addSubview($0)
+                $0.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
             }
+            
+            return cell
+        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: OtherExchangeCollectionViewCell.identifier,
+                for: indexPath
+            ) as? OtherExchangeCollectionViewCell else {
+                print("cell")
+                return UICollectionViewCell()
+            }
+            return cell
         }
-        
-        return cell
+        return UICollectionViewCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return exchangeDetailView.imageCollectionView.bounds.size
+        if collectionView == exchangeDetailView.imageCollectionView {
+            return exchangeDetailView.imageCollectionView.bounds.size
+        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+            return CGSize(width: 173, height: 130) 
+        }
+        return CGSize(width: 100, height: 100)
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {

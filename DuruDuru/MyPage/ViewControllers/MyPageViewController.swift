@@ -23,7 +23,6 @@ class MyPageViewController: UIViewController {
             $0.textColor = .black
             $0.sizeToFit()
         }
-        
         let titleButtonItem = UIBarButtonItem(customView: myPage)
         self.navigationItem.leftBarButtonItem = titleButtonItem
         
@@ -31,9 +30,17 @@ class MyPageViewController: UIViewController {
         let settingButton = UIBarButtonItem(image: .setting, style: .plain, target: self, action: #selector(settingButtonTapped))
         settingButton.tintColor = .black
         self.navigationItem.rightBarButtonItem = settingButton
+        
+        myPageView.profileEditButton.addTarget(self, action: #selector(profileEditButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func profileEditButtonTapped() {
+        let profileEditVC = ProfileEditViewController()
+        self.navigationController?.pushViewController(profileEditVC, animated: true)
     }
     
     @objc func settingButtonTapped() {
-        self.navigationController?.popViewController(animated: true)
+        let settingVC = SettingViewController()
+        self.navigationController?.pushViewController(settingVC, animated: true)
     }
 }

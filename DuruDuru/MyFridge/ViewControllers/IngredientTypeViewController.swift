@@ -8,23 +8,18 @@
 import UIKit
 
 class IngredientTypeViewController: UIViewController {
-
-    // MARK: - Data
-    private let categories = ["과일", "육류", "버섯", "유제품", "수산물", "견과류", "건조식품"]
-    private let items = [
-        "과일": ["사과", "배", "귤"],
-        "육류": ["소고기", "돼지고기", "닭고기"],
-        "버섯": ["표고버섯", "팽이버섯", "송이버섯"],
-        "유제품": ["우유", "요구르트", "치즈", "크림", "버터", "아이스크림"],
-        "수산물": ["새우", "참치", "연어"],
-        "견과류": ["아몬드", "호두", "캐슈넛"],
-        "건조식품": ["쌀", "콩", "밀"]
-    ]
-    private var selectedCategory: String = "과일" // 기본 선택된 카테고리
-
+    
     // MARK: - UI Components
     private var ingredientTypeView: IngredientTypeView!
-
+    
+    // 카테고리 데이터
+    private let categories = IngredientCategoryModel.dummy()
+    
+    // 식재료 데이터 (IngredientSimpleModel 기반)
+    private let ingredientData = IngredientData.dummy()
+    
+    private var filteredIngredients: [IngredientSimpleModel] = [] // 현재 선택된 카테고리의 식재료
+    
     // MARK: - Lifecycle
     override func loadView() {
         ingredientTypeView = IngredientTypeView()
@@ -34,7 +29,8 @@ class IngredientTypeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActions()
-        setupInitialState()
+        setupDelegates()
+        filterIngredients(for: nil) // 초기 상태: 모든 식재료 표시
         navigationItem.hidesBackButton = true
     }
 
@@ -42,16 +38,29 @@ class IngredientTypeViewController: UIViewController {
     private func setupActions() {
         ingredientTypeView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         ingredientTypeView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
-        ingredientTypeView.leftStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         ingredientTypeView.dateButton.addTarget(self, action: #selector(didTapDateButton), for: .touchUpInside)
     }
-
-    private func setupInitialState() {
-        updateCategoryButtons()
-        ingredientTypeView.pickerView.delegate = self
-        ingredientTypeView.pickerView.dataSource = self
-        ingredientTypeView.pickerView.reloadAllComponents()
+    
+    private func setupDelegates() {
+        ingredientTypeView.ingredientCategoryCollectionView.delegate = self
+        ingredientTypeView.ingredientCategoryCollectionView.dataSource = self
+        ingredientTypeView.ingredientsCircleCollectionView.delegate = self
+        ingredientTypeView.ingredientsCircleCollectionView.dataSource = self
     }
+    
+    // MARK: - Filtering
+    private func filterIngredients(for category: IngredientCategoryModel?) {
+        if let category = category {
+            filteredIngredients = ingredientData
+                .first(where: { $0.category.categoryName == category.categoryName })?
+                .ingredients ?? []
+        } else {
+            // 모든 카테고리의 식재료를 평평하게(flatMap) 펼쳐서 보여줌
+            filteredIngredients = ingredientData.flatMap { $0.ingredients }
+        }
+        ingredientTypeView.ingredientsCircleCollectionView.reloadData()
+    }
+
 
     // MARK: - Actions
     @objc private func didTapBackButton() {
@@ -61,50 +70,74 @@ class IngredientTypeViewController: UIViewController {
     @objc private func didTapCloseButton() {
         dismiss(animated: true, completion: nil)
     }
-
-    @objc private func didTapCategoryButton(_ sender: UIButton) {
-        guard let category = sender.title(for: .normal) else { return }
-        selectedCategory = category
-        updateCategoryButtons()
-        ingredientTypeView.pickerView.reloadAllComponents()
-    }
     
     @objc private func didTapDateButton() {
-        // 날짜 설정 화면으로 이동
-        let dateSelectionVC = DateSelectionViewController() 
+        let dateSelectionVC = DateSelectionViewController()
         navigationController?.pushViewController(dateSelectionVC, animated: true)
     }
-    
-    private func updateCategoryButtons() {
-        ingredientTypeView.leftStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-        categories.forEach { category in
-            let button = UIButton(type: .system)
-            button.setTitle(category, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16)
-            button.setTitleColor(.black, for: .normal)
-            button.backgroundColor = category == selectedCategory ? .systemGreen : .white
-            button.layer.cornerRadius = 8
-            button.clipsToBounds = true
-            button.addTarget(self, action: #selector(didTapCategoryButton(_:)), for: .touchUpInside)
-            ingredientTypeView.leftStackView.addArrangedSubview(button)
-        }
-    }
-    
-    
 }
 
-// MARK: - UIPickerViewDataSource & Delegate
-extension IngredientTypeViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+// MARK: - UICollectionViewDataSource
+extension IngredientTypeViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
+            return categories.count // 카테고리 개수
+        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            return filteredIngredients.count // 필터링된 식재료 개수
+        }
+        return 0
     }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return items[selectedCategory]?.count ?? 0
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: IngredientCategoryCollectionViewCell.identifier,
+                for: indexPath
+            ) as? IngredientCategoryCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            let category = categories[indexPath.item]
+            cell.configure(model: category)
+            return cell
+        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: IngredientsCircleCollectionViewCell.identifier,
+                for: indexPath
+            ) as? IngredientsCircleCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            let ingredient = filteredIngredients[indexPath.item]
+            cell.configureSimple(with: ingredient) // 심플 모델 기반 셀 구성
+            return cell
+        }
+        return UICollectionViewCell()
     }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return items[selectedCategory]?[row]
+}
+
+// MARK: - UICollectionViewDelegate
+extension IngredientTypeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
+            let selectedCategory = categories[indexPath.item]
+            filterIngredients(for: selectedCategory)
+        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            let selectedIngredient = filteredIngredients[indexPath.item]
+            print("선택된 식재료: \(selectedIngredient.name)")
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
+            return CGSize(width: 66, height: 26)
+        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            let spacing: CGFloat = 8
+            let totalSpacing = spacing * 4
+            let cellWidth = (collectionView.frame.width - totalSpacing) / 3
+            return CGSize(width: cellWidth, height: cellWidth)
+        }
+        return CGSize.zero
     }
 }

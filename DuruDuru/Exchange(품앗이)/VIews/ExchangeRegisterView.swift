@@ -127,12 +127,12 @@ class ExchangeRegisterView: UIView {
     
     private func setupConstraints() {
         backButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-20)
             $0.leading.equalToSuperview().offset(16)
         }
         
         closeButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-20)
             $0.trailing.equalToSuperview().offset(-16)
         }
         

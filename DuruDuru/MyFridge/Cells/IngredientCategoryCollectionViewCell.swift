@@ -65,7 +65,8 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
         container.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(7)
-            $0.bottom.equalToSuperview().offset(7)
+            $0.bottom.equalToSuperview().offset(-7)
+            $0.right.left.equalToSuperview().inset(8)
         }
     }
     

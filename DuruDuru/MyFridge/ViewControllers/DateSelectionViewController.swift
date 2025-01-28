@@ -9,40 +9,49 @@ import UIKit
 
 class DateSelectionViewController: UIViewController {
     // MARK: - Properties
-    
     private let dateSelectionView = DateSelectionView()
     
     // MARK: - Lifecycle
-    
     override func loadView() {
-        self.view = dateSelectionView
+        view = dateSelectionView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActions()
+        setupIconConstraints()
         navigationItem.hidesBackButton = true
-        
     }
     
-    // MARK: - Setup
-    
+    // MARK: - Setup Methods
     private func setupActions() {
-        // "식재료 추가" 버튼을 눌렀을 때 동작
         dateSelectionView.confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
-        // "뒤로가기" 버튼 액션
         dateSelectionView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
-    // MARK: - Actions
+    private func setupIconConstraints() {
+        guard let iconView = dateSelectionView.dateTextField.leftView,
+              let iconImageView = iconView.subviews.first as? UIImageView else {
+            return
+        }
+        
+        iconImageView.snp.makeConstraints {
+            $0.centerY.equalTo(iconView)
+            $0.leading.equalTo(iconView).offset(10) // 아이콘 왼쪽 여백
+            $0.width.height.equalTo(20) // 아이콘 크기
+        }
+    }
     
+    // MARK: - Actions
     @objc private func didTapConfirmButton() {
         print("식재료 추가 완료")
-        // 다음 화면으로 이동하거나 데이터를 저장하는 로직 추가
+
+        let myFridgeVC = MyFridgeViewController()
+        navigationController?.setViewControllers([myFridgeVC], animated: true)
     }
 
+    
     @objc private func didTapBackButton() {
-        // 이전 화면으로 이동
         navigationController?.popViewController(animated: true)
     }
 }

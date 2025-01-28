@@ -26,7 +26,6 @@ class MyFridgeViewController: UIViewController {
         setupAction()
         ingredientVC = IngredientsViewController()
         cookingVC = MyCookingViewController()
-        cookingVC.delegate = self
         add(asChildViewController: ingredientVC)
     }
     
@@ -89,14 +88,5 @@ class MyFridgeViewController: UIViewController {
         ])
         
         viewController.didMove(toParent: self)
-    }
-    
-    
-}
-
-extension MyFridgeViewController: MyCookingViewControllerDelegate{
-    func didTapRecipeViewButton() {
-        let recipeViewController = RecipeViewController()
-        navigationController?.pushViewController(recipeViewController, animated: true)
     }
 }

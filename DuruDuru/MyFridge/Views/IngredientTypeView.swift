@@ -35,7 +35,7 @@ class IngredientTypeView: UIView {
     
     let topSeparator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.gray
+        view.backgroundColor = UIColor.systemGreen
         return view
     }()
     
@@ -53,47 +53,55 @@ class IngredientTypeView: UIView {
         label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
-    
-    let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "잘 모르겠다면 툴팁을 열어 식재료 종류 분류 기준을 확인하세요."
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .lightGray
-        label.numberOfLines = 0
-        return label
-    }()
-    
-    let leftStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        return stackView
-    }()
 
-    let pickerView: UIPickerView = {
-        let picker = UIPickerView()
-        picker.backgroundColor = .white
-        picker.layer.cornerRadius = 8
-        picker.clipsToBounds = true
-        return picker
-    }()
-
+    /// 검색창 라벨
+    let searchBarLabel = UILabel().then {
+        $0.text = "식재료 이름으로 검색하기"
+        $0.font = UIFont.systemFont(ofSize: 14)
+        $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
+    }
     
-    let tooltipButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "info.circle"), for: .normal)
-        button.tintColor = .darkGray
-        return button
-    }()
-
-    let tooltipLabel: UILabel = {
-        let label = UILabel()
-        label.text = "식재료 종류 분류 기준 확인하기"
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .darkGray
-        return label
-    }()
+    /// 검색창
+    let searchBar = UITextField().then {
+        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
+        $0.layer.cornerRadius = 10
+    }
     
+    /// 검색창 이미지
+    let searchImageView = UIImageView().then {
+        $0.image = UIImage(named: "Search")
+        $0.contentMode = .scaleAspectFit
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    let allButton = UIButton().then {
+        $0.setImage(.allCategory, for: .normal)
+        $0.imageView?.contentMode = .scaleAspectFit
+        $0.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        $0.layer.cornerRadius = 4
+    }
+    
+    let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .horizontal
+        $0.estimatedItemSize = .init(width: 60, height: 26)
+        $0.minimumInteritemSpacing = 8
+    }).then {
+        $0.backgroundColor = .clear
+        $0.isScrollEnabled = true
+        $0.register(IngredientCategoryCollectionViewCell.self, forCellWithReuseIdentifier: IngredientCategoryCollectionViewCell.identifier)
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .vertical
+        $0.minimumInteritemSpacing = 8 // 좌우 간격
+        $0.minimumLineSpacing = 7 // 상하 간격
+        $0.estimatedItemSize = .init(width: 118, height: 145)// 셀 크기
+    }).then {
+        $0.backgroundColor = .clear
+        $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)
+        $0.showsVerticalScrollIndicator = false
+    }
     
     let dateButton: UIButton = {
         let button = UIButton(type: .system)
@@ -128,11 +136,12 @@ class IngredientTypeView: UIView {
         addSubview(topSeparator)
         addSubview(stepLabel)
         addSubview(questionLabel)
-        addSubview(descriptionLabel)
-        addSubview(leftStackView)
-        addSubview(pickerView)
-        addSubview(tooltipButton)
-        addSubview(tooltipLabel)
+        addSubview(searchBar)
+        searchBar.addSubview(searchImageView)
+        searchBar.addSubview(searchBarLabel)
+        addSubview(allButton)
+        addSubview(ingredientCategoryCollectionView)
+        addSubview(ingredientsCircleCollectionView)
         addSubview(dateButton)
     }
     
@@ -168,37 +177,44 @@ class IngredientTypeView: UIView {
             $0.leading.equalToSuperview().offset(16)
         }
         
-        descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(questionLabel.snp.bottom).offset(9)
-            $0.leading.trailing.equalToSuperview().inset(16)
+        searchBar.snp.makeConstraints {
+            $0.top.equalTo(questionLabel.snp.bottom).offset(10)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(36)
         }
         
-        leftStackView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(30)
+        searchImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(7)
+            $0.bottom.equalToSuperview().offset(-7)
+            $0.left.equalToSuperview().offset(8)
+        }
+        
+        searchBarLabel.snp.makeConstraints {
+            $0.left.equalTo(searchImageView.snp.right).offset(5)
+            $0.top.equalToSuperview().offset(7)
+            $0.bottom.equalToSuperview().offset(-7)
+        }
+        
+        allButton.snp.makeConstraints {
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
-            $0.width.equalTo(100)
-            $0.bottom.equalToSuperview().offset(-350)
-        }
-
-        pickerView.snp.makeConstraints {
-            $0.top.equalTo(leftStackView.snp.top)
-            $0.leading.equalTo(leftStackView.snp.trailing).offset(8)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalTo(leftStackView.snp.bottom)
+            $0.width.height.equalTo(26)
         }
         
-        // 툴팁 버튼
-        tooltipButton.snp.makeConstraints {
-            $0.top.equalTo(pickerView.snp.bottom).offset(210) // pickerView 아래
-            $0.centerX.equalToSuperview().offset(-80) // 약간 왼쪽으로
+        ingredientCategoryCollectionView.snp.makeConstraints {
+            $0.top.equalTo(searchBar.snp.bottom).offset(10)
+            $0.left.equalTo(allButton.snp.right).offset(8)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(26)
         }
-
-        // 툴팁 라벨
-        tooltipLabel.snp.makeConstraints {
-            $0.centerY.equalTo(tooltipButton)
-            $0.leading.equalTo(tooltipButton.snp.trailing).offset(8) // 버튼 오른쪽에 텍스트 배치
+        
+        ingredientsCircleCollectionView.snp.makeConstraints {
+            $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.bottom.equalToSuperview()
         }
-
         // 날짜 설정 버튼
         dateButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)

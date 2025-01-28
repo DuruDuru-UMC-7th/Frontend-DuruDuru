@@ -11,7 +11,7 @@ class EmailLoginViewController: UIViewController {
     
     
     /// 아이디, 비번 지정 변수
-    let userInfo: UserInfo = UserInfo(id: "Evan", pwd: "1234")
+    let userInfo: UserInfo = UserInfo(id: "1234", pwd: "1234")
     
     override func viewDidLoad() {
         super.viewDidLoad()

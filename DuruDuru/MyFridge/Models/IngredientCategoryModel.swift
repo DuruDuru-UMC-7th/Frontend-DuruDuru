@@ -20,7 +20,9 @@ extension IngredientCategoryModel{
             IngredientCategoryModel(icon: .fruit, categoryName: "과일"),
             IngredientCategoryModel(icon: .meat, categoryName: "육류"),
             IngredientCategoryModel(icon: .fish, categoryName: "수산물"),
-            IngredientCategoryModel(icon: .dryFood, categoryName: "건조식품")
+            IngredientCategoryModel(icon: .dryFood, categoryName: "건조식품"),
+            IngredientCategoryModel(icon: .dryFood, categoryName: "건조식품huhjk"),
+            IngredientCategoryModel(icon: .dryFood, categoryName: "건조식품dtfhjghj")
         ]
     }
 }

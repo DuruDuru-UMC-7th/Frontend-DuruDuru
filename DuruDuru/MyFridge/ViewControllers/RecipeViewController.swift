@@ -19,10 +19,13 @@ class RecipeViewController: UIViewController {
         
         recipeView = RecipeView(frame: self.view.bounds)
         self.view = recipeView
-        if let backImage = UIImage(named: "Arrow3")?.withRenderingMode(.alwaysOriginal) {
-            let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
-            self.navigationItem.leftBarButtonItem = backButton
-        }
+        
+        /// 뒤로 가기 버튼
+        let backImage = UIImage(named: "Arrow3")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
         self.title = (ingredientName ?? "없음") + "을 사용하는 레시피"
         setupDelegate()
     }
@@ -39,6 +42,7 @@ class RecipeViewController: UIViewController {
 }
 
 extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         recipes.count
     }
@@ -48,27 +52,18 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipeTableViewCell.identifier, for: indexPath) as? RecipeTableViewCell else {
             return UITableViewCell()
         }
-        if let imageURL = URL(string: recipes[indexPath.row].titleImage) {
-            cell.titleImage.kf.setImage(with: imageURL)
-        }
-        cell.recipeName.text = recipes[indexPath.row].recipeName
-        
+        cell.configure(recipe: recipes[indexPath.row])
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            // 선택된 셀의 레시피 정보를 가져옵니다.
-            let selectedRecipe = recipes[indexPath.row]
-            // RecipeDetailViewController를 인스턴스화합니다.
-            let recipeDetailVC = RecipeDetailViewController()
-            
-            // 선택된 레시피 정보를 전달합니다.
-//            recipeDetailVC.recipe = selectedRecipe
-            
-            // 화면 전환을 수행합니다.
-            navigationController?.pushViewController(recipeDetailVC, animated: true)
-        }
-    
-    
+//        let selectedRecipe = recipes[indexPath.row]
+        let recipeDetailVC = RecipeDetailViewController()
+        
+//        recipeDetailVC.recipe = selectedRecipe
+        
+        // 화면 전환을 수행합니다.
+        navigationController?.pushViewController(recipeDetailVC, animated: true)
+    }
 }

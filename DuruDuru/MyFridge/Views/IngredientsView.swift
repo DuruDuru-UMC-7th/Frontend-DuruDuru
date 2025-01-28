@@ -42,7 +42,7 @@ class IngredientsView: UIView {
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
         $0.estimatedItemSize = .init(width: 60, height: 26)
-        $0.minimumInteritemSpacing = 7
+        $0.minimumInteritemSpacing = 8
     }).then {
         $0.backgroundColor = .clear
         $0.isScrollEnabled = true
@@ -74,42 +74,29 @@ class IngredientsView: UIView {
     
     
     /// 플로팅 버튼
-    let floatingButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "floating"), for: .normal) // floating.png 이미지
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowRadius = 4
-        return button
-    }()
+    let floatingButton = UIButton().then {
+        $0.setImage(UIImage(named: "exchangeFloating"), for: .normal)
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+        $0.layer.shadowOpacity = 0.3
+        $0.layer.shadowRadius = 7
+    }
     
     /// 팝업 버튼 1
     let receiptButton: UIButton = {
         let button = UIButton()
-        button.setTitle("영수증으로 추가하기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 8
+        button.setImage(UIImage(named: "AddRecipe"), for: .normal)
         button.isHidden = true // 초기 상태 숨김
         return button
     }()
-    
+
     /// 팝업 버튼 2
     let manualButton: UIButton = {
         let button = UIButton()
-        button.setTitle("직접 추가하기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 8
+        button.setImage(UIImage(named: "AddButton"), for: .normal)
         button.isHidden = true // 초기 상태 숨김
         return button
     }()
-    
-    
-    
     
     
     // MARK: - Init
@@ -174,7 +161,7 @@ class IngredientsView: UIView {
         
         ingredientCategoryCollectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).offset(10)
-            $0.left.equalTo(allButton.snp.right).offset(7)
+            $0.left.equalTo(allButton.snp.right).offset(8)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(26)
         }
@@ -190,7 +177,6 @@ class IngredientsView: UIView {
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalToSuperview()
-//            $0.height.greaterThanOrEqualTo(200)
         }
         
         
@@ -201,14 +187,14 @@ class IngredientsView: UIView {
         }
         
         manualButton.snp.makeConstraints {
-            $0.trailing.equalTo(floatingButton.snp.trailing).offset(-16)
+            $0.trailing.equalToSuperview().offset(-0)
             $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
             $0.width.equalTo(162)
             $0.height.equalTo(40)
         }
 
         receiptButton.snp.makeConstraints {
-            $0.trailing.equalTo(floatingButton.snp.trailing).offset(-16)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(manualButton.snp.top).offset(-10)
             $0.width.equalTo(162)
             $0.height.equalTo(40)

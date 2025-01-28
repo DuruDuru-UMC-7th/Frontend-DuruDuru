@@ -125,6 +125,14 @@ class ExchangeRegisterDetailView: UIView {
         return button
     }()
     
+    /// 설명 라벨
+    let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "설명"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return label
+    }()
+    
     /// 설명 텍스트뷰
     let descriptionTextView: UITextView = {
         let textView = UITextView()
@@ -132,11 +140,53 @@ class ExchangeRegisterDetailView: UIView {
         textView.layer.borderColor = UIColor.lightGray.cgColor
         textView.layer.cornerRadius = 8
         textView.font = .systemFont(ofSize: 16)
-        textView.text = "품앗이 할 식재료의 상태를 자세히 설명해주세요."
+        textView.text = "품앗이 할 식재료의 상태를 자세히 설명해주세요.\n건강하고 알뜰한 품앗이 문화를 함께 만들어나가요!"
         textView.textColor = .systemGray
         return textView
     }()
     
+    /// 방식 라벨
+    let methodLabel: UILabel = {
+        let label = UILabel()
+        label.text = "방식"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return label
+    }()
+    
+    /// 나눔 버튼
+    let shareButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("나눔", for: .normal)
+        button.setTitleColor(.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.cornerRadius = 8
+        return button
+    }()
+    
+    /// 교환 버튼
+    let exchangeButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("교환", for: .normal)
+        button.setTitleColor(.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.cornerRadius = 8
+        return button
+    }()
+
+    /// 하단 "다음으로" 버튼
+    let nextButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("다음으로", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemGreen
+        button.layer.cornerRadius = 8
+        return button
+    }()
     
     // MARK: - 초기화
     
@@ -166,7 +216,12 @@ class ExchangeRegisterDetailView: UIView {
         addSubview(quantityValueLabel)
         addSubview(plusButton)
         addSubview(unitButton)
+        addSubview(descriptionLabel)
         addSubview(descriptionTextView)
+        addSubview(methodLabel)
+        addSubview(shareButton)
+        addSubview(exchangeButton)
+        addSubview(nextButton)
     }
     
     // MARK: - 오토레이아웃 설정
@@ -242,11 +297,53 @@ class ExchangeRegisterDetailView: UIView {
             $0.height.equalTo(40)
         }
         
+        descriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide).offset(300) // 기존 컴포넌트 아래에 적절히 위치
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
         descriptionTextView.snp.makeConstraints {
-            $0.top.equalTo(minusButton.snp.bottom).offset(20)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(150)
         }
         
+        methodLabel.snp.makeConstraints {
+            $0.top.equalTo(descriptionTextView.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        shareButton.snp.makeConstraints {
+            $0.top.equalTo(methodLabel.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.equalTo(80)
+            $0.height.equalTo(40)
+        }
+        
+        exchangeButton.snp.makeConstraints {
+            $0.centerY.equalTo(shareButton)
+            $0.leading.equalTo(shareButton.snp.trailing).offset(16)
+            $0.width.equalTo(80)
+            $0.height.equalTo(40)
+        }
+        
+        nextButton.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(50)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16)
+        }
+    }
+    // MARK: - 버튼 스타일 업데이트
+    func updateButtonStyle(selectedButton: UIButton, deselectedButton: UIButton) {
+        selectedButton.setTitleColor(.white, for: .normal)
+        selectedButton.backgroundColor = .systemGreen
+        selectedButton.layer.borderColor = UIColor.systemGreen.cgColor
+        
+        deselectedButton.setTitleColor(.systemGray, for: .normal)
+        deselectedButton.backgroundColor = .white
+        deselectedButton.layer.borderColor = UIColor.lightGray.cgColor
     }
 }
+
+
+

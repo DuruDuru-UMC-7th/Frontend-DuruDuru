@@ -13,14 +13,14 @@ class ExchangeRegisterDetailViewController: UIViewController {
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
     private var ingredient: IngredientsModel? // 선택된 식재료
     private var quantity: Int = 0
+    private var selectedMethod: String? = nil
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
         setupActions() // 버튼 동작 설정
-        
-        
     }
     
     override func loadView() {
@@ -44,7 +44,10 @@ class ExchangeRegisterDetailViewController: UIViewController {
         detailView.minusButton.addTarget(self, action: #selector(didTapMinusButton), for: .touchUpInside)
         detailView.plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
         detailView.unitButton.addTarget(self, action: #selector(didTapUnitButton), for: .touchUpInside)
+        detailView.shareButton.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
+        detailView.exchangeButton.addTarget(self, action: #selector(didTapExchangeButton), for: .touchUpInside)
     }
+    
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true) // 네비게이션 스택에서 이전 화면으로 이동
@@ -81,5 +84,21 @@ class ExchangeRegisterDetailViewController: UIViewController {
         }
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+    
+    @objc private func didTapShareButton() {
+        selectedMethod = "나눔"
+        detailView.updateButtonStyle(
+            selectedButton: detailView.shareButton,
+            deselectedButton: detailView.exchangeButton
+        )
+    }
+    
+    @objc private func didTapExchangeButton() {
+        selectedMethod = "교환"
+        detailView.updateButtonStyle(
+            selectedButton: detailView.exchangeButton,
+            deselectedButton: detailView.shareButton
+        )
     }
 }

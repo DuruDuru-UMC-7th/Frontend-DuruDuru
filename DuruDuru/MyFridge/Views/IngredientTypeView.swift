@@ -35,7 +35,7 @@ class IngredientTypeView: UIView {
     
     let topSeparator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.gray
+        view.backgroundColor = UIColor.systemGreen
         return view
     }()
     

@@ -9,8 +9,7 @@ import UIKit
 import SnapKit
 
 class DateSelectionView: UIView {
-    // MARK: - Components
-    
+    // MARK: - UI Components
     let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
@@ -35,7 +34,7 @@ class DateSelectionView: UIView {
     
     let topSeparator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.gray
+        view.backgroundColor = UIColor.systemGreen
         return view
     }()
     
@@ -68,8 +67,17 @@ class DateSelectionView: UIView {
         let textField = UITextField()
         textField.placeholder = "YYYY / MM / DD"
         textField.borderStyle = .roundedRect
-        textField.rightView = UIImageView(image: UIImage(systemName: "calendar"))
-        textField.rightViewMode = .always
+        textField.textAlignment = .center
+        
+        // LeftView에 Calendar 아이콘 추가
+//        let iconView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+//        let iconImageView = UIImageView(image: UIImage(systemName: "calendar"))
+//        iconImageView.tintColor = .gray
+//        iconView.addSubview(iconImageView)
+//        textField.leftView = iconView
+//        textField.leftViewMode = .always
+//        
+        
         return textField
     }()
     
@@ -78,7 +86,13 @@ class DateSelectionView: UIView {
         label.text = "기억이 나지 않습니다"
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .systemGray
-        label.textAlignment = .right
+        
+        // 밑줄 스타일 추가
+        let attributedString = NSAttributedString(
+            string: "기억이 나지 않습니다",
+            attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue]
+        )
+        label.attributedText = attributedString
         return label
     }()
     
@@ -92,7 +106,6 @@ class DateSelectionView: UIView {
     }()
     
     // MARK: - Initializer
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -103,20 +116,11 @@ class DateSelectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup
-    
+    // MARK: - Setup Methods
     private func setupUI() {
         backgroundColor = .white
-        addSubview(backButton)
-        addSubview(closeButton)
-        addSubview(titleLabel)
-        addSubview(topSeparator)
-        addSubview(stepLabel)
-        addSubview(questionLabel)
-        addSubview(descriptionLabel)
-        addSubview(dateTextField)
-        addSubview(noMemoryLabel)
-        addSubview(confirmButton)
+        [backButton, closeButton, titleLabel, topSeparator, stepLabel, questionLabel,
+         descriptionLabel, dateTextField, noMemoryLabel, confirmButton].forEach { addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -157,7 +161,7 @@ class DateSelectionView: UIView {
         }
         
         dateTextField.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(200)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(237.5)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(44)
         }
@@ -165,7 +169,6 @@ class DateSelectionView: UIView {
         noMemoryLabel.snp.makeConstraints {
             $0.top.equalTo(dateTextField.snp.bottom).offset(10)
             $0.trailing.equalTo(dateTextField.snp.trailing)
-            $0.leading.equalTo(dateTextField.snp.leading) // 텍스트필드에 맞춤
         }
         
         confirmButton.snp.makeConstraints {

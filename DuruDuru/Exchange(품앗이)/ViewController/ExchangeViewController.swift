@@ -12,6 +12,8 @@ class ExchangeViewController: UIViewController {
     // MARK: - Properties
     
     private var exchangeView: ExchangeView!
+    private var isFloatingExpanded = false
+    
     
     // MARK: - Lifecycle
     
@@ -21,11 +23,11 @@ class ExchangeViewController: UIViewController {
         exchangeView = ExchangeView(frame: self.view.bounds)
         self.view = exchangeView
         setupDelegate()
+        setupActions()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        exchangeView.updateTableViewHeight(dataCnt: 14)
     }
     
     private func setupDelegate(){
@@ -33,6 +35,34 @@ class ExchangeViewController: UIViewController {
         exchangeView.myExchangeCollectionView.delegate = self
         exchangeView.exchangeTableView.delegate = self
         exchangeView.exchangeTableView.dataSource = self
+    }
+    
+    private func setupActions() {
+        exchangeView.floatingButton.addTarget(self, action: #selector(didTapFloatingButton), for: .touchUpInside)
+        exchangeView.registerPoomButton.addTarget(self, action: #selector(didTapRegisterPoom), for: .touchUpInside)
+        exchangeView.registerTogetherButton.addTarget(self, action: #selector(didTapRegisterTogether), for: .touchUpInside)
+    }
+    
+    /// 플로팅 버튼 클릭 시 동작
+    @objc private func didTapFloatingButton() {
+        isFloatingExpanded.toggle()
+        
+        UIView.animate(withDuration: 0.3) {
+            self.exchangeView.updateFloatingButtons(isExpanded: self.isFloatingExpanded)
+        }
+    }
+    
+    /// "품앗이 등록하기" 버튼 클릭 시 동작
+    @objc private func didTapRegisterPoom() {
+        let registerVC = ExchangeRegisterViewController()
+        registerVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(registerVC, animated: true)
+    }
+    
+    /// "함께 먹자 등록하기" 버튼 클릭 시 동작
+    @objc private func didTapRegisterTogether() {
+        let togetherVC = ExchangeRegisterDetailViewController()
+        navigationController?.pushViewController(togetherVC, animated: true)
     }
 }
 

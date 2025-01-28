@@ -83,4 +83,9 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         expiryLabel.text = model.daysRemaining // e.g., "D-3"
         ingredientNameLabel.text = model.name // e.g., "콩나물"
     }
+    
+    func configureSimple(with model: IngredientSimpleModel) {
+        expiryLabel.text = "" // 단순 모델에서는 소비기한 표시 안 함
+        ingredientNameLabel.text = model.name // e.g., "우유"
+    }
 }

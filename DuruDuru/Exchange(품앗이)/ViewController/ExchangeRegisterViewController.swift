@@ -12,7 +12,8 @@ class ExchangeRegisterViewController: UIViewController {
     // MARK: - Properties
     private var exchangeRegisterView: ExchangeRegisterView!
     private var ingredients: [IngredientsModel] = IngredientsModel.dummy()
-    
+    private var selectedIngredient: IngredientsModel?
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,8 +47,19 @@ class ExchangeRegisterViewController: UIViewController {
     }
     
     @objc private func didTapNextButton() {
+        guard let selectedIngredient = selectedIngredient else {
+            let alert = UIAlertController(title: "선택 오류", message: "식재료를 선택해주세요.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            present(alert, animated: true)
+            return
+        }
         let detailVC = ExchangeRegisterDetailViewController()
+        detailVC.configure(with: selectedIngredient)
         navigationController?.pushViewController(detailVC, animated: true)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIngredient = ingredients[indexPath.row]
     }
 }
 
@@ -69,7 +81,7 @@ extension ExchangeRegisterViewController: UICollectionViewDelegate, UICollection
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedIngredient = ingredients[indexPath.row]
-    }
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        selectedIngredient = ingredients[indexPath.row]
+//    }
 }

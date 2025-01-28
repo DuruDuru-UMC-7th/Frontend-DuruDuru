@@ -8,22 +8,24 @@
 import UIKit
 
 class SettingViewController: UIViewController {
+    
+    private var settingView: SettingView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        settingView = SettingView(frame: self.view.bounds)
+        self.view = settingView
+        
+        /// 뒤로 가기 버튼
+        let backImage = UIImage(named: "Arrow3")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
 
-        // Do any additional setup after loading the view.
+        self.title = "설정"
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @objc func backButtonTapped() {
+        self.navigationController?.popViewController(animated: true)
     }
-    */
-
 }

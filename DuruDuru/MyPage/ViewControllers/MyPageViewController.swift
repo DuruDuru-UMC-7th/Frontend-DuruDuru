@@ -36,11 +36,13 @@ class MyPageViewController: UIViewController {
     
     @objc func profileEditButtonTapped() {
         let profileEditVC = ProfileEditViewController()
+        profileEditVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(profileEditVC, animated: true)
     }
     
     @objc func settingButtonTapped() {
         let settingVC = SettingViewController()
+        settingVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(settingVC, animated: true)
     }
 }

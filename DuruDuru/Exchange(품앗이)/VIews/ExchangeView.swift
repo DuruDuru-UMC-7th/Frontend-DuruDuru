@@ -93,6 +93,19 @@ class ExchangeView: UIView {
         $0.layer.shadowOpacity = 0.3
         $0.layer.shadowRadius = 4
     }
+
+    /// 품앗이 등록 버튼
+    let registerPoomButton = UIButton().then {
+        $0.setImage(UIImage(named: "AddPoom"), for: .normal)
+        $0.isHidden = true
+    }
+    
+    /// 함께 먹자 등록 버튼
+    let registerTogetherButton = UIButton().then {
+        $0.setImage(UIImage(named: "AddTogether"), for: .normal)
+        $0.isHidden = true
+    }
+    
     
     // MARK: - Constaints & Add Function
     
@@ -113,6 +126,9 @@ class ExchangeView: UIView {
             contentView.addSubview($0)
         }
         addSubview(floatingButton)
+        addSubview(registerPoomButton)
+        addSubview(registerTogetherButton)
+        
     }
     
     /// 오토레이아웃 설정
@@ -176,6 +192,22 @@ class ExchangeView: UIView {
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-5)
         }
+        
+        registerTogetherButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-10)
+            $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
+            $0.width.equalTo(156)
+            $0.height.equalTo(40)
+        }
+        
+        registerPoomButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-10)
+            $0.bottom.equalTo(registerTogetherButton.snp.top).offset(-10)
+            $0.width.equalTo(139)
+            $0.height.equalTo(40)
+        }
+        
+
     }
     
     func updateTableViewHeight(dataCnt: Int) {
@@ -183,5 +215,13 @@ class ExchangeView: UIView {
         exchangeTableView.snp.updateConstraints {
             $0.height.equalTo(160 * dataCnt)
         }
+    }
+    
+    func updateFloatingButtons(isExpanded: Bool) {
+        registerPoomButton.isHidden = !isExpanded
+        registerTogetherButton.isHidden = !isExpanded
+        
+        let imageName = isExpanded ? "close" : "exchangeFloating"
+        floatingButton.setImage(UIImage(named: imageName), for: .normal)
     }
 }

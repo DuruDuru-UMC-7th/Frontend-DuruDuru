@@ -7,7 +7,7 @@
 
 import UIKit
 
-class IngredientsViewController: UIViewController {
+class IngredientsViewController: UIViewController, UITextFieldDelegate {
 
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
@@ -23,6 +23,7 @@ class IngredientsViewController: UIViewController {
         self.view = ingredientsView
         setupDelegate()
         setupFloatingButtonActions()
+        setupSearchBar()
         
         filterIngredients(by: nil) // 초기 상태에서는 모든 식재료 보여주기
     }
@@ -90,6 +91,13 @@ class IngredientsViewController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
 
+    // 식재료 검색
+    private func setupSearchBar() {
+        ingredientsView.searchBar.delegate = self
+        ingredientsView.searchBar.addTarget(self, action: #selector(didChangeSearchText), for: .editingChanged)
+    }
+
+    
     @objc private func togglePopupButtons() {
         let isHidden = ingredientsView.receiptButton.isHidden
         ingredientsView.receiptButton.isHidden = !isHidden
@@ -115,6 +123,22 @@ class IngredientsViewController: UIViewController {
         selectedCategory = nil
         ingredientsView.ingredientCategoryCollectionView.reloadData()
     }
+    
+    // 식재료 이름에 따른 필터링
+    @objc private func didChangeSearchText() {
+        guard let searchText = ingredientsView.searchBar.text, !searchText.isEmpty else {
+            filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
+            return
+        }
+
+        // 현재 필터링된 데이터에서 검색어가 포함된 항목만 필터링
+        filteredIngredients = allIngredientData.flatMap { $0.ingredients }
+            .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+            .filter { $0.name.contains(searchText) }
+
+        ingredientsView.ingredientsCircleCollectionView.reloadData()
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource

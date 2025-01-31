@@ -23,7 +23,7 @@ class IngredientTypeViewController: UIViewController {
     private let categories = IngredientCategoryModel.dummy()
     
     // 식재료 데이터 (IngredientSimpleModel 기반)
-    private let ingredientData = IngredientData.dummy()
+    private var ingredientData = IngredientsDataModel.dummy()
     
     private var filteredIngredients: [IngredientSimpleModel] = [] // 현재 선택된 카테고리의 식재료
     

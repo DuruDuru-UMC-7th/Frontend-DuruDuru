@@ -7,24 +7,24 @@
 
 import UIKit
 
-class IngredientsViewController: UIViewController, UICollectionViewDelegate {
+class IngredientsViewController: UIViewController {
 
     private var ingredientsView: IngredientsView!
-    let data = IngredientCategoryModel.dummy()
-    var ingredientData = IngredientsModel.dummy()
+    let categoryData = IngredientCategoryModel.dummy()
+    var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
+    var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
+    var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
 
-    
-    
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("ingredientController")
         ingredientsView = IngredientsView(frame: self.view.bounds)
         self.view = ingredientsView
         setupDelegate()
         setupFloatingButtonActions()
         
+        filterIngredients(by: nil) // 초기 상태에서는 모든 식재료 보여주기
     }
 
     private func setupDelegate() {
@@ -35,15 +35,29 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func setupFloatingButtonActions() {
-        // 플로팅 버튼 클릭 시
         ingredientsView.floatingButton.addTarget(self, action: #selector(togglePopupButtons), for: .touchUpInside)
-        // 직접 추가 버튼 클릭 시
         ingredientsView.manualButton.addTarget(self, action: #selector(didTapDirectAddButton), for: .touchUpInside)
-        // 영수증 추가 버튼 클릭 시
         ingredientsView.receiptButton.addTarget(self, action: #selector(didTapReceiptAddButton), for: .touchUpInside)
+        
+        ingredientsView.allButton.addTarget(self, action: #selector(didTapAllCategoryButton), for: .touchUpInside)
     }
 
+    /// 특정 카테고리에 해당하는 식재료만 필터링
+    private func filterIngredients(by category: IngredientCategoryModel?) {
+        selectedCategory = category
+        
+        if let category = category {
+            filteredIngredients = allIngredientData
+                .first(where: { $0.category.categoryName == category.categoryName })?
+                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
+        } else {
+            // 전체 보기
+            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+        }
+        ingredientsView.ingredientsCircleCollectionView.reloadData()
+    }
     
+    /// 식재료 삭제 팝업 (전체 데이터에서도 삭제)
     private func showDeletePopup(for ingredient: IngredientsModel, at indexPath: IndexPath) {
         let alertController = UIAlertController(
             title: "이 식재료를 냉장고에서 삭제할까요?",
@@ -51,34 +65,35 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
             preferredStyle: .alert
         )
         
-        // "아니요" 버튼
         let cancelAction = UIAlertAction(title: "아니요", style: .cancel, handler: nil)
-        
-        // "네, 삭제할게요" 버튼
         let deleteAction = UIAlertAction(title: "네, 삭제할게요", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
-            
-            // 데이터 삭제
-            self.ingredientData.remove(at: indexPath.row)
-            
-            // 컬렉션 뷰 갱신
-            self.ingredientsView.ingredientsCircleCollectionView.deleteItems(at: [indexPath])
+
+            // 전체 데이터에서 해당 아이템 삭제
+            for (index, categoryData) in allIngredientData.enumerated() {
+                if let ingredientIndex = categoryData.ingredients.firstIndex(where: { $0.name == ingredient.name }) {
+                    allIngredientData[index].ingredients.remove(at: ingredientIndex)
+                    break
+                }
+            }
+
+            // 현재 필터링된 데이터에서도 삭제
+            filteredIngredients.remove(at: indexPath.row)
+
+            // 화면 갱신 (현재 선택된 카테고리를 유지하면서 필터링)
+            self.filterIngredients(by: self.selectedCategory)
         }
         
-        // 액션 추가
         alertController.addAction(cancelAction)
         alertController.addAction(deleteAction)
         
-        // 팝업 표시
         present(alertController, animated: true, completion: nil)
     }
 
-    
     @objc private func togglePopupButtons() {
         let isHidden = ingredientsView.receiptButton.isHidden
         ingredientsView.receiptButton.isHidden = !isHidden
         ingredientsView.manualButton.isHidden = !isHidden
-        // 플로팅 버튼 이미지 변경
         let newImage = isHidden ? UIImage(named: "close") : UIImage(named: "exchangeFloating")
         ingredientsView.floatingButton.setImage(newImage, for: .normal)
     }
@@ -91,10 +106,15 @@ class IngredientsViewController: UIViewController, UICollectionViewDelegate {
 
     @objc private func didTapReceiptAddButton() {
         print("영수증으로 추가하기 버튼 클릭")
-        // 영수증 관련 화면 구현 예정
     }
-
-
+    
+    @objc private func didTapAllCategoryButton() {
+        print("전체 카테고리 버튼 클릭됨")
+        
+        filterIngredients(by: nil) // 전체 카테고리 선택 시 모든 데이터 표시
+        selectedCategory = nil
+        ingredientsView.ingredientCategoryCollectionView.reloadData()
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -103,53 +123,59 @@ extension IngredientsViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
-            return data.count // 카테고리 필터 데이터 개수 반환
+            return categoryData.count
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            return ingredientData.count // 동그란 식재료 데이터 개수 반환
+            return filteredIngredients.count
         }
         return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
-            // 카테고리 필터 셀 처리
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: IngredientCategoryCollectionViewCell.identifier,
                 for: indexPath
             ) as? IngredientCategoryCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            cell.configure(model: data[indexPath.row])
+            cell.configure(model: categoryData[indexPath.row])
             return cell
-
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            // 동그란 식재료 셀 처리
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: IngredientsCircleCollectionViewCell.identifier,
                 for: indexPath
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-
-            let ingredient = ingredientData[indexPath.item]
+            let ingredient = filteredIngredients[indexPath.item]
             cell.configure(with: ingredient)
             return cell
         }
-
         return UICollectionViewCell()
     }
 }
 
+// MARK: - UICollectionViewDelegate
+extension IngredientsViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == ingredientsView.ingredientCategoryCollectionView {
+            let selectedCategory = categoryData[indexPath.item]
+            filterIngredients(by: selectedCategory)
+        } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
+            let selectedIngredient = filteredIngredients[indexPath.row]
+            showDeletePopup(for: selectedIngredient, at: indexPath)
+        }
+    }
+}
+
+
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
-            // 카테고리 필터 셀 크기 유지
             return CGSize(width: 66, height: 26)
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            // 동그란 식재료 셀 크기 설정 (한 줄에 3개 배치)
             let spacing: CGFloat = 8
             let totalSpacing = spacing * 4
             let cellWidth = (collectionView.frame.width - totalSpacing) / 3
@@ -157,18 +183,4 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
         }
         return CGSize.zero
     }
-
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard collectionView == ingredientsView.ingredientsCircleCollectionView else { return }
-        
-        // 선택된 식재료 가져오기
-        let selectedIngredient = ingredientData[indexPath.row]
-        
-        // 팝업 띄우기
-        showDeletePopup(for: selectedIngredient, at: indexPath)
-    }
-    
-    
 }
-

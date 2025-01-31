@@ -6,9 +6,9 @@
 //
 
 // IngredientsDataModel.swift
-struct IngredientData {
+struct IngredientsDataModel {
     let category: IngredientCategoryModel
-    let ingredients: [IngredientSimpleModel]
+    var ingredients: [IngredientSimpleModel]
 }
 
 // daysRemaining이 없는 단순 모델
@@ -16,18 +16,18 @@ struct IngredientSimpleModel {
     let name: String
 }
 
-extension IngredientData {
-    static func dummy() -> [IngredientData] {
+extension IngredientsDataModel {
+    static func dummy() -> [IngredientsDataModel] {
         return [
-            IngredientData(
+            IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .milk, categoryName: "유제품"),
                 ingredients: [
                     IngredientSimpleModel(name: "우유"),
                     IngredientSimpleModel(name: "버터"),
-                    IngredientSimpleModel(name: "요구르트")
+                    IngredientSimpleModel(name: "요거트")
                 ]
             ),
-            IngredientData(
+            IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .fruit, categoryName: "과일"),
                 ingredients: [
                     IngredientSimpleModel(name: "사과"),

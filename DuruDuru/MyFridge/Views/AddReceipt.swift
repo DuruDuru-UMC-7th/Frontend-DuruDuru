@@ -97,7 +97,6 @@ class AddReceiptView: UIView {
         
         scanningView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.height.equalTo(0.5)
         }
         
         backButton.snp.makeConstraints {

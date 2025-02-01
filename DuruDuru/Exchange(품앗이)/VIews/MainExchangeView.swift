@@ -120,7 +120,7 @@ class MainExchangeView: UIView {
         }
         
         segmentedControl.snp.makeConstraints {
-            $0.top.equalTo(locationButton.snp.bottom)
+            $0.top.equalToSuperview().offset(75)
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(48)

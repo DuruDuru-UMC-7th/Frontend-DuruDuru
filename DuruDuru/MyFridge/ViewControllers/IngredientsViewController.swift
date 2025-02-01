@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class IngredientsViewController: UIViewController, UITextFieldDelegate {
 
@@ -114,6 +115,55 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
 
     @objc private func didTapReceiptAddButton() {
         print("영수증으로 추가하기 버튼 클릭")
+
+        
+    #if targetEnvironment(simulator)
+        fatalError()
+    #endif
+        
+        // Privacy - Camera Usage Description
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] isAuthorized in
+            guard isAuthorized else {
+                self?.showAlertGoToSetting()
+                return
+            }
+            
+            DispatchQueue.main.async {
+                let customCameraVC = CustomCameraViewController()
+                customCameraVC.modalPresentationStyle = .fullScreen
+                self?.present(customCameraVC, animated: true)
+            }
+        }
+    }
+    
+    /// 카메라 접근 Alert
+    func showAlertGoToSetting() {
+        let alertController = UIAlertController(
+          title: "현재 카메라 사용에 대한 접근 권한이 없습니다.",
+          message: "설정 > {앱 이름}탭에서 접근을 활성화 할 수 있습니다.",
+          preferredStyle: .alert
+        )
+        let cancelAlert = UIAlertAction(
+          title: "취소",
+          style: .cancel
+        ) { _ in
+            alertController.dismiss(animated: true, completion: nil)
+          }
+        let goToSettingAlert = UIAlertAction(
+          title: "설정으로 이동하기",
+          style: .default) { _ in
+            guard
+              let settingURL = URL(string: UIApplication.openSettingsURLString),
+              UIApplication.shared.canOpenURL(settingURL)
+            else { return }
+            UIApplication.shared.open(settingURL, options: [:])
+          }
+        [cancelAlert, goToSettingAlert]
+          .forEach(alertController.addAction(_:))
+        DispatchQueue.main.async {
+          self.present(alertController, animated: true) // must be used from main thread only
+        }
+      }
     }
     
     @objc private func didTapAllCategoryButton() {
@@ -207,4 +257,42 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
         }
         return CGSize.zero
     }
+
+
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard collectionView == ingredientsView.ingredientsCircleCollectionView else { return }
+        
+        // 선택된 식재료 가져오기
+        let selectedIngredient = ingredientData[indexPath.row]
+        
+        // 팝업 띄우기
+        showDeletePopup(for: selectedIngredient, at: indexPath)
+    }
+    
 }
+
+//extension IngredientsViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+//    func imagePickerController(
+//        _ picker: UIImagePickerController,
+//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
+//    ) {
+//        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+//            picker.dismiss(animated: true)
+//            return
+//        }
+//        
+//        picker.dismiss(animated: true) {
+//            // PhotoPreviewViewController를 모달로 표시
+//            let addReceiptCompleteVC = AddReceiptCompleteViewController()
+//            addReceiptCompleteVC.image = image // 선택한 이미지 전달
+//            
+//            // 모달 방식으로 뷰 컨트롤러 표시
+//            addReceiptCompleteVC.modalPresentationStyle = .fullScreen // 전체 화면 모달로 설정
+//            self.present(addReceiptCompleteVC, animated: true, completion: nil)
+//        }
+//    }
+//}
+
+}
+

@@ -202,6 +202,7 @@ class MyPageView: UIView {
         profileContentView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(96)
             $0.width.equalTo(370)
         }

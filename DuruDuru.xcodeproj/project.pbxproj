@@ -10,6 +10,8 @@
 		019EF65E2D44C9FB0093CE7F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF65D2D44C9FB0093CE7F /* Kingfisher */; };
 		019EF6612D44CA040093CE7F /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF6602D44CA040093CE7F /* Then */; };
 		019EF6642D44CA930093CE7F /* TagListView in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF6632D44CA930093CE7F /* TagListView */; };
+		019EF72D2D4E4A6C0093CE7F /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */; };
+		019EF72F2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */; };
 		42A6CAE22D29548200F49352 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 42A6CAE12D29548200F49352 /* SnapKit */; };
 		43923ABD2D4D386600F67E5F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 43923ABC2D4D386600F67E5F /* Alamofire */; };
 /* End PBXBuildFile section */
@@ -46,7 +48,9 @@
 			files = (
 				43923ABD2D4D386600F67E5F /* Alamofire in Frameworks */,
 				019EF65E2D44C9FB0093CE7F /* Kingfisher in Frameworks */,
+				019EF72D2D4E4A6C0093CE7F /* NVActivityIndicatorView in Frameworks */,
 				019EF6612D44CA040093CE7F /* Then in Frameworks */,
+				019EF72F2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended in Frameworks */,
 				019EF6642D44CA930093CE7F /* TagListView in Frameworks */,
 				42A6CAE22D29548200F49352 /* SnapKit in Frameworks */,
 			);
@@ -95,7 +99,12 @@
 				019EF65D2D44C9FB0093CE7F /* Kingfisher */,
 				019EF6602D44CA040093CE7F /* Then */,
 				019EF6632D44CA930093CE7F /* TagListView */,
+
+				019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */,
+				019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */,
+
 				43923ABC2D4D386600F67E5F /* Alamofire */,
+
 			);
 			productName = DuruDuru;
 			productReference = 42124F6C2D26CB3E0095E058 /* DuruDuru.app */;
@@ -130,7 +139,11 @@
 				019EF65C2D44C9FB0093CE7F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				019EF65F2D44CA040093CE7F /* XCRemoteSwiftPackageReference "Then" */,
 				019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */,
+
+				019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
+
 				43923ABB2D4D386600F67E5F /* XCRemoteSwiftPackageReference "Alamofire" */,
+
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 42124F6D2D26CB3E0095E058 /* Products */;
@@ -170,6 +183,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A47BUDSR5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DuruDuru/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -196,6 +210,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A47BUDSR5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DuruDuru/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -382,6 +397,14 @@
 				minimumVersion = 1.4.1;
 			};
 		};
+		019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ninjaprox/NVActivityIndicatorView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.2.0;
+			};
+		};
 		42A6CAE02D29548200F49352 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit?tab=readme-ov-file#installation";
@@ -415,6 +438,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */;
 			productName = TagListView;
+		};
+		019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
+			productName = NVActivityIndicatorView;
+		};
+		019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
+			productName = NVActivityIndicatorViewExtended;
 		};
 		42A6CAE12D29548200F49352 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

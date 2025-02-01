@@ -39,9 +39,9 @@ class ExchangeView: UIView {
     
     /// 나의 품앗이 목록
     let myExchangeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
-        $0.minimumInteritemSpacing = 10
+        $0.minimumInteritemSpacing = 5
         $0.minimumLineSpacing = 10
-        $0.estimatedItemSize = .init(width: 180, height: 80)// 셀 크기
+        $0.estimatedItemSize = .init(width: (UIScreen.main.bounds.width - 42) / 2, height: 80)// 셀 크기
     }).then {
         $0.backgroundColor = .clear
         $0.register(MyExchangeCollectionViewCell.self, forCellWithReuseIdentifier: MyExchangeCollectionViewCell.identifier)
@@ -82,7 +82,7 @@ class ExchangeView: UIView {
         $0.register(ExchangeTableViewCell.self, forCellReuseIdentifier: ExchangeTableViewCell.identifier)
         $0.separatorStyle = .none
         $0.isScrollEnabled = false
-
+        
     }
     
     /// 플로팅 버튼
@@ -93,7 +93,7 @@ class ExchangeView: UIView {
         $0.layer.shadowOpacity = 0.3
         $0.layer.shadowRadius = 4
     }
-
+    
     /// 품앗이 등록 버튼
     let registerPoomButton = UIButton().then {
         $0.setImage(UIImage(named: "AddPoom"), for: .normal)
@@ -207,11 +207,10 @@ class ExchangeView: UIView {
             $0.height.equalTo(40)
         }
         
-
+        
     }
     
     func updateTableViewHeight(dataCnt: Int) {
-        exchangeTableView.layoutIfNeeded()
         exchangeTableView.snp.updateConstraints {
             $0.height.equalTo(160 * dataCnt)
         }

@@ -27,10 +27,6 @@ class ExchangeViewController: UIViewController {
         exchangeView.updateTableViewHeight(dataCnt: 14)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-    
     private func setupDelegate(){
         exchangeView.myExchangeCollectionView.dataSource = self
         exchangeView.myExchangeCollectionView.delegate = self

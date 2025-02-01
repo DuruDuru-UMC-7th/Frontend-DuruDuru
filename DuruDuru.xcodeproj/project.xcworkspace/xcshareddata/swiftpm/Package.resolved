@@ -1,6 +1,16 @@
 {
-  "originHash" : "ec2e3ef5697f1a372a10bdb58ef033305e11d8d74d4bd4649f7ff6ec05160cde",
+  "originHash" : "0d2cbe5a0011553fc76a5b7327ebe5616e577895b8b4f30d3ee39e0b09f2d6e1",
+
   "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
+      }
+    },
     {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",

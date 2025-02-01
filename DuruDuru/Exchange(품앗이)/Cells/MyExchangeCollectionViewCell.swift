@@ -17,7 +17,7 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addComponents()
         constraints()
-        layer.cornerRadius = 10
+        applyCornerRadius()
         layer.borderWidth = 1
         layer.borderColor = UIColor(hex: 0x70737C14, alpha: 0.08)?.cgColor
     }
@@ -86,5 +86,23 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
             $0.left.equalTo(titleImage.snp.right).offset(15)
             $0.top.equalTo(date.snp.bottom).offset(10)
         }
+    }
+    
+    // MARK: - Apply Corner Radius
+    
+    private func applyCornerRadius() {
+        let path = UIBezierPath(roundedRect: bounds,
+                                byRoundingCorners: [.topLeft, .bottomLeft],
+                                cornerRadii: CGSize(width: 10, height: 10))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
+    }
+    
+    // MARK: - Layout
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyCornerRadius()
     }
 }

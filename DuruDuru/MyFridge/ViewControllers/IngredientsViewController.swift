@@ -9,15 +9,15 @@ import UIKit
 import AVFoundation
 
 class IngredientsViewController: UIViewController, UITextFieldDelegate {
-
+    
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
     var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
     var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
     var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
-
+    
     // MARK: - Lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         ingredientsView = IngredientsView(frame: self.view.bounds)
@@ -28,7 +28,7 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         
         filterIngredients(by: nil) // 초기 상태에서는 모든 식재료 보여주기
     }
-
+    
     private func setupDelegate() {
         ingredientsView.ingredientCategoryCollectionView.dataSource = self
         ingredientsView.ingredientCategoryCollectionView.delegate = self
@@ -43,7 +43,7 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         
         ingredientsView.allButton.addTarget(self, action: #selector(didTapAllCategoryButton), for: .touchUpInside)
     }
-
+    
     /// 특정 카테고리에 해당하는 식재료만 필터링
     private func filterIngredients(by category: IngredientCategoryModel?) {
         selectedCategory = category
@@ -70,7 +70,7 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         let cancelAction = UIAlertAction(title: "아니요", style: .cancel, handler: nil)
         let deleteAction = UIAlertAction(title: "네, 삭제할게요", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
-
+            
             // 전체 데이터에서 해당 아이템 삭제
             for (index, categoryData) in allIngredientData.enumerated() {
                 if let ingredientIndex = categoryData.ingredients.firstIndex(where: { $0.name == ingredient.name }) {
@@ -78,10 +78,10 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
                     break
                 }
             }
-
+            
             // 현재 필터링된 데이터에서도 삭제
             filteredIngredients.remove(at: indexPath.row)
-
+            
             // 화면 갱신 (현재 선택된 카테고리를 유지하면서 필터링)
             self.filterIngredients(by: self.selectedCategory)
         }
@@ -91,13 +91,13 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         
         present(alertController, animated: true, completion: nil)
     }
-
+    
     // 식재료 검색
     private func setupSearchBar() {
         ingredientsView.searchBar.delegate = self
         ingredientsView.searchBar.addTarget(self, action: #selector(didChangeSearchText), for: .editingChanged)
     }
-
+    
     
     @objc private func togglePopupButtons() {
         let isHidden = ingredientsView.receiptButton.isHidden
@@ -106,20 +106,20 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         let newImage = isHidden ? UIImage(named: "close") : UIImage(named: "exchangeFloating")
         ingredientsView.floatingButton.setImage(newImage, for: .normal)
     }
-
+    
     @objc private func didTapDirectAddButton() {
         let addIngredientVC = AddIngredientViewController()
         addIngredientVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(addIngredientVC, animated: true)
     }
-
+    
     @objc private func didTapReceiptAddButton() {
         print("영수증으로 추가하기 버튼 클릭")
-
         
-    #if targetEnvironment(simulator)
+        
+#if targetEnvironment(simulator)
         fatalError()
-    #endif
+#endif
         
         // Privacy - Camera Usage Description
         AVCaptureDevice.requestAccess(for: .video) { [weak self] isAuthorized in
@@ -139,32 +139,32 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
     /// 카메라 접근 Alert
     func showAlertGoToSetting() {
         let alertController = UIAlertController(
-          title: "현재 카메라 사용에 대한 접근 권한이 없습니다.",
-          message: "설정 > {앱 이름}탭에서 접근을 활성화 할 수 있습니다.",
-          preferredStyle: .alert
+            title: "현재 카메라 사용에 대한 접근 권한이 없습니다.",
+            message: "설정 > {앱 이름}탭에서 접근을 활성화 할 수 있습니다.",
+            preferredStyle: .alert
         )
         let cancelAlert = UIAlertAction(
-          title: "취소",
-          style: .cancel
+            title: "취소",
+            style: .cancel
         ) { _ in
             alertController.dismiss(animated: true, completion: nil)
-          }
-        let goToSettingAlert = UIAlertAction(
-          title: "설정으로 이동하기",
-          style: .default) { _ in
-            guard
-              let settingURL = URL(string: UIApplication.openSettingsURLString),
-              UIApplication.shared.canOpenURL(settingURL)
-            else { return }
-            UIApplication.shared.open(settingURL, options: [:])
-          }
-        [cancelAlert, goToSettingAlert]
-          .forEach(alertController.addAction(_:))
-        DispatchQueue.main.async {
-          self.present(alertController, animated: true) // must be used from main thread only
         }
-      }
+        let goToSettingAlert = UIAlertAction(
+            title: "설정으로 이동하기",
+            style: .default) { _ in
+                guard
+                    let settingURL = URL(string: UIApplication.openSettingsURLString),
+                    UIApplication.shared.canOpenURL(settingURL)
+                else { return }
+                UIApplication.shared.open(settingURL, options: [:])
+            }
+        [cancelAlert, goToSettingAlert]
+            .forEach(alertController.addAction(_:))
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true) // must be used from main thread only
+        }
     }
+    
     
     @objc private func didTapAllCategoryButton() {
         print("전체 카테고리 버튼 클릭됨")
@@ -180,21 +180,21 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
             filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
             return
         }
-
+        
         // 현재 필터링된 데이터에서 검색어가 포함된 항목만 필터링
         filteredIngredients = allIngredientData.flatMap { $0.ingredients }
             .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
             .filter { $0.name.contains(searchText) }
-
+        
         ingredientsView.ingredientsCircleCollectionView.reloadData()
     }
-
+    
 }
 
 // MARK: - UICollectionViewDataSource
 
 extension IngredientsViewController: UICollectionViewDataSource {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
             return categoryData.count
@@ -203,7 +203,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
         }
         return 0
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
@@ -257,18 +257,6 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
         }
         return CGSize.zero
     }
-
-
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard collectionView == ingredientsView.ingredientsCircleCollectionView else { return }
-        
-        // 선택된 식재료 가져오기
-        let selectedIngredient = ingredientData[indexPath.row]
-        
-        // 팝업 띄우기
-        showDeletePopup(for: selectedIngredient, at: indexPath)
-    }
     
 }
 
@@ -281,12 +269,12 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
 //            picker.dismiss(animated: true)
 //            return
 //        }
-//        
+//
 //        picker.dismiss(animated: true) {
 //            // PhotoPreviewViewController를 모달로 표시
 //            let addReceiptCompleteVC = AddReceiptCompleteViewController()
 //            addReceiptCompleteVC.image = image // 선택한 이미지 전달
-//            
+//
 //            // 모달 방식으로 뷰 컨트롤러 표시
 //            addReceiptCompleteVC.modalPresentationStyle = .fullScreen // 전체 화면 모달로 설정
 //            self.present(addReceiptCompleteVC, animated: true, completion: nil)
@@ -294,5 +282,5 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
 //    }
 //}
 
-}
+
 

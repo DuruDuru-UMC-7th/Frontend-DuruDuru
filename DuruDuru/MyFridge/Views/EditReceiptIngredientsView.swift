@@ -99,6 +99,13 @@ class EditReceiptIngredientsView: UIView {
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
     }
     
+    let saveButton = UIButton().then {
+        $0.setTitle("저장", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x00C269), for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        $0.isHidden = true
+    }
+    
     /// 식재료 테이블 뷰
     public let ingredientsTableView = UITableView().then {
         $0.register(ReceiptIngredientsTableViewCell.self, forCellReuseIdentifier: ReceiptIngredientsTableViewCell.identifier)
@@ -136,6 +143,7 @@ class EditReceiptIngredientsView: UIView {
             dateView,
             ListOfIngredients,
             editIngredientsButton,
+            saveButton,
             ingredientsTableView,
             buttonView
         ].forEach {
@@ -245,6 +253,11 @@ class EditReceiptIngredientsView: UIView {
         }
         
         editIngredientsButton.snp.makeConstraints {
+            $0.centerY.equalTo(ListOfIngredients)
+            $0.right.equalToSuperview().offset(-16)
+        }
+        
+        saveButton.snp.makeConstraints {
             $0.centerY.equalTo(ListOfIngredients)
             $0.right.equalToSuperview().offset(-16)
         }

@@ -62,6 +62,7 @@ class RecipeView: UIView {
         $0.separatorStyle = .singleLine
         $0.allowsSelection = true
         $0.isUserInteractionEnabled = true
+        $0.showsVerticalScrollIndicator = false
     }
     
     // MARK: - Constaints & Add Function

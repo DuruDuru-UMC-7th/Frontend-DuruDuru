@@ -11,12 +11,17 @@ struct ReceiptModel {
     
     let purchaseDate: String
     let week: String
-    let ingredients: [ReceiptIngredients]
+    var ingredients: [ReceiptIngredients]
 }
 
 struct ReceiptIngredients {
     let ingredientName: String
-    let count: Int
+    var count: Int
+    
+    mutating func setCount(newCount: Int) {
+        self.count = newCount
+    }
+    
 }
 
 extension ReceiptModel {

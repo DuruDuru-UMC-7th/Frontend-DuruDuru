@@ -99,12 +99,9 @@
 				019EF65D2D44C9FB0093CE7F /* Kingfisher */,
 				019EF6602D44CA040093CE7F /* Then */,
 				019EF6632D44CA930093CE7F /* TagListView */,
-
 				019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */,
 				019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */,
-
 				43923ABC2D4D386600F67E5F /* Alamofire */,
-
 			);
 			productName = DuruDuru;
 			productReference = 42124F6C2D26CB3E0095E058 /* DuruDuru.app */;
@@ -139,11 +136,8 @@
 				019EF65C2D44C9FB0093CE7F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				019EF65F2D44CA040093CE7F /* XCRemoteSwiftPackageReference "Then" */,
 				019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */,
-
 				019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
-
 				43923ABB2D4D386600F67E5F /* XCRemoteSwiftPackageReference "Alamofire" */,
-
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 42124F6D2D26CB3E0095E058 /* Products */;

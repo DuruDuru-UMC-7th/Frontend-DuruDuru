@@ -287,15 +287,17 @@ class EditReceiptIngredientsView: UIView {
         }
     }
     
-    func configure(receipt: ReceiptModel) {
+    func configure(receipt: ResponseReceiptIngredientsModel) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         if let date = dateFormatter.date(from: receipt.purchaseDate) {
             dateFormatter.dateFormat = "yyyy년 M월 d일"
             let formattedDate = dateFormatter.string(from: date)
             
-            dateTitleLabel.text = "\(formattedDate) \(receipt.week)"
-            buyDateValue.text = "\(formattedDate) \(receipt.week)"
+//            dateTitleLabel.text = "\(formattedDate) \(receipt.week)"
+//            buyDateValue.text = "\(formattedDate) \(receipt.week)"
+            dateTitleLabel.text = formattedDate + " 금요일"
+            buyDateValue.text = formattedDate + " 금요일"
         } else {
             dateTitleLabel.text = "날짜 형식 오류"
             buyDateValue.text = "날짜 형식 오류"

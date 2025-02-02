@@ -10,7 +10,8 @@ import UIKit
 class EditReceiptIngredientsViewController: UIViewController{
     
     private var editReceiptIngredientsView: EditReceiptIngredientsView!
-    var receipt = ReceiptModel.dummy()
+//    var receipt = ReceiptModel.dummy()
+    var responseReceiptIngredientsModel: ResponseReceiptIngredientsModel!
     private var isEditingMode = false
     
     override func viewDidLoad() {
@@ -19,7 +20,7 @@ class EditReceiptIngredientsViewController: UIViewController{
         self.view = editReceiptIngredientsView
         
         setupDelegate()
-        editReceiptIngredientsView.configure(receipt: receipt)
+        editReceiptIngredientsView.configure(receipt: responseReceiptIngredientsModel? = nil)
         
         editReceiptIngredientsView.backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         editReceiptIngredientsView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
@@ -99,7 +100,7 @@ class EditReceiptIngredientsViewController: UIViewController{
 extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableViewDelegate, DeleteButtonDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        receipt.ingredients.count
+        responseReceiptIngredientsModel.ingredients.count
     }
     
     
@@ -107,7 +108,7 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ReceiptIngredientsTableViewCell.identifier, for: indexPath) as? ReceiptIngredientsTableViewCell else {
             return UITableViewCell()
         }
-        cell.configure(ingredient: receipt.ingredients[indexPath.row], isEditing: isEditingMode)
+        cell.configure(ingredient: responseReceiptIngredientsModel.ingredients[indexPath.row], isEditing: isEditingMode)
         cell.delegate = self
         
         return cell
@@ -121,7 +122,7 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         guard let indexPath = editReceiptIngredientsView.ingredientsTableView.indexPath(for: cell) else { return }
         
         /// 데이터 모델에서 해당 아이템 삭제
-        receipt.ingredients.remove(at: indexPath.row)
+        responseReceiptIngredientsModel.ingredients.remove(at: indexPath.row)
         
         /// 셀 삭제
         editReceiptIngredientsView.ingredientsTableView.deleteRows(at: [indexPath], with: .automatic)
@@ -131,7 +132,7 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         guard let indexPath = editReceiptIngredientsView.ingredientsTableView.indexPath(for: cell) else { return }
         
         /// 데이터 모델에서 카운트 업데이트
-        receipt.ingredients[indexPath.row].setCount(newCount: newCount)
+        responseReceiptIngredientsModel.ingredients[indexPath.row].setCount(newCount: newCount)
         
         editReceiptIngredientsView.ingredientsTableView.reloadRows(at: [indexPath], with: .none)
     }

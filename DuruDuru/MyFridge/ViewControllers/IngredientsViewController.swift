@@ -197,14 +197,14 @@ extension IngredientsViewController: UICollectionViewDelegate {
 
 extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == ingredientsView.ingredientCategoryCollectionView {
-            return CGSize(width: 66, height: 26)
-        } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            let spacing: CGFloat = 8
-            let totalSpacing = spacing * 4
-            let cellWidth = (collectionView.frame.width - totalSpacing) / 3
-            return CGSize(width: cellWidth, height: cellWidth)
+        if collectionView == ingredientsView.ingredientsCircleCollectionView {
+            let screenWidth = UIScreen.main.bounds.width
+            let cellSpacing: CGFloat = 5
+            let totalSpacing = cellSpacing * 4
+            let cellWidth = (screenWidth - totalSpacing - 32) / 3 // 3열 유지
+
+            return CGSize(width: cellWidth, height: cellWidth + 30) // 기존보다 더 키움
         }
-        return CGSize.zero
+        return CGSize(width: 66, height: 26)
     }
 }

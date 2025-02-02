@@ -46,6 +46,11 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        circleView.layer.cornerRadius = circleView.frame.width / 2 // 동적으로 원형 설정
+    }
+    
     // MARK: - Add Components
     
     private func addComponents() {
@@ -59,8 +64,10 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     private func setupConstraints() {
         // 원의 크기와 위치
         circleView.snp.makeConstraints {
-            $0.top.right.left.equalToSuperview()
-            $0.height.width.equalTo(118)
+            $0.top.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.equalTo(circleView.snp.width) // 원형 유지
         }
         
         // 원 내부 텍스트 (소비기한)
@@ -70,10 +77,9 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         
         // 원 아래 텍스트 (식재료 이름)
         ingredientNameLabel.snp.makeConstraints {
-            $0.top.equalTo(circleView.snp.bottom)
-            // 원 아래에 위치
-            $0.centerX.equalToSuperview() // 수평 중앙 정렬
-            $0.bottom.equalToSuperview().offset(-5)
+            $0.top.equalTo(circleView.snp.bottom).offset(8) // 이름이 보일 공간 확보
+            $0.centerX.equalToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview().offset(-5)
         }
     }
     

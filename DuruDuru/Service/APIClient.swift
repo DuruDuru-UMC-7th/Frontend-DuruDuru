@@ -46,20 +46,18 @@ final class APIClient {
             "Content-Type": "multipart/form-data"
         ]
         
-        // 쿼리 파라미터를 포함한 URL 생성
-        let urlWithQuery = "\(url)?memberId=\(memberId)"
-        
         session.upload(multipartFormData: { multipartFormData in
-            // 이미지 데이터 추가
+            multipartFormData.append(Data(String(memberId).utf8),
+                                     withName: "memberId")
             multipartFormData.append(imageData, withName: "file", fileName: "image.png", mimeType: "image/png")
-        }, to: urlWithQuery, method: .post, headers: headers)
+        }, to: url, method: .post, headers: headers)
         .validate()
         .responseDecodable(of: T.self) { response in
             switch response.result {
             case .success(let value):
                 completion(.success(value))
             case .failure(let error):
-                // 에러 발생 시 추가 정보 출력
+                /// 에러 발생 시 추가 정보 출력
                 if let httpResponse = response.response {
                     print("Error: \(error.localizedDescription)")
                     print("Status Code: \(httpResponse.statusCode)")

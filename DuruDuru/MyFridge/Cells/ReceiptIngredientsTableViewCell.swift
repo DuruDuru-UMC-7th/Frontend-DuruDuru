@@ -171,7 +171,8 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         }
     }
     
-    public func configure(ingredient: ReceiptIngredients, isEditing: Bool) {
+    /// configure
+    public func configure(ingredient: ReceiptIngredient!, isEditing: Bool) {
         ingredientName.text = ingredient.ingredientName
         count.text = "x" + String(ingredient.count)
         countLabel.text = String(ingredient.count)
@@ -183,6 +184,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         count.isHidden = isEditing
     }
     
+    /// '-' 버튼 클릭시
     @objc func decrementButtonClicked() {
         guard let currentCount = Int(countLabel.text ?? "0"), currentCount > 1 else { return }
         
@@ -192,6 +194,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         delegate?.didUpdateCount(in: self, newCount: newCount)
     }
 
+    /// '+' 버튼 클릭시
     @objc func incrementButtonClicked() {
         guard let currentCount = Int(countLabel.text ?? "0") else { return }
         
@@ -201,6 +204,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         delegate?.didUpdateCount(in: self, newCount: newCount)
     }
     
+    /// 삭제 버튼 클릭시
     @objc func deleteButtonClicked() {
         delegate?.didTapDeleteButton(in: self)
     }

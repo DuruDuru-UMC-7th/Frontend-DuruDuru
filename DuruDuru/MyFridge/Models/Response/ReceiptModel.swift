@@ -7,13 +7,20 @@
 
 import UIKit
 
-struct ResponseReceiptIngredientsModel: Codable {
-    
-    let purchaseDate: String
-    var ingredients: [ResponseIngredientModel]
+struct ReceiptModel: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: ReceiptResult?
 }
 
-struct ResponseIngredientModel: Codable {
+struct ReceiptResult: Codable {
+    
+    let purchaseDate: String?
+    var ingredients: [ReceiptIngredient]
+}
+
+struct ReceiptIngredient: Codable {
     
     let memberId: Int
     let receiptId: Int

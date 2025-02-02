@@ -363,4 +363,16 @@ class ExchangeDetailView: UIView {
             $0.height.equalTo(144 * round(Double(dataCnt) / 2) + 45)
         }
     }
+    
+    public func configure(trade: TradeResult) {
+        count.text = String(trade.ingredientCount) + "개"
+        remainDate.text = trade.expiryDate ?? "10일"
+        title.text = trade.title
+        content.text = trade.body
+        if trade.tradeType == "SHARE"{
+            share.text = "나눔"
+        } else {
+            share.text = "교환"
+        }
+    }
 }

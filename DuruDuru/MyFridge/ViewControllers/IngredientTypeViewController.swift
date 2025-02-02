@@ -5,13 +5,6 @@
 //  Created by 윤시진 on 1/19/25.
 //
 
-//
-//  IngredientTypeViewController.swift
-//  DuruDuru
-//
-//  Created by 윤시진 on 1/19/25.
-//
-
 import UIKit
 
 class IngredientTypeViewController: UIViewController {

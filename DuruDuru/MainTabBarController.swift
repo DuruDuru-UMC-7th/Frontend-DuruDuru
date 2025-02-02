@@ -40,13 +40,18 @@ class MainTabBarController: UITabBarController {
         
         self.viewControllers = [homeVC, fridgeVC, exchangeVC, chattingVC, myPageVC]
         
+        // 아이콘 크기 및 위치 조정
+        for item in tabBar.items ?? [] {
+            item.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -2, right: 0) // 아이콘 위치 조정
+            item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 0) // 타이틀 위치 조정
+        }
     }
     
     /// 클릭 시, 검은색으로 칠해지도록 Aprrearance 조정 함수
     private func appearance() {
         let barAppearance = UITabBarAppearance()
-        barAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
-        barAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.black]
+        barAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.systemGreen
+        barAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.systemGreen]
         barAppearance.stackedLayoutAppearance.selected.badgeBackgroundColor = UIColor.black
         barAppearance.stackedLayoutAppearance.normal.badgeBackgroundColor = UIColor.black
         

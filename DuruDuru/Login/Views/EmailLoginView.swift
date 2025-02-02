@@ -56,7 +56,7 @@ class EmailLoginView: UIView {
     
     /// 비밀번호 입력 텍스트필드
     public lazy var passwordTextField: InputTextfield = InputTextfield()
-
+    
     
     /// 아직 회원이 아니신가요? 라벨
     private lazy var notMemberLabel: UILabel = {
@@ -79,7 +79,7 @@ class EmailLoginView: UIView {
             attributes.font = UIFont.systemFont(ofSize: 13, weight: .regular) // 텍스트 폰트
             return attributes
         }
-
+        
         let button = UIButton(configuration: config)
         return button
     }()
@@ -154,7 +154,7 @@ class EmailLoginView: UIView {
         return textField
     }
     
-
+    
     
     // MARK: - MakeFunction
     
@@ -188,75 +188,67 @@ class EmailLoginView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints(){
+        let screenHeight = UIScreen.main.bounds.height
+        
         backButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+            $0.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(10)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(24)
-            $0.height.equalTo(24)
+            $0.width.height.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+            $0.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(10)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(115)
-            $0.height.equalTo(22)
         }
         
         emailLabel.snp.makeConstraints{
-            $0.top.equalTo(titleLabel.snp.bottom).offset(196.5)
+            let topOffset = screenHeight < 700 ? 100 : 196.5  // 여백 조정
+            $0.top.equalTo(titleLabel.snp.bottom).offset(topOffset)
             $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
-            $0.height.equalTo(22)
         }
         
         emailTextField.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(52)
         }
         
         passwordLabel.snp.makeConstraints {
-            $0.top.equalTo(emailTextField.snp.bottom).offset(32)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.greaterThanOrEqualTo(130)
-            $0.height.equalTo(22)
+            $0.top.equalTo(emailTextField.snp.bottom).offset(20)
+            $0.left.equalTo(emailTextField.snp.left)
         }
         
         passwordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.left.equalTo(emailTextField.snp.left)
+            $0.right.equalTo(emailTextField.snp.right)
             $0.height.equalTo(52)
         }
         
         notMemberLabel.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(197)
-            $0.left.equalToSuperview().offset(102)
-            $0.width.greaterThanOrEqualTo(130)
-            $0.height.equalTo(22)
+            let bottomOffset = screenHeight < 700 ? 50 : 197  // 여백 조정
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(bottomOffset)
+            $0.centerX.equalToSuperview()
         }
         
         signUpButton.snp.makeConstraints {
-            $0.top.equalTo(passwordTextField.snp.bottom).offset(197)
-            $0.left.equalTo(notMemberLabel.snp.right)
-            $0.width.greaterThanOrEqualTo(34)
-            $0.height.equalTo(22)
+            $0.centerY.equalTo(notMemberLabel.snp.centerY)
+            $0.left.equalTo(notMemberLabel.snp.right).offset(5)
         }
         
         searchLabel.snp.makeConstraints {
-            $0.top.equalTo(notMemberLabel.snp.bottom)
+            $0.top.equalTo(notMemberLabel.snp.bottom).offset(5)
             $0.centerX.equalToSuperview()
-            $0.width.greaterThanOrEqualTo(200)
-            $0.height.equalTo(22)
         }
         
         loginBtn.snp.makeConstraints {
-            $0.top.equalTo(searchLabel.snp.bottom).offset(22)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            let bottomOffset = screenHeight < 700 ? -10 : -20  // 여백조정
+            $0.top.equalTo(searchLabel.snp.bottom).offset(20)
+            $0.left.equalTo(emailTextField.snp.left)
+            $0.right.equalTo(emailTextField.snp.right)
             $0.height.equalTo(47)
+            $0.bottom.lessThanOrEqualTo(self.safeAreaLayoutGuide.snp.bottom).offset(bottomOffset)
         }
-        
     }
 }

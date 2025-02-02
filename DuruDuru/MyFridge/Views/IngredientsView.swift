@@ -64,8 +64,7 @@ class IngredientsView: UIView {
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
         $0.minimumInteritemSpacing = 8 // 좌우 간격
-        $0.minimumLineSpacing = 7 // 상하 간격
-        $0.estimatedItemSize = .init(width: 118, height: 145)// 셀 크기
+        $0.minimumLineSpacing = 12 // 상하 간격
     }).then {
         $0.backgroundColor = .clear
         $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)
@@ -181,7 +180,7 @@ class IngredientsView: UIView {
         
         
         floatingButton.snp.makeConstraints {
-            $0.width.height.equalTo(68)
+            $0.width.height.equalTo(95)
             $0.trailing.equalToSuperview().offset(-5)
             $0.bottom.equalToSuperview().offset(-10)
         }

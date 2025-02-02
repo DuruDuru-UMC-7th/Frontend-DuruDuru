@@ -12,6 +12,7 @@ class ExchangeDetailViewController: UIViewController {
     private var exchangeDetailView: ExchangeDetailView!
     private var pageControl: UIPageControl!
     private var images: [UIImage] = [.thumbnail, .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
+    var tradeId: Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +45,7 @@ class ExchangeDetailViewController: UIViewController {
         setUpdelegate()
         exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10)
         exchangeDetailView.pageControl.numberOfPages = images.count
+        getTrade(tradeId: tradeId)
     }
     
     @objc func backButtonTapped() {
@@ -63,6 +65,23 @@ class ExchangeDetailViewController: UIViewController {
         exchangeDetailView.imageCollectionView.delegate = self
         exchangeDetailView.otherExchangeCollectionView.dataSource = self
         exchangeDetailView.otherExchangeCollectionView.delegate = self
+    }
+    
+    private func getTrade(tradeId: Int) {
+        let url = "http://3.35.252.162:8080/trade/\(tradeId)"
+        
+        APIClient.shared.request(url, method: .get, parameters: nil) { (result: Result<TradeModel, Error>) in
+            switch result {
+            case .success(let response):
+                if let trade = response.result {
+                    self.exchangeDetailView.configure(trade: trade)
+                } else {
+                    print("에러: trade 값이 nil입니다.")
+                }
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
     }
 }
 

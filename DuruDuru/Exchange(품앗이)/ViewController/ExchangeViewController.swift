@@ -61,6 +61,8 @@ class ExchangeViewController: UIViewController {
         let togetherVC = ExchangeRegisterDetailViewController()
         navigationController?.pushViewController(togetherVC, animated: true)
     }
+    
+    
 }
 
 // MARK: - UICollectionView
@@ -107,6 +109,7 @@ extension ExchangeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let exchangeDetailVc = ExchangeDetailViewController()
+        exchangeDetailVc.tradeId = 2 /// 임시로 2로 지정
         exchangeDetailVc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(exchangeDetailVc, animated: true)
     }

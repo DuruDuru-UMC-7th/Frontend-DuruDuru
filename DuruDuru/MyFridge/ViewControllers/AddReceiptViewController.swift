@@ -34,17 +34,17 @@ class AddReceiptViewController: UIViewController {
             self.addReceiptView.scanLabel.text = "인식 완료!"
             self.OCRScan(memberId: 5, image: self.image ?? UIImage())
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                self.scanningCompleted()
+                self.scanningCompleted()
                 print("3초 지남")
             }
         }
     }
  
-    private func scanningCompleted(_ response: ResponseReceiptIngredientsModel? = nil) {
+    private func scanningCompleted() {
         addReceiptView.stopScanningBarAnimation()
         addReceiptView.indicator.stopAnimating()
         let editReceiptIngredientsVC = EditReceiptIngredientsViewController()
-        editReceiptIngredientsVC.responseReceiptIngredientsModel = response
+//        editReceiptIngredientsVC.responseReceiptIngredientsModel = response
         editReceiptIngredientsVC.modalPresentationStyle = .fullScreen
         present(editReceiptIngredientsVC, animated: true, completion: nil)
     }
@@ -71,7 +71,7 @@ class AddReceiptViewController: UIViewController {
             switch result {
             case .success(let response):
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    self.scanningCompleted(response)
+//                    self.scanningCompleted(response)
                 }
             case .failure(let error):
                 print("네트워킹 오류: \(error)")

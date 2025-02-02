@@ -435,6 +435,8 @@ class RecipeDetailView: UIView {
         let indexLabel = UILabel().then {
             $0.text = String(index)
             $0.font = .systemFont(ofSize: 15)
+            $0.textColor = UIColor(hex: 0x868686)
+            $0.textAlignment = .center
         }
         
         containerView.addSubview(indexLabel)
@@ -443,6 +445,7 @@ class RecipeDetailView: UIView {
         indexLabel.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(32.5)
             $0.left.equalToSuperview().offset(26)
+            $0.width.equalTo(10)
         }
         
         /// 레이블의 패딩 설정

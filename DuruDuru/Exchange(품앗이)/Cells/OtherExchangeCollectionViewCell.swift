@@ -17,6 +17,8 @@ class OtherExchangeCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addComponents()
         constraints()
+        applyCornerRadius()
+        layer.cornerRadius = 10
     }
     
     required init?(coder: NSCoder) {
@@ -28,7 +30,6 @@ class OtherExchangeCollectionViewCell: UICollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.image = .thumbnail
-        $0.layer.cornerRadius = 10
     }
     
     // MARK: - Constaints & Add Function
@@ -42,6 +43,26 @@ class OtherExchangeCollectionViewCell: UICollectionViewCell {
     private func constraints() {
         titleImage.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.height.equalTo(130)
+            $0.width.equalTo((UIScreen.main.bounds.width - 56) / 2)
         }
+    }
+    
+    // MARK: - Apply Corner Radius
+    
+    private func applyCornerRadius() {
+        let path = UIBezierPath(roundedRect: bounds,
+                                byRoundingCorners: .allCorners,
+                                cornerRadii: CGSize(width: 10, height: 10))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
+    }
+    
+    // MARK: - Layout
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyCornerRadius()
     }
 }

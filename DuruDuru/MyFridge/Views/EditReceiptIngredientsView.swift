@@ -59,7 +59,7 @@ class EditReceiptIngredientsView: UIView {
     }
     
     let subTitleLabel = UILabel().then {
-        $0.text = "의 식재료를 구메하셨네요!"
+        $0.text = "의 식재료를 구매하셨네요!"
         $0.font = .boldSystemFont(ofSize: 20)
         $0.textColor = .black
     }

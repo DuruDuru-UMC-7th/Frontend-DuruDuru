@@ -62,6 +62,7 @@ class IngredientsTableViewCell: UITableViewCell {
     let recipeViewButton = UIButton().then {
         $0.setImage(.arrow2, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
+        $0.contentHorizontalAlignment = .right
     }
     
     /// 레시피
@@ -102,6 +103,7 @@ class IngredientsTableViewCell: UITableViewCell {
         recipeViewButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-16)
+            $0.width.equalTo(50)
         }
         
         recipeCollectionView.snp.makeConstraints {

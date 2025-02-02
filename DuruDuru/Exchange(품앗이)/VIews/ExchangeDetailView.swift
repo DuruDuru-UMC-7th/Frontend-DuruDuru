@@ -176,9 +176,9 @@ class ExchangeDetailView: UIView {
     
     /// 다른 품앗이 collectionView
     let otherExchangeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
-        $0.minimumInteritemSpacing = 24
+        $0.minimumInteritemSpacing = 12
         $0.minimumLineSpacing = 14
-        $0.itemSize = .init(width: 173, height: 130)
+        $0.estimatedItemSize = .init(width: (UIScreen.main.bounds.width - 56) / 2, height: 130)
     }).then {
         $0.register(OtherExchangeCollectionViewCell.self, forCellWithReuseIdentifier: OtherExchangeCollectionViewCell.identifier)
         $0.showsHorizontalScrollIndicator = false

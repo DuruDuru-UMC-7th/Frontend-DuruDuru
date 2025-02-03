@@ -183,7 +183,7 @@ class EditReceiptIngredientsView: UIView {
     func setupConstraints() {
         backButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(67)
-            $0.right.equalToSuperview().offset(-40)
+            $0.right.equalToSuperview().offset(-16)
             $0.width.height.equalTo(24)
         }
         

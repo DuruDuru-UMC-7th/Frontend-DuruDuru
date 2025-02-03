@@ -81,21 +81,33 @@ class IngredientsView: UIView {
         $0.layer.shadowRadius = 7
     }
     
-    /// 팝업 버튼 1
-    let receiptButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "AddRecipe"), for: .normal)
-        button.isHidden = true // 초기 상태 숨김
-        return button
-    }()
+    /// 영수등으로 추가하기 버튼
+    let receiptButton = UIButton().then {
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "AddRecipe")
+        $0.configuration?.imagePlacement = .leading
+        $0.configuration?.imagePadding = 5
+        $0.configuration?.attributedTitle = AttributedString("영수증으로 추가하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
+        $0.backgroundColor = UIColor(hex: 0x00C269)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
+        $0.isHidden = true
+    }
 
-    /// 팝업 버튼 2
-    let manualButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "AddButton"), for: .normal)
-        button.isHidden = true // 초기 상태 숨김
-        return button
-    }()
+    /// 직접 추가하기 버튼
+    let manualButton = UIButton().then {
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "AddButton")
+        $0.configuration?.imagePlacement = .leading
+        $0.configuration?.imagePadding = 5
+        $0.configuration?.attributedTitle = AttributedString("직접 추가하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
+        $0.backgroundColor = UIColor(hex: 0x00C269)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
+        $0.isHidden = true
+    }
     
     
     // MARK: - Init
@@ -186,16 +198,16 @@ class IngredientsView: UIView {
         }
         
         manualButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-0)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
-            $0.width.equalTo(162)
+            $0.width.equalTo(126)
             $0.height.equalTo(40)
         }
 
         receiptButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(manualButton.snp.top).offset(-10)
-            $0.width.equalTo(162)
+            $0.width.equalTo(160)
             $0.height.equalTo(40)
         }
     }

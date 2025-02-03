@@ -31,6 +31,7 @@ class RecipeViewController: UIViewController {
         
         /// 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
     
@@ -46,10 +47,9 @@ class RecipeViewController: UIViewController {
     
     /// 키보드 숨기기
     @objc private func dismissKeyboard() {
+        // 키보드가 나타나 있을 때만 숨기기
         if recipeView.searchBar.isFirstResponder {
             recipeView.searchBar.resignFirstResponder()
-        } else {
-            recipeView.searchBar.becomeFirstResponder()
         }
     }
     

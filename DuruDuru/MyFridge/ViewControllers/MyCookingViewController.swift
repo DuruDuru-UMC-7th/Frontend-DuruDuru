@@ -29,6 +29,7 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
         
         /// 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
     
@@ -41,10 +42,9 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     
     /// 키보드 숨기기
     @objc private func dismissKeyboard() {
+        // 키보드가 나타나 있을 때만 숨기기
         if myCookingView.searchBar.isFirstResponder {
             myCookingView.searchBar.resignFirstResponder()
-        } else {
-            myCookingView.searchBar.becomeFirstResponder()
         }
     }
 }

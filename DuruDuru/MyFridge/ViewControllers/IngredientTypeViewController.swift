@@ -32,6 +32,10 @@ class IngredientTypeViewController: UIViewController {
         setupDelegates()
         filterIngredients(for: nil) // 초기 상태: 모든 식재료 표시
         navigationItem.hidesBackButton = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 
     // MARK: - Setup
@@ -39,8 +43,6 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         ingredientTypeView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         ingredientTypeView.dateButton.addTarget(self, action: #selector(didTapDateButton), for: .touchUpInside)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupDelegates() {
@@ -244,10 +246,9 @@ class IngredientTypeViewController: UIViewController {
     
     /// 키보드 숨기기
     @objc private func dismissKeyboard() {
+        // 키보드가 나타나 있을 때만 숨기기
         if ingredientTypeView.searchBar.isFirstResponder {
             ingredientTypeView.searchBar.resignFirstResponder()
-        } else {
-            ingredientTypeView.searchBar.becomeFirstResponder()
         }
     }
 

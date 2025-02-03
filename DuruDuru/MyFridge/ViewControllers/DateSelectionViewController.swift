@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DateSelectionViewController: UIViewController {
+class DateSelectionViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     // MARK: - Properties
     private let dateSelectionView = DateSelectionView()
     
@@ -21,6 +21,13 @@ class DateSelectionViewController: UIViewController {
         setupActions()
         setupIconConstraints()
         navigationItem.hidesBackButton = true
+        
+        dateSelectionView.dateTextField.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        /// 이메일 텍스트 필드에 포커스
+        dateSelectionView.dateTextField.becomeFirstResponder()
     }
     
     // MARK: - Setup Methods
@@ -53,5 +60,13 @@ class DateSelectionViewController: UIViewController {
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    //키보드 delegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if(textField.isEqual(dateSelectionView.dateTextField)){
+            dateSelectionView.dateTextField.resignFirstResponder()
+        }
+        return true
     }
 }

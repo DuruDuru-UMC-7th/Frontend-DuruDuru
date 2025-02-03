@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate{
+class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     
     /// 아이디, 비번 지정 변수
@@ -51,7 +51,6 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
     }
     
     func endEdit(){
-        print("숨기긱")
         loginView.passwordTextField.resignFirstResponder()//키보드 숨기기
     }
     

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AddIngredientViewController: UIViewController {
+class AddIngredientViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     // MARK: - UI Components
     
@@ -101,6 +101,8 @@ class AddIngredientViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        
+        nameTextField.delegate = self
     }
     
     // MARK: - Setup
@@ -194,5 +196,13 @@ class AddIngredientViewController: UIViewController {
     @objc private func didTapNextButton() {
         let nextVC = IngredientTypeViewController() // 종류 설정 화면
         navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    /// textField return 누를때 동작
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if(textField.isEqual(nameTextField)){ /// 리턴 누르면
+            nameTextField.resignFirstResponder()
+        }
+        return true
     }
 }

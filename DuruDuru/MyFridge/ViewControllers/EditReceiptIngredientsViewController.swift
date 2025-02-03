@@ -103,6 +103,15 @@ class EditReceiptIngredientsViewController: UIViewController{
         editReceiptIngredientsView.addButton.isUserInteractionEnabled = true
         editReceiptIngredientsView.addButton.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
         editReceiptIngredientsView.addButton.setTitleColor(.white, for: .normal)
+        
+        /// ingredient 수정 API 요청
+        for ingredient in receiptResult.ingredients {
+            print(ingredient.receiptId)
+            print(ingredient.ingredientId)
+            print(ingredient.ingredientName)
+            print(ingredient.count)
+            patchIngredient(ingredietResult: ingredient)
+        }
     }
     
     private func setupDelegate(){
@@ -152,4 +161,42 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         
         editReceiptIngredientsView.ingredientsTableView.reloadRows(at: [indexPath], with: .none)
     }
+    
+    func patchIngredient(ingredietResult: IngredientResult) {
+        let url = "http://3.35.252.162:8080/OCR/ingredient/24"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "receiptId": ingredietResult.receiptId,
+            "memberId": 2, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        print(urlWithQuery)
+        
+        /// requestBody
+        let requestBody = PatchIngredientRequest(ingredientName: ingredietResult.ingredientName, count: ingredietResult.count)
+        
+        /// API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<IngredientResponseModel, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
 }

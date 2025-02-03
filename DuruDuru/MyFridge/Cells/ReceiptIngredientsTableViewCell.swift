@@ -172,7 +172,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
     }
     
     /// configure
-    public func configure(ingredient: ReceiptIngredient!, isEditing: Bool) {
+    public func configure(ingredient: IngredientResult!, isEditing: Bool) {
         ingredientName.text = ingredient.ingredientName
         count.text = "x" + String(ingredient.count)
         countLabel.text = String(ingredient.count)

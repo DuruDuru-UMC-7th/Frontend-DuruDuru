@@ -15,6 +15,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
     var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
     var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
+    var minorCategoryList: [String] = []
     
     // MARK: - Lifecycle
     
@@ -25,7 +26,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         setupDelegate()
         setupFloatingButtonActions()
         
-        filterIngredients(by: nil) // 초기 상태에서는 모든 식재료 보여주기
+        filterIngredients(by: nil)
         
         /// 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -63,6 +64,27 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         }
         ingredientsView.ingredientsCircleCollectionView.reloadData()
     }
+    
+    
+    // 대분류에 따른 소분류 조회 api 연결
+    private func fetchIngredientCategories(for majorCategory: String) {
+        print("API 요청: majorCategory = \(majorCategory)") // 디버깅용 출력
+        
+        APIClient.shared.getIngredientCategories(majorCategory: majorCategory) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let categories):
+                    self.minorCategoryList = categories
+                    print("소분류 카테고리: \(categories)") // ✅ 결과 확인
+                    self.ingredientsView.ingredientsCircleCollectionView.reloadData()
+                case .failure(let error):
+                    print("오류 발생: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    
     
     /// 식재료 삭제 팝업 (전체 데이터에서도 삭제)
     private func showDeletePopup(for ingredient: IngredientsModel, at indexPath: IndexPath) {
@@ -243,13 +265,14 @@ extension IngredientsViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension IngredientsViewController: UICollectionViewDelegate {
+    /// 대분류에 따른 소분류 조회 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
-            let selectedCategory = categoryData[indexPath.item]
-            filterIngredients(by: selectedCategory)
-        } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            let selectedIngredient = filteredIngredients[indexPath.row]
-            showDeletePopup(for: selectedIngredient, at: indexPath)
+            let selectedCategory = categoryData[indexPath.item].categoryName // 선택한 카테고리명 가져오기
+            print("사용자가 선택한 카테고리: \(selectedCategory)") // 디버깅 출력
+            
+            // 테고리 선택 시 API 요청 실행
+            fetchIngredientCategories(for: selectedCategory)
         }
     }
 }
@@ -271,8 +294,3 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
     }
     
 }
-
-
-
-
-

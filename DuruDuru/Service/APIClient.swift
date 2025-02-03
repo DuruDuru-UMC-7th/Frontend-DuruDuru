@@ -13,7 +13,7 @@ final class APIClient {
     private let session: Session
     
     private init() {
-       let interceptor = AuthorizationInterceptor(accessToken: "eeyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNzM4NTkxNjU3LCJleHAiOjE3Mzg1OTUyNTd9.quaNtWYfSF_n9kxl6OwXMyehtk0vKmvMVEts50b2H3A")
+        //       let interceptor = AuthorizationInterceptor(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNzM4NjAzMzY3LCJleHAiOjE3Mzg2MDY5Njd9.dqzZVqfbVSa7_4wrmvkVLW00tT3fbF3JF9_6CodHXTg")
         session = Session()
     }
     
@@ -22,13 +22,25 @@ final class APIClient {
         method: HTTPMethod,
         parameters: Parameters? = nil,
         completion: @escaping (Result<T, Error>) -> Void) {
-            session.request(url, method: method, parameters: parameters)
+            var headers: HTTPHeaders = [:]
+            headers["Content-Type"] = "application/json"
+            
+            session.request(url, method: method, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 .validate()
                 .responseDecodable(of: T.self) { response in
                     switch response.result {
                     case .success(let value):
                         completion(.success(value))
                     case .failure(let error):
+                        /// 에러 발생 시 추가 정보 출력
+                        if let httpResponse = response.response {
+                            print("Error: \(error.localizedDescription)")
+                            print("Status Code: \(httpResponse.statusCode)")
+                            if let data = response.data,
+                               let errorMessage = String(data: data, encoding: .utf8) {
+                                print("Response Data: \(errorMessage)")
+                            }
+                        }
                         completion(.failure(error))
                     }
                 }
@@ -41,34 +53,47 @@ final class APIClient {
         imageData: Data,
         completion: @escaping (Result<T, Error>) -> Void) {
             
-        let headers: HTTPHeaders = [
-            "accept": "application/json",
-            "Content-Type": "multipart/form-data"
-        ]
-        
-        session.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(Data(String(memberId).utf8),
-                                     withName: "memberId")
-            multipartFormData.append(imageData, withName: "file", fileName: "image.png", mimeType: "image/png")
-        }, to: url, method: .post, headers: headers)
-        .validate()
-        .responseDecodable(of: T.self) { response in
-            switch response.result {
-            case .success(let value):
-                completion(.success(value))
-            case .failure(let error):
-                /// 에러 발생 시 추가 정보 출력
-                if let httpResponse = response.response {
-                    print("Error: \(error.localizedDescription)")
-                    print("Status Code: \(httpResponse.statusCode)")
-                    if let data = response.data,
-                       let errorMessage = String(data: data, encoding: .utf8) {
-                        print("Response Data: \(errorMessage)")
+            let headers: HTTPHeaders = [
+                "accept": "application/json",
+                "Content-Type": "multipart/form-data"
+            ]
+            
+            session.upload(multipartFormData: { multipartFormData in
+                multipartFormData.append(Data(String(memberId).utf8),
+                                         withName: "memberId")
+                multipartFormData.append(imageData, withName: "file", fileName: "image.png", mimeType: "image/png")
+            }, to: url, method: .post, headers: headers)
+            .validate()
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let value):
+                    completion(.success(value))
+                case .failure(let error):
+                    /// 에러 발생 시 추가 정보 출력
+                    if let httpResponse = response.response {
+                        print("Error: \(error.localizedDescription)")
+                        print("Status Code: \(httpResponse.statusCode)")
+                        if let data = response.data,
+                           let errorMessage = String(data: data, encoding: .utf8) {
+                            print("Response Data: \(errorMessage)")
+                        }
                     }
+                    completion(.failure(error))
                 }
-                completion(.failure(error))
             }
         }
+    
+    /// 쿼리 문자열 생성 함수
+    func createQueryString(from parameters: [String: Any]) -> String {
+        var components: [String] = []
+        
+        for (key, value) in parameters {
+            if let valueString = "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                components.append("\(key)=\(valueString)")
+            }
+        }
+        
+        return components.joined(separator: "&")
     }
     
     /// 대분류에 따른 소분류 조회
@@ -79,9 +104,9 @@ final class APIClient {
         let baseUrl = "http://3.35.252.162:8080/ingredient/category/major-to-minor"
         
         let urlWithQuery = "\(baseUrl)?majorCategory=\(majorCategory.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
-
+        
         print("Request URL: \(urlWithQuery)") // 디버깅용 출력
-
+        
         session.request(urlWithQuery, method: .get)
             .validate()
             .responseDecodable(of: CategoryResponse.self) { response in
@@ -106,5 +131,5 @@ final class APIClient {
                 }
             }
     }
-
+    
 }

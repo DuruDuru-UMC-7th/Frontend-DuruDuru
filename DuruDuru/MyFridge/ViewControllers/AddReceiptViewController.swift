@@ -33,7 +33,7 @@ class AddReceiptViewController: UIViewController {
     private func startScanning() {
         addReceiptView.animateScanningBar()
         addReceiptView.indicator.startAnimating()
-        self.OCRScan(memberId: 5, image: self.image ?? UIImage()) /// 임시로 memberId 5로 지정
+        self.OCRScan(memberId: 2, image: self.image ?? UIImage()) /// 임시로 memberId 5로 지정
         
         /// 3초 후 스캔 완료
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

@@ -8,7 +8,7 @@
 import UIKit
 import AVFoundation
 
-class IngredientsViewController: UIViewController, UITextFieldDelegate {
+class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
@@ -24,9 +24,12 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         self.view = ingredientsView
         setupDelegate()
         setupFloatingButtonActions()
-        setupSearchBar()
         
         filterIngredients(by: nil) // 초기 상태에서는 모든 식재료 보여주기
+        
+        /// 키보드 동작을 위한 제스쳐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupDelegate() {
@@ -34,6 +37,7 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         ingredientsView.ingredientCategoryCollectionView.delegate = self
         ingredientsView.ingredientsCircleCollectionView.dataSource = self
         ingredientsView.ingredientsCircleCollectionView.delegate = self
+        ingredientsView.searchBar.delegate = self
     }
     
     private func setupFloatingButtonActions() {
@@ -91,13 +95,6 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         
         present(alertController, animated: true, completion: nil)
     }
-    
-    // 식재료 검색
-    private func setupSearchBar() {
-        ingredientsView.searchBar.delegate = self
-        ingredientsView.searchBar.addTarget(self, action: #selector(didChangeSearchText), for: .editingChanged)
-    }
-    
     
     @objc private func togglePopupButtons() {
         let isHidden = ingredientsView.receiptButton.isHidden
@@ -174,9 +171,9 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         ingredientsView.ingredientCategoryCollectionView.reloadData()
     }
     
-    // 식재료 이름에 따른 필터링
-    @objc private func didChangeSearchText() {
-        guard let searchText = ingredientsView.searchBar.text, !searchText.isEmpty else {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // 텍스트가 변경될 때 호출
+        guard !searchText.isEmpty else {
             filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
             return
         }
@@ -185,8 +182,23 @@ class IngredientsViewController: UIViewController, UITextFieldDelegate {
         filteredIngredients = allIngredientData.flatMap { $0.ingredients }
             .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
             .filter { $0.name.contains(searchText) }
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        /// 키보드 숨기기
+        ingredientsView.searchBar.resignFirstResponder()
         
+        /// 검색 동작
         ingredientsView.ingredientsCircleCollectionView.reloadData()
+    }
+    
+    /// 키보드 숨기기
+    @objc private func dismissKeyboard() {
+        if ingredientsView.searchBar.isFirstResponder {
+            ingredientsView.searchBar.resignFirstResponder()
+        } else {
+            ingredientsView.searchBar.becomeFirstResponder()
+        }
     }
     
 }
@@ -260,27 +272,7 @@ extension IngredientsViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
-//extension IngredientsViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-//    func imagePickerController(
-//        _ picker: UIImagePickerController,
-//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
-//    ) {
-//        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-//            picker.dismiss(animated: true)
-//            return
-//        }
-//
-//        picker.dismiss(animated: true) {
-//            // PhotoPreviewViewController를 모달로 표시
-//            let addReceiptCompleteVC = AddReceiptCompleteViewController()
-//            addReceiptCompleteVC.image = image // 선택한 이미지 전달
-//
-//            // 모달 방식으로 뷰 컨트롤러 표시
-//            addReceiptCompleteVC.modalPresentationStyle = .fullScreen // 전체 화면 모달로 설정
-//            self.present(addReceiptCompleteVC, animated: true, completion: nil)
-//        }
-//    }
-//}
+
 
 
 

@@ -28,15 +28,29 @@ class RecipeViewController: UIViewController {
         
         self.title = (ingredientName ?? "없음") + "을 사용하는 레시피"
         setupDelegate()
+        
+        /// 키보드 동작을 위한 제스쳐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupDelegate(){
         recipeView.recipeTableView.dataSource = self
         recipeView.recipeTableView.delegate = self
+        recipeView.searchBar.delegate = self
     }
     
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    /// 키보드 숨기기
+    @objc private func dismissKeyboard() {
+        if recipeView.searchBar.isFirstResponder {
+            recipeView.searchBar.resignFirstResponder()
+        } else {
+            recipeView.searchBar.becomeFirstResponder()
+        }
     }
     
 }
@@ -58,6 +72,7 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
 //        let selectedRecipe = recipes[indexPath.row]
         let recipeDetailVC = RecipeDetailViewController()
         
@@ -67,3 +82,15 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         navigationController?.pushViewController(recipeDetailVC, animated: true)
     }
 }
+
+extension RecipeViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        /// 키보드 숨기기
+        recipeView.searchBar.resignFirstResponder()
+        
+        /// 검색 동작
+    }
+    
+}
+

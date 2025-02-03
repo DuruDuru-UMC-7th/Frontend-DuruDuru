@@ -9,8 +9,8 @@
 import UIKit
 import SnapKit
 
-class HomeViewController: UIViewController {
-
+class HomeViewController: UIViewController, UISearchBarDelegate {
+    
     // MARK: - UI Components
     
     private let scrollView = UIScrollView()
@@ -20,7 +20,7 @@ class HomeViewController: UIViewController {
     private let nearbyView = NearbyView()
     private let togetherEatView = TogetherEatView()
     private let homeRecipeView = HomeRecipeView()
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -28,6 +28,10 @@ class HomeViewController: UIViewController {
         setupUI()
         setupConstraints()
         setUpUIBar()
+        setupDelegate()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup UI
@@ -61,8 +65,29 @@ class HomeViewController: UIViewController {
     
     // MARK: - Function
     
+    /// delegate
+    private func setupDelegate() {
+        nearbyView.searchBar.delegate = self
+    }
+    
     @objc func alarmButtonTapped() {
         print("알람 버튼 눌림")
+    }
+    
+    /// 키보드 delegate
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        /// 키보드 숨기기
+        searchBar.resignFirstResponder()
+        
+        /// 검색 동작
+    }
+
+    @objc private func dismissKeyboard() {
+        if nearbyView.searchBar.isFirstResponder {
+            nearbyView.searchBar.resignFirstResponder()
+        } else {
+            nearbyView.searchBar.becomeFirstResponder()
+        }
     }
     
     // MARK: - Setup Constraints

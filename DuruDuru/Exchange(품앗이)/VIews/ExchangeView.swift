@@ -63,18 +63,22 @@ class ExchangeView: UIView {
     let shareButton = UIButton().then {
         $0.setTitle("나눔", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.backgroundColor = UIColor(hex: 0x00C269)
         $0.layer.cornerRadius = 6
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        $0.layer.borderColor = UIColor(hex: 0x00C269).cgColor
+        $0.layer.borderWidth = 1
     }
     
     /// 교환 버튼
     let exchangeButton = UIButton().then {
         $0.setTitle("교환", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
+        $0.backgroundColor = .white
         $0.layer.cornerRadius = 6
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        $0.layer.borderColor = UIColor(hex: 0x37383C, alpha: 0.16).cgColor
+        $0.layer.borderWidth = 1
     }
     
     /// 품앗이 테이블 뷰
@@ -91,18 +95,34 @@ class ExchangeView: UIView {
         $0.layer.shadowColor = UIColor.black.cgColor
         $0.layer.shadowOffset = CGSize(width: 0, height: 2)
         $0.layer.shadowOpacity = 0.3
-        $0.layer.shadowRadius = 4
+        $0.layer.shadowRadius = 7
     }
     
     /// 품앗이 등록 버튼
     let registerPoomButton = UIButton().then {
-        $0.setImage(UIImage(named: "AddPoom"), for: .normal)
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "AddPoom")
+        $0.configuration?.imagePlacement = .leading
+        $0.configuration?.imagePadding = 5
+        $0.configuration?.attributedTitle = AttributedString("품앗이 등록하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
+        $0.backgroundColor = UIColor(hex: 0x00C269)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
         $0.isHidden = true
     }
     
     /// 함께 먹자 등록 버튼
     let registerTogetherButton = UIButton().then {
-        $0.setImage(UIImage(named: "AddTogether"), for: .normal)
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "AddTogether")
+        $0.configuration?.imagePlacement = .leading
+        $0.configuration?.imagePadding = 5
+        $0.configuration?.attributedTitle = AttributedString("함께 먹자 등록하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
+        $0.backgroundColor = UIColor(hex: 0x00C269)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
         $0.isHidden = true
     }
     
@@ -188,20 +208,20 @@ class ExchangeView: UIView {
         }
         
         floatingButton.snp.makeConstraints {
-            $0.width.height.equalTo(68)
-            $0.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-5)
+            $0.width.height.equalTo(95)
+            $0.trailing.equalToSuperview().offset(-5)
+            $0.bottom.equalToSuperview().offset(-10)
         }
         
         registerTogetherButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-10)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
             $0.width.equalTo(156)
             $0.height.equalTo(40)
         }
         
         registerPoomButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-10)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(registerTogetherButton.snp.top).offset(-10)
             $0.width.equalTo(139)
             $0.height.equalTo(40)

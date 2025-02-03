@@ -45,10 +45,24 @@ class ExchangeTableViewCell: UITableViewCell {
     
     // MARK: - Components
     
+    let container = UIView().then {
+        $0.layer.cornerRadius = 10
+    }
+    
+    let statusLabel = UILabel().then {
+        $0.text = "품앗이중"
+        $0.font = .systemFont(ofSize: 8)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
+        $0.textColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.backgroundColor = .white
+        $0.textAlignment = .center
+    }
+    
     /// 대표 이미지
     let titleImage = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.layer.cornerRadius = 12
+        $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
         $0.image = .duruDuruLogo
     }
@@ -114,12 +128,21 @@ class ExchangeTableViewCell: UITableViewCell {
         $0.backgroundColor = UIColor(hex: 0xDCDCDC, alpha: 1.0)
     }
     
+    let moreButton = UIButton().then {
+        $0.setImage(.moreButton.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.28)
+    }
+    
     // MARK: - Function
     
     /// 컴포넌트 생성
     private func addComponents() {
+        addSubview(container)
+        container.addSubview(titleImage)
+        container.addSubview(statusLabel)
+        
         [
-            titleImage,
+            container,
             name,
             location,
             date,
@@ -128,7 +151,8 @@ class ExchangeTableViewCell: UITableViewCell {
             count,
             remain,
             remainDate,
-            dividedLine
+            dividedLine,
+            moreButton
         ].forEach {
             addSubview($0)
         }
@@ -137,6 +161,17 @@ class ExchangeTableViewCell: UITableViewCell {
     private func constraints() {
         
         titleImage.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        statusLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(4)
+            $0.left.equalToSuperview().offset(4)
+            $0.width.equalTo(40)
+            $0.height.equalTo(16)
+        }
+        
+        container.snp.makeConstraints {
             $0.top.equalToSuperview().offset(30)
             $0.left.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-30)
@@ -181,6 +216,11 @@ class ExchangeTableViewCell: UITableViewCell {
         remainDate.snp.makeConstraints {
             $0.top.equalTo(count.snp.bottom).offset(5)
             $0.left.equalTo(remain.snp.right).offset(10)
+        }
+        
+        moreButton.snp.makeConstraints {
+            $0.top.equalTo(container.snp.top).offset(4)
+            $0.right.equalToSuperview().offset(-8)
         }
         
         dividedLine.snp.makeConstraints {

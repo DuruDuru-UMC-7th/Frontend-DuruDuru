@@ -33,7 +33,7 @@ class RecipeDetailView: UIView {
     
     /// 스크롤 뷰
     let scrollView = UIScrollView().then {
-        $0.showsVerticalScrollIndicator = true
+        $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
     }
     

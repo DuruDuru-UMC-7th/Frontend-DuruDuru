@@ -17,7 +17,8 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addComponents()
         constraints()
-        applyCornerRadius()
+        layer.cornerRadius = 10
+        layer.masksToBounds = true
         layer.borderWidth = 1
         layer.borderColor = UIColor(hex: 0x70737C14, alpha: 0.08)?.cgColor
     }
@@ -27,6 +28,20 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Components
+    
+    let container = UIView().then {
+        $0.layer.cornerRadius = 10
+    }
+    
+    let statusLabel = UILabel().then {
+        $0.text = "품앗이중"
+        $0.font = .systemFont(ofSize: 8)
+        $0.layer.cornerRadius = 8
+        $0.layer.masksToBounds = true
+        $0.textColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.backgroundColor = .white
+        $0.textAlignment = .center
+    }
     
     /// 대표 이미지
     let titleImage = UIImageView().then {
@@ -53,19 +68,38 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
         $0.text = "나눔"
     }
     
+    let moreButton = UIButton().then {
+        $0.setImage(.moreButton.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.28)
+    }
+    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(titleImage)
+        addSubview(container)
+        container.addSubview(titleImage)
+        container.addSubview(statusLabel)
         addSubview(name)
         addSubview(date)
         addSubview(isChange)
+        addSubview(moreButton)
     }
     
     /// 오토레이아웃 설정
     private func constraints() {
         titleImage.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        statusLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(4)
+            $0.left.equalToSuperview().offset(4)
+            $0.width.equalTo(40)
+            $0.height.equalTo(16)
+        }
+        
+        container.snp.makeConstraints {
             $0.left.equalToSuperview()
             $0.top.equalToSuperview()
             $0.bottom.equalToSuperview()
@@ -74,7 +108,7 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
         
         name.snp.makeConstraints {
             $0.left.equalTo(titleImage.snp.right).offset(15)
-            $0.top.equalToSuperview().offset(6)
+            $0.top.equalToSuperview().offset(9)
         }
         
         date.snp.makeConstraints {
@@ -86,23 +120,10 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
             $0.left.equalTo(titleImage.snp.right).offset(15)
             $0.top.equalTo(date.snp.bottom).offset(10)
         }
-    }
-    
-    // MARK: - Apply Corner Radius
-    
-    private func applyCornerRadius() {
-        let path = UIBezierPath(roundedRect: bounds,
-                                byRoundingCorners: [.topLeft, .bottomLeft],
-                                cornerRadii: CGSize(width: 10, height: 10))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        layer.mask = mask
-    }
-    
-    // MARK: - Layout
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        applyCornerRadius()
+        
+        moreButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(9)
+            $0.right.equalToSuperview().offset(-8)
+        }
     }
 }

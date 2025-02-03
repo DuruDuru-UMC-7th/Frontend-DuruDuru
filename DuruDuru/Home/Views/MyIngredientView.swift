@@ -16,22 +16,6 @@ class MyIngredientView: UIView {
     
     // MARK: - UI Components
     
-    /// 상단 로고
-    private lazy var logoImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "HomeLogo")
-        return imageView
-    }()
-    
-    /// 상단 알림 아이콘
-    private lazy var bellImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "Bell")
-        return imageView
-    }()
-    
     /// "나의 식재료" 제목
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -88,8 +72,6 @@ class MyIngredientView: UIView {
     // MARK: - Setup UI
     
     private func setupUI() {
-        addSubview(logoImage)
-        addSubview(bellImage)
         addSubview(titleLabel)
         addSubview(openFridgeButton)
         addSubview(collectionView)
@@ -98,24 +80,10 @@ class MyIngredientView: UIView {
     // MARK: - Setup Constraints
     
     private func setupConstraints() {
-        /// 로고 및 알림 아이콘 배치
-        logoImage.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.equalToSuperview().offset(16.5)
-            $0.width.equalTo(96)
-            $0.height.equalTo(24)
-        }
-        
-        bellImage.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.right.equalToSuperview().offset(-16.5)
-            $0.width.equalTo(24)
-            $0.height.equalTo(24)
-        }
         
         /// 나의 식재료 제목 & 버튼 배치
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(logoImage.snp.bottom).offset(30)
+            $0.top.equalToSuperview().offset(20)
             $0.left.equalToSuperview().offset(16)
         }
         

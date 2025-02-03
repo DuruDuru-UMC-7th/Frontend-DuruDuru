@@ -27,9 +27,25 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
+        setUpUIBar()
     }
     
     // MARK: - Setup UI
+    
+    private func setUpUIBar(){
+        /// 상단 로고
+        let logoImage = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
+            $0.image = UIImage(named: "HomeLogo")
+        }
+        let titleItem = UIBarButtonItem(customView: logoImage)
+        self.navigationItem.leftBarButtonItem = titleItem
+        
+        /// 상단 알림 아이콘
+        let alarmButton = UIBarButtonItem(image: .bell, style: .plain, target: self, action: #selector(alarmButtonTapped))
+        alarmButton.tintColor = .black
+        self.navigationItem.rightBarButtonItem = alarmButton
+    }
     
     private func setupUI() {
         view.backgroundColor = .white
@@ -41,6 +57,12 @@ class HomeViewController: UIViewController {
         contentView.addSubview(nearbyView)
         contentView.addSubview(togetherEatView)
         contentView.addSubview(homeRecipeView)
+    }
+    
+    // MARK: - Function
+    
+    @objc func alarmButtonTapped() {
+        print("알람 버튼 눌림")
     }
     
     // MARK: - Setup Constraints

@@ -32,6 +32,10 @@ class IngredientTypeViewController: UIViewController {
         setupDelegates()
         filterIngredients(for: nil) // 초기 상태: 모든 식재료 표시
         navigationItem.hidesBackButton = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 
     // MARK: - Setup
@@ -46,6 +50,7 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.ingredientCategoryCollectionView.dataSource = self
         ingredientTypeView.ingredientsCircleCollectionView.delegate = self
         ingredientTypeView.ingredientsCircleCollectionView.dataSource = self
+        ingredientTypeView.searchBar.delegate = self
     }
     
     // MARK: - Filtering
@@ -238,6 +243,14 @@ class IngredientTypeViewController: UIViewController {
         // "날짜 설정하러 가기" 버튼 다시 보이기
         ingredientTypeView.dateButton.isHidden = false
     }
+    
+    /// 키보드 숨기기
+    @objc private func dismissKeyboard() {
+        // 키보드가 나타나 있을 때만 숨기기
+        if ingredientTypeView.searchBar.isFirstResponder {
+            ingredientTypeView.searchBar.resignFirstResponder()
+        }
+    }
 
 }
 
@@ -307,5 +320,15 @@ extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: cellWidth, height: cellWidth)
         }
         return CGSize.zero
+    }
+}
+
+extension IngredientTypeViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        /// 키보드 숨기기
+        ingredientTypeView.searchBar.resignFirstResponder()
+        
+        /// 검색 동작
     }
 }

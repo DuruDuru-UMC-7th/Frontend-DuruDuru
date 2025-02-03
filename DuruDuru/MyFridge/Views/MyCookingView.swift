@@ -23,24 +23,23 @@ class MyCookingView: UIView {
     
     // MARK: - Components
     
-    /// 검색창 라벨
-    let searchBarLabel = UILabel().then {
-        $0.text = "사용할 식재료를 검색하세요"
-        $0.font = UIFont.systemFont(ofSize: 14)
-        $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
-    }
-    
-    /// 검색창
-    let searchBar = UITextField().then {
-        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
+    let searchBarContainer = UIView().then {
         $0.layer.cornerRadius = 10
+        $0.layer.masksToBounds = true
+        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
     }
     
-    /// 검색창 이미지
-    let searchImageView = UIImageView().then {
-        $0.image = UIImage(named: "Search")
-        $0.contentMode = .scaleAspectFit
-        $0.translatesAutoresizingMaskIntoConstraints = false
+    /// 검색 바
+    let searchBar = UISearchBar().then {
+        $0.placeholder = "사용할 식재료를 검색하세요"
+        $0.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        $0.backgroundColor = .clear
+        // 텍스트 필드 접근
+        if let textField = $0.value(forKey: "searchField") as? UITextField {
+            textField.font = UIFont.systemFont(ofSize: 14)
+            textField.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
+            textField.backgroundColor = .clear
+        }
     }
     
     let allButton = UIButton().then {
@@ -78,9 +77,8 @@ class MyCookingView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(searchBar)
-        searchBar.addSubview(searchImageView)
-        searchBar.addSubview(searchBarLabel)
+        addSubview(searchBarContainer)
+        searchBarContainer.addSubview(searchBar)
         addSubview(allButton)
         addSubview(ingredientCategoryCollectionView)
         addSubview(myRecipe)
@@ -89,27 +87,19 @@ class MyCookingView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints() {
-        searchBar.snp.makeConstraints {
+        searchBarContainer.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(36)
         }
         
-        searchImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(7)
-            $0.bottom.equalToSuperview().offset(-7)
-            $0.left.equalToSuperview().offset(8)
-        }
-        
-        searchBarLabel.snp.makeConstraints {
-            $0.left.equalTo(searchImageView.snp.right).offset(5)
-            $0.top.equalToSuperview().offset(7)
-            $0.bottom.equalToSuperview().offset(-7)
+        searchBar.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         allButton.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(10)
+            $0.top.equalTo(searchBarContainer.snp.bottom).offset(10)
             $0.left.equalToSuperview().offset(16)
             $0.height.width.equalTo(26)
         }

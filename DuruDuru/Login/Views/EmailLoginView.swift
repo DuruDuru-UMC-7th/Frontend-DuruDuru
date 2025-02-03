@@ -49,13 +49,13 @@ class EmailLoginView: UIView {
     private lazy var emailLabel: UILabel = makeLabel(title: "이메일")
     
     /// 이메일 입력 텍스트필드
-    public lazy var emailTextField: UITextField = textField(text: "이메일을 입력하세요")
+    lazy var emailTextField: UITextField = textField(text: "이메일을 입력하세요")
     
     /// 비밀번호 라벨
     private lazy var passwordLabel: UILabel = makeLabel(title: "비밀번호")
     
     /// 비밀번호 입력 텍스트필드
-    public lazy var passwordTextField: InputTextfield = InputTextfield()
+    lazy var passwordTextField: InputTextfield = InputTextfield()
     
     
     /// 아직 회원이 아니신가요? 라벨

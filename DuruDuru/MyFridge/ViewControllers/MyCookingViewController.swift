@@ -26,12 +26,26 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
         myCookingView = MyCookingView(frame: self.view.bounds)
         self.view = myCookingView
         setupDelegate()
+        
+        /// 키보드 동작을 위한 제스쳐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupDelegate(){
         myCookingView.ingredientCategoryCollectionView.dataSource = self
         myCookingView.ingredientCategoryCollectionView.delegate = self
         myCookingView.ingredientsTableView.dataSource = self
+        myCookingView.searchBar.delegate = self
+    }
+    
+    /// 키보드 숨기기
+    @objc private func dismissKeyboard() {
+        // 키보드가 나타나 있을 때만 숨기기
+        if myCookingView.searchBar.isFirstResponder {
+            myCookingView.searchBar.resignFirstResponder()
+        }
     }
 }
 
@@ -92,6 +106,17 @@ extension MyCookingViewController: IngredientsTableViewCellDelegate {
         recipeViewController.recipes = data[indexPath.row].recipes
         navigationController?.pushViewController(recipeViewController, animated: true)
     }
+}
+
+extension MyCookingViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        /// 키보드 숨기기
+        myCookingView.searchBar.resignFirstResponder()
+        
+        /// 검색 동작
+    }
+    
 }
 
 /// 레시피 화면 전환을 위한 delegate 프로토콜

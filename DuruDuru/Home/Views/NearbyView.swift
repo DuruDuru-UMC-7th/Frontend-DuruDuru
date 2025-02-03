@@ -22,13 +22,24 @@ class NearbyView: UIView {
         return label
     }()
     
+    let searchBarContainer = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.layer.masksToBounds = true
+        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
+    }
+    
     /// 검색 바
-    private let searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "필요한 식재료를 검색하세요"
-        searchBar.searchBarStyle = .minimal
-        return searchBar
-    }()
+    let searchBar = UISearchBar().then {
+        $0.placeholder = "필요한 식재료를 검색하세요"
+        $0.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        $0.backgroundColor = .clear
+        // 텍스트 필드 접근
+        if let textField = $0.value(forKey: "searchField") as? UITextField {
+            textField.font = UIFont.systemFont(ofSize: 14)
+            textField.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
+            textField.backgroundColor = .clear
+        }
+    }
     
     /// "최신순" 버튼
     let recentButton = UIButton().then {
@@ -79,7 +90,8 @@ class NearbyView: UIView {
     
     private func setupUI() {
         addSubview(titleLabel)
-        addSubview(searchBar)
+        addSubview(searchBarContainer)
+        searchBarContainer.addSubview(searchBar)
         addSubview(recentButton)
         addSubview(listStackView)
         addSubview(moreButton)
@@ -95,11 +107,15 @@ class NearbyView: UIView {
             $0.height.equalTo(22)
         }
         
-        searchBar.snp.makeConstraints {
+        searchBarContainer.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(15)
-            $0.left.right.equalToSuperview().inset(6)
+            $0.left.right.equalToSuperview().inset(16)
             $0.width.equalTo(370)
             $0.height.equalTo(36)
+        }
+        
+        searchBar.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         recentButton.snp.makeConstraints {

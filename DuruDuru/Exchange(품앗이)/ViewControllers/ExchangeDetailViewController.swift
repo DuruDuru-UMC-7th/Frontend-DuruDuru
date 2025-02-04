@@ -82,7 +82,7 @@ class ExchangeDetailViewController: UIViewController {
     private func getTrade(tradeId: Int) {
         let url = "http://3.35.252.162:8080/trade/\(tradeId)"
         
-        APIClient.shared.request(url, method: .get, parameters: nil) { (result: Result<TradeModel, Error>) in
+        APIClient.shared.request(url, method: .get, parameters: nil) { (result: Result<TradeResponse, Error>) in
             switch result {
             case .success(let response):
                 if let trade = response.result {

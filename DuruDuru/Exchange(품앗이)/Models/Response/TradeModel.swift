@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct TradeModel: Codable {
+struct TradeResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: TradeResult?
+    let result: TradeModel?
 }
 
-struct TradeResult: Codable {
+struct TradeModel: Codable {
     let tradeId: Int
     let memberId: Int
     let ingredientId: Int

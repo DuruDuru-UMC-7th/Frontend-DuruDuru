@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct ReceiptModel: Codable {
+struct ReceiptResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String

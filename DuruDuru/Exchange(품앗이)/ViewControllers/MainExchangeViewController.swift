@@ -7,13 +7,14 @@
 
 import UIKit
 
-class MainExchangeViewController: UIViewController {
+class MainExchangeViewController: UIViewController, SettingTownDelegate {
     
     // MARK: - Properties
     
     var mainExchangeView: MainExchangeView!
     private var exchangeVC: ExchangeViewController!
     private var eatTogetherVC: EatTogetherViewController!
+    var isTownRegistered = false // 동네 등록 여부 변수
     
     // MARK: - Lifecycle
     
@@ -34,7 +35,6 @@ class MainExchangeViewController: UIViewController {
     private func setupAction() {
         /// segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정
         mainExchangeView.segmentedControl.addTarget(self, action: #selector(segmentChanged(segment:)),for: .valueChanged)
-        
         mainExchangeView.locationButton.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
     }
     
@@ -62,22 +62,24 @@ class MainExchangeViewController: UIViewController {
     
     /// 동네 설정 버튼 클릭 시 동작
     @objc private func didTapLocationButton() {
-        
-        print("동네 설정 버튼 클릭")
-        
         let settingTownVC = SettingTownViewController()
+        settingTownVC.delegate = self
         settingTownVC.hidesBottomBarWhenPushed = true
+        settingTownVC.isTownRegistered = self.isTownRegistered
         navigationController?.pushViewController(settingTownVC, animated: true)
     }
     
     func setUpUIBar() {
-        
         let townButton = UIBarButtonItem(customView: mainExchangeView.locationButton)
-        
         let downButton = UIBarButtonItem(customView: mainExchangeView.downImage)
         
-        // 상단 바에 버튼 추가
-        self.navigationItem.leftBarButtonItems = [townButton, downButton]
+        // UIStackView를 사용하여 간격 조정
+        let stackView = UIStackView(arrangedSubviews: [townButton.customView!, downButton.customView!])
+        stackView.axis = .horizontal
+        stackView.spacing = 0 
+        
+        // 상단 바에 스택 뷰 추가
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: stackView)
     }
     
     /// 자식 뷰 컨트롤러 바꾸기
@@ -108,4 +110,8 @@ class MainExchangeViewController: UIViewController {
         viewController.didMove(toParent: self)
     }
     
+    func didUpdateTownData(dong: String, isTownRegistered: Bool) {
+        mainExchangeView.locationButton.setTitle(dong, for: .normal)
+        self.isTownRegistered = isTownRegistered
+    }
 }

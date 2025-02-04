@@ -26,7 +26,7 @@ class MainExchangeView: UIView {
     
     /// 주소 바꾸기 버튼
     let locationButton = UIButton().then {
-        $0.setTitle("공릉동", for: .normal)
+        $0.setTitle("내 동네 설정", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
     }

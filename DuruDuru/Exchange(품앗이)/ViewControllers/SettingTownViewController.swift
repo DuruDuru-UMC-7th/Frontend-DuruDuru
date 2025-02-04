@@ -15,12 +15,15 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     
     private var settingTownView: SettingTownView!
     
-    /// 초기위치(서울역) 위도, 경도 값
+    // 초기위치(서울역) 위도, 경도 값
     let defaultLocation = CLLocationCoordinate2D(latitude: 37.55545687279665, longitude: 126.97257243324101)
     let defaultSpanValue = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
+    weak var delegate: SettingTownDelegate?
+    var setTownRequest: SetTownRequest!
+    var isTownRegistered: Bool! // 동네 등록 여부 변수
     
     // MARK: - Lifecycle
     
@@ -39,12 +42,13 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         settingTownView.map.setUserTrackingMode(.follow, animated: true) /// 유저의 현재 위치로 지도 이동
         
         setUpUIBar()
+        
+        settingTownView.completeSettingTownButton.addTarget(self, action: #selector(settingButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Functions
     
     func setUpUIBar() {
-        
         /// 뒤로 가기 버튼
         let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped))
         self.navigationItem.leftBarButtonItem = backButton
@@ -57,9 +61,26 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         self.navigationController?.popViewController(animated: true)
     }
     
+    @objc func settingButtonTapped() {
+        if isTownRegistered {
+            // 동네 수정 API 호출
+            updateTown(setTownRequest: self.setTownRequest)
+        } else {
+            // 동네 등록 API 호출
+            setTown(setTownRequest: self.setTownRequest)
+        }
+        delegate?.didUpdateTownData(dong: self.setTownRequest.eupmyeondong, isTownRegistered: true)
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     // 위치 업데이트 메서드
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            
+            // 위도 경도
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            
             // 역 지오코딩 수행
             geocoder.reverseGeocodeLocation(location) { placeMarks, error in
                 guard let placeMarks = placeMarks, error == nil else {
@@ -76,9 +97,19 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
                     if let locality = placeMark.locality, let subLocality = placeMark.subLocality, let administrativeArea = placeMark.administrativeArea {
                         // '시'로 끝나는 경우 제외
                         if !administrativeArea.hasSuffix("시") {
-                            locationValue1 += "\(administrativeArea) \(locality) \(subLocality)" // 시
+                            locationValue1 += "\(administrativeArea) \(locality) \(subLocality)"
+                            self.setTownRequest = SetTownRequest(latitude: Double(latitude),
+                                                                 longitude: Double(longitude),
+                                                                 sido: administrativeArea,
+                                                                 sigungu: locality,
+                                                                 eupmyeondong: subLocality)
                         } else {
-                            locationValue1 += "\(locality) \(subLocality)" // 시를 제외하고 추가
+                            locationValue1 += "\(locality) \(subLocality)"
+                            self.setTownRequest = SetTownRequest(latitude: Double(latitude),
+                                                                 longitude: Double(longitude),
+                                                                 sido: administrativeArea,
+                                                                 sigungu: locality,
+                                                                 eupmyeondong: subLocality)
                         }
                     }
                     
@@ -118,4 +149,88 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         print("위치 업데이트 실패: \(error.localizedDescription)")
     }
     
+    // MARK: - API 관련
+    
+    // 동네 등록 API
+    func setTown(setTownRequest: SetTownRequest) {
+        let url = "http://3.35.252.162:8080/town/"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 3, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        /// requestBody
+        let requestBody = SetTownRequest(latitude: setTownRequest.latitude,
+                                         longitude: setTownRequest.longitude,
+                                         sido: setTownRequest.sido,
+                                         sigungu: setTownRequest.sigungu,
+                                         eupmyeondong: setTownRequest.eupmyeondong)
+        
+        /// API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .post, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!동네 등록 성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+    // 동네 수정 API
+    func updateTown(setTownRequest: SetTownRequest) {
+        let url = "http://3.35.252.162:8080/town/"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 3, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        /// requestBody
+        let requestBody = SetTownRequest(latitude: setTownRequest.latitude,
+                                         longitude: setTownRequest.longitude,
+                                         sido: setTownRequest.sido,
+                                         sigungu: setTownRequest.sigungu,
+                                         eupmyeondong: setTownRequest.eupmyeondong)
+        
+        /// API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!동네 수정 성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+}
+
+protocol SettingTownDelegate: AnyObject {
+    func didUpdateTownData(dong: String, isTownRegistered: Bool)
 }

@@ -162,6 +162,8 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         editReceiptIngredientsView.ingredientsTableView.reloadRows(at: [indexPath], with: .none)
     }
     
+    // MARK: - API 관련
+    
     func patchIngredient(ingredietResult: IngredientResult) {
         let url = "http://3.35.252.162:8080/OCR/ingredient/24"
         

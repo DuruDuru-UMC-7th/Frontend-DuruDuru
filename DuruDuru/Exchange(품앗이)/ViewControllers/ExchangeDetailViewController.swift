@@ -9,15 +9,30 @@ import UIKit
 
 class ExchangeDetailViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private var exchangeDetailView: ExchangeDetailView!
     private var pageControl: UIPageControl!
     private var images: [UIImage] = [.thumbnail, .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
     var tradeId: Int!
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         exchangeDetailView = ExchangeDetailView(frame: self.view.bounds)
         self.view = exchangeDetailView
+        
+        setUpUIBar()
+        setUpdelegate()
+        exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10) /// 다른 품앗이보기 height 설정
+        exchangeDetailView.pageControl.numberOfPages = images.count /// 이미지 pageControl
+        getTrade(tradeId: tradeId) /// API 요청
+    }
+    
+    // MARK: - Functions
+    
+    func setUpUIBar() {
         
         /// 상단네비게이션바 투명으로
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear
@@ -41,11 +56,6 @@ class ExchangeDetailViewController: UIViewController {
         
         /// 오른쪽 바 버튼 항목 설정
         self.navigationItem.rightBarButtonItems = [space2, moreButton, exportButton]
-        
-        setUpdelegate()
-        exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10)
-        exchangeDetailView.pageControl.numberOfPages = images.count
-        getTrade(tradeId: tradeId)
     }
     
     @objc func backButtonTapped() {
@@ -67,6 +77,8 @@ class ExchangeDetailViewController: UIViewController {
         exchangeDetailView.otherExchangeCollectionView.delegate = self
     }
     
+    // MARK: - API 관련
+    
     private func getTrade(tradeId: Int) {
         let url = "http://3.35.252.162:8080/trade/\(tradeId)"
         
@@ -84,6 +96,8 @@ class ExchangeDetailViewController: UIViewController {
         }
     }
 }
+
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension ExchangeDetailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     

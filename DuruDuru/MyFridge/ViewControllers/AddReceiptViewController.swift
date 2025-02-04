@@ -13,7 +13,7 @@ class AddReceiptViewController: UIViewController {
     
     var image: UIImage?
     private var addReceiptView: AddReceiptView!
-    private var receipt: ReceiptModel!
+    private var receipt: ReceiptResult!
     
     // MARK: - Lifecycle
     
@@ -44,18 +44,18 @@ class AddReceiptViewController: UIViewController {
             
             /// 인식 완료 화면 2초 보여주고 화면 전환
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.scanningCompleted(response: self.receipt)
+                self.scanningCompleted(receipt: self.receipt)
             }
         }
     }
  
-    private func scanningCompleted(response: ReceiptModel) {
+    private func scanningCompleted(receipt: ReceiptResult) {
         addReceiptView.stopScanningBarAnimation()
         addReceiptView.indicator.stopAnimating()
         
         /// 영수증 수정 화면으로 전환
         let editReceiptIngredientsVC = EditReceiptIngredientsViewController()
-        editReceiptIngredientsVC.receiptResult = response.result
+        editReceiptIngredientsVC.receiptResult = receipt
         editReceiptIngredientsVC.modalPresentationStyle = .fullScreen
         present(editReceiptIngredientsVC, animated: true, completion: nil)
     }
@@ -77,11 +77,11 @@ class AddReceiptViewController: UIViewController {
         }
         
         // multipart/form-data 요청
-        APIClient.shared.upload(url: url, memberId: memberId, imageData: imageData) { (result: Result<ReceiptModel, Error>) in
+        APIClient.shared.upload(url: url, memberId: memberId, imageData: imageData) { (result: Result<ReceiptResponse, Error>) in
             switch result {
             case .success(let response):
                 print("성공")
-                self.receipt = response
+                self.receipt = response.result
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
             }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct IngredientResponseModel: Codable {
+struct IngredientResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String

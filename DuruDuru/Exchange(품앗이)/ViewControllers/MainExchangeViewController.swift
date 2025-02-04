@@ -8,18 +8,21 @@
 import UIKit
 
 class MainExchangeViewController: UIViewController {
-
-    // MARK: - Init
     
-    private var mainExchangeView: MainExchangeView!
+    // MARK: - Properties
+    
+    var mainExchangeView: MainExchangeView!
     private var exchangeVC: ExchangeViewController!
     private var eatTogetherVC: EatTogetherViewController!
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         mainExchangeView = MainExchangeView(frame: self.view.bounds)
         self.view = mainExchangeView
+        setUpUIBar()
         setupAction()
         exchangeVC = ExchangeViewController()
         eatTogetherVC = EatTogetherViewController()
@@ -30,11 +33,9 @@ class MainExchangeViewController: UIViewController {
     
     private func setupAction() {
         /// segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정
-        mainExchangeView.segmentedControl.addTarget(
-            self,
-            action: #selector(segmentChanged(segment:)),
-            for: .valueChanged
-        )
+        mainExchangeView.segmentedControl.addTarget(self, action: #selector(segmentChanged(segment:)),for: .valueChanged)
+        
+        mainExchangeView.locationButton.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
     }
     
     @objc
@@ -57,6 +58,26 @@ class MainExchangeViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
+    }
+    
+    /// 동네 설정 버튼 클릭 시 동작
+    @objc private func didTapLocationButton() {
+        
+        print("동네 설정 버튼 클릭")
+        
+        let settingTownVC = SettingTownViewController()
+        settingTownVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(settingTownVC, animated: true)
+    }
+    
+    func setUpUIBar() {
+        
+        let townButton = UIBarButtonItem(customView: mainExchangeView.locationButton)
+        
+        let downButton = UIBarButtonItem(customView: mainExchangeView.downImage)
+        
+        // 상단 바에 버튼 추가
+        self.navigationItem.leftBarButtonItems = [townButton, downButton]
     }
     
     /// 자식 뷰 컨트롤러 바꾸기
@@ -86,5 +107,5 @@ class MainExchangeViewController: UIViewController {
         
         viewController.didMove(toParent: self)
     }
-
+    
 }

@@ -73,7 +73,7 @@ class MyFridgeView: UIView {
     /// 오토레이아웃 설정
     private func constraints() {
         segmentedControl.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(75)
+            $0.top.equalToSuperview().offset(88)
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(48)

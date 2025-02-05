@@ -7,17 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		019EF6642D44CA930093CE7F /* TagListView in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF6632D44CA930093CE7F /* TagListView */; };
-		019EF72D2D4E4A6C0093CE7F /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */; };
-		019EF72F2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended in Frameworks */ = {isa = PBXBuildFile; productRef = 019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */; };
-		42A746302D4F38BA00244A89 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 42A7462F2D4F38BA00244A89 /* Then */; };
-		42A746332D4F38D000244A89 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 42A746322D4F38D000244A89 /* Kingfisher */; };
-		42A746362D4F38FD00244A89 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 42A746352D4F38FD00244A89 /* SnapKit */; };
-		43923ABD2D4D386600F67E5F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 43923ABC2D4D386600F67E5F /* Alamofire */; };
+		42069BE22D53410500020F6A /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 42069BE12D53410500020F6A /* KakaoSDK */; };
+		42069BE42D53410500020F6A /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 42069BE32D53410500020F6A /* KakaoSDKAuth */; };
+		42069BE62D53410500020F6A /* KakaoSDKCert in Frameworks */ = {isa = PBXBuildFile; productRef = 42069BE52D53410500020F6A /* KakaoSDKCert */; };
+		42069BE82D53410500020F6A /* KakaoSDKCertCore in Frameworks */ = {isa = PBXBuildFile; productRef = 42069BE72D53410500020F6A /* KakaoSDKCertCore */; };
+		42069BEA2D53410500020F6A /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 42069BE92D53410500020F6A /* KakaoSDKCommon */; };
+		42069CC02D53416C00020F6A /* TagListView in Frameworks */ = {isa = PBXBuildFile; productRef = 42069CBF2D53416C00020F6A /* TagListView */; };
+		E2DA4542370C23DA05CBE232 /* Pods_DuruDuru.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB07FC60C76A9A496DB3DD8 /* Pods_DuruDuru.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		42124F6C2D26CB3E0095E058 /* DuruDuru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuruDuru.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DB07FC60C76A9A496DB3DD8 /* Pods_DuruDuru.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DuruDuru.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		61A52D9777C5EE0F28CA42E9 /* Pods-DuruDuru.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DuruDuru.release.xcconfig"; path = "Target Support Files/Pods-DuruDuru/Pods-DuruDuru.release.xcconfig"; sourceTree = "<group>"; };
+		FD36D7B151452EDBF983A5FE /* Pods-DuruDuru.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DuruDuru.debug.xcconfig"; path = "Target Support Files/Pods-DuruDuru/Pods-DuruDuru.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -46,13 +49,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42A746332D4F38D000244A89 /* Kingfisher in Frameworks */,
-				42A746302D4F38BA00244A89 /* Then in Frameworks */,
-				43923ABD2D4D386600F67E5F /* Alamofire in Frameworks */,
-				42A746362D4F38FD00244A89 /* SnapKit in Frameworks */,
-				019EF72D2D4E4A6C0093CE7F /* NVActivityIndicatorView in Frameworks */,
-				019EF72F2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended in Frameworks */,
-				019EF6642D44CA930093CE7F /* TagListView in Frameworks */,
+				E2DA4542370C23DA05CBE232 /* Pods_DuruDuru.framework in Frameworks */,
+				42069BE22D53410500020F6A /* KakaoSDK in Frameworks */,
+				42069BE82D53410500020F6A /* KakaoSDKCertCore in Frameworks */,
+				42069BE42D53410500020F6A /* KakaoSDKAuth in Frameworks */,
+				42069BEA2D53410500020F6A /* KakaoSDKCommon in Frameworks */,
+				42069CC02D53416C00020F6A /* TagListView in Frameworks */,
+				42069BE62D53410500020F6A /* KakaoSDKCert in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +67,8 @@
 			children = (
 				42124F6E2D26CB3E0095E058 /* DuruDuru */,
 				42124F6D2D26CB3E0095E058 /* Products */,
+				4CC8458D5D2A344F9B53F129 /* Pods */,
+				CFBCF4EB35BC0BCA700FC656 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -75,6 +80,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4CC8458D5D2A344F9B53F129 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FD36D7B151452EDBF983A5FE /* Pods-DuruDuru.debug.xcconfig */,
+				61A52D9777C5EE0F28CA42E9 /* Pods-DuruDuru.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CFBCF4EB35BC0BCA700FC656 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5DB07FC60C76A9A496DB3DD8 /* Pods_DuruDuru.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -82,9 +104,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 42124F7F2D26CB3F0095E058 /* Build configuration list for PBXNativeTarget "DuruDuru" */;
 			buildPhases = (
+				7B7D2BAF8F29DBD7A12ADA72 /* [CP] Check Pods Manifest.lock */,
 				42124F682D26CB3E0095E058 /* Sources */,
 				42124F692D26CB3E0095E058 /* Frameworks */,
 				42124F6A2D26CB3E0095E058 /* Resources */,
+				4F58A8E777C36C45981735B9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -94,15 +118,6 @@
 				42124F6E2D26CB3E0095E058 /* DuruDuru */,
 			);
 			name = DuruDuru;
-			packageProductDependencies = (
-				019EF6632D44CA930093CE7F /* TagListView */,
-				019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */,
-				019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */,
-				43923ABC2D4D386600F67E5F /* Alamofire */,
-				42A7462F2D4F38BA00244A89 /* Then */,
-				42A746322D4F38D000244A89 /* Kingfisher */,
-				42A746352D4F38FD00244A89 /* SnapKit */,
-			);
 			productName = DuruDuru;
 			productReference = 42124F6C2D26CB3E0095E058 /* DuruDuru.app */;
 			productType = "com.apple.product-type.application";
@@ -132,12 +147,8 @@
 			mainGroup = 42124F632D26CB3E0095E058;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */,
-				019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
-				43923ABB2D4D386600F67E5F /* XCRemoteSwiftPackageReference "Alamofire" */,
-				42A7462E2D4F38BA00244A89 /* XCRemoteSwiftPackageReference "Then" */,
-				42A746312D4F38D000244A89 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				42A746342D4F38FD00244A89 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				42069CBE2D53416C00020F6A /* XCRemoteSwiftPackageReference "TagListView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 42124F6D2D26CB3E0095E058 /* Products */;
@@ -159,6 +170,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4F58A8E777C36C45981735B9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DuruDuru/Pods-DuruDuru-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DuruDuru/Pods-DuruDuru-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DuruDuru/Pods-DuruDuru-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7B7D2BAF8F29DBD7A12ADA72 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DuruDuru-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		42124F682D26CB3E0095E058 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -172,12 +225,14 @@
 /* Begin XCBuildConfiguration section */
 		42124F802D26CB3F0095E058 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FD36D7B151452EDBF983A5FE /* Pods-DuruDuru.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4A47BUDSR5;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DuruDuru/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "~를 사용하기 위해서 카메라 권한이 필요합니다.";
@@ -187,6 +242,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -202,12 +258,14 @@
 		};
 		42124F812D26CB3F0095E058 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 61A52D9777C5EE0F28CA42E9 /* Pods-DuruDuru.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4A47BUDSR5;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DuruDuru/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "~를 사용하기 위해서 카메라 권한이 필요합니다.";
@@ -217,6 +275,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -373,7 +432,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */ = {
+		42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.23.0;
+			};
+		};
+		42069CBE2D53416C00020F6A /* XCRemoteSwiftPackageReference "TagListView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ElaWorkshop/TagListView";
 			requirement = {
@@ -381,83 +448,38 @@
 				minimumVersion = 1.4.1;
 			};
 		};
-		019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ninjaprox/NVActivityIndicatorView";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.2.0;
-			};
-		};
-		42A7462E2D4F38BA00244A89 /* XCRemoteSwiftPackageReference "Then" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/devxoul/Then";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-		42A746312D4F38D000244A89 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.1.4;
-			};
-		};
-		42A746342D4F38FD00244A89 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit?tab=readme-ov-file#installation";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
-			};
-		};
-		43923ABB2D4D386600F67E5F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		019EF6632D44CA930093CE7F /* TagListView */ = {
+		42069BE12D53410500020F6A /* KakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 019EF6622D44CA920093CE7F /* XCRemoteSwiftPackageReference "TagListView" */;
+			package = 42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+		42069BE32D53410500020F6A /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		42069BE52D53410500020F6A /* KakaoSDKCert */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCert;
+		};
+		42069BE72D53410500020F6A /* KakaoSDKCertCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCertCore;
+		};
+		42069BE92D53410500020F6A /* KakaoSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42069BE02D53410500020F6A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCommon;
+		};
+		42069CBF2D53416C00020F6A /* TagListView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42069CBE2D53416C00020F6A /* XCRemoteSwiftPackageReference "TagListView" */;
 			productName = TagListView;
-		};
-		019EF72C2D4E4A6C0093CE7F /* NVActivityIndicatorView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
-			productName = NVActivityIndicatorView;
-		};
-		019EF72E2D4E4A6C0093CE7F /* NVActivityIndicatorViewExtended */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 019EF72B2D4E4A6C0093CE7F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
-			productName = NVActivityIndicatorViewExtended;
-		};
-		42A7462F2D4F38BA00244A89 /* Then */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 42A7462E2D4F38BA00244A89 /* XCRemoteSwiftPackageReference "Then" */;
-			productName = Then;
-		};
-		42A746322D4F38D000244A89 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 42A746312D4F38D000244A89 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
-		};
-		42A746352D4F38FD00244A89 /* SnapKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 42A746342D4F38FD00244A89 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-		};
-		43923ABC2D4D386600F67E5F /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 43923ABB2D4D386600F67E5F /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

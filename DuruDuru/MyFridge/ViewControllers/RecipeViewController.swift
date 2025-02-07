@@ -10,9 +10,13 @@ import Kingfisher
 
 class RecipeViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private var recipeView: RecipeView!
     var ingredientName: String?  /// 전달 받은 재료 이름
     var recipes = [RecipeModel]()
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +25,7 @@ class RecipeViewController: UIViewController {
         self.view = recipeView
         
         /// 뒤로 가기 버튼
-        let backImage = UIImage(named: "Arrow3")
+        let backImage = UIImage(systemName: "chevron.left")
         let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
         self.navigationItem.leftBarButtonItem = backButton
         backButton.tintColor = .black
@@ -34,6 +38,8 @@ class RecipeViewController: UIViewController {
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
+    
+    // MARK: - Funtions
     
     private func setupDelegate(){
         recipeView.recipeTableView.dataSource = self
@@ -54,6 +60,8 @@ class RecipeViewController: UIViewController {
     }
     
 }
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
     

@@ -98,19 +98,25 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         let deleteAction = UIAlertAction(title: "네, 삭제할게요", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
-            // 전체 데이터에서 해당 아이템 삭제
-            for (index, categoryData) in allIngredientData.enumerated() {
-                if let ingredientIndex = categoryData.ingredients.firstIndex(where: { $0.name == ingredient.name }) {
-                    allIngredientData[index].ingredients.remove(at: ingredientIndex)
-                    break
-                }
-            }
+//            // 전체 데이터에서 해당 아이템 삭제
+//            for (index, categoryData) in allIngredientData.enumerated() {
+//                if let ingredientIndex = categoryData.ingredients.firstIndex(where: { $0.name == ingredient.name }) {
+//                    allIngredientData[index].ingredients.remove(at: ingredientIndex)
+//                    break
+//                }
+//            }
+//            
+//            // 현재 필터링된 데이터에서도 삭제
+//            filteredIngredients.remove(at: indexPath.row)
+//            
+//            // 화면 갱신 (현재 선택된 카테고리를 유지하면서 필터링)
+//            self.filterIngredients(by: self.selectedCategory)
             
-            // 현재 필터링된 데이터에서도 삭제
-            filteredIngredients.remove(at: indexPath.row)
+            let ingredientDetailVC = IngredientDetailViewController()
+            ingredientDetailVC.ingredient = ingredient
+            ingredientDetailVC.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(ingredientDetailVC, animated: true)
             
-            // 화면 갱신 (현재 선택된 카테고리를 유지하면서 필터링)
-            self.filterIngredients(by: self.selectedCategory)
         }
         
         alertController.addAction(cancelAction)
@@ -273,6 +279,9 @@ extension IngredientsViewController: UICollectionViewDelegate {
             
             // 테고리 선택 시 API 요청 실행
             fetchIngredientCategories(for: selectedCategory)
+        } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
+            let selectedIngredient = filteredIngredients[indexPath.item]
+            showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출
         }
     }
 }

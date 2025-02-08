@@ -61,8 +61,6 @@ class ExchangeViewController: UIViewController {
         let togetherVC = ExchangeRegisterDetailViewController()
         navigationController?.pushViewController(togetherVC, animated: true)
     }
-    
-    
 }
 
 // MARK: - UICollectionView

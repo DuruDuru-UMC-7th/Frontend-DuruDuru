@@ -50,13 +50,18 @@ class ExchangeRegisterDetailViewController: UIViewController {
     
     
     @objc private func didTapBackButton() {
-        navigationController?.popViewController(animated: true) // 네비게이션 스택에서 이전 화면으로 이동
+        if let navigationController = self.navigationController {
+            navigationController.popViewController(animated: true) // 네비게이션 스택에서 이전 화면으로 이동
+        }
     }
+
     
     @objc private func didTapCloseButton() {
         // 네비게이션 스택을 초기화하고 첫 화면으로 이동
         navigationController?.popToRootViewController(animated: true)
     }
+    
+    
     @objc private func didTapMinusButton() {
         if quantity > 0 { // 0 이하로 내려가지 않음
             quantity -= 1

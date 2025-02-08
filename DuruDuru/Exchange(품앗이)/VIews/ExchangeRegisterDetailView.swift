@@ -31,7 +31,7 @@ class ExchangeRegisterDetailView: UIView {
     /// 제목 레이블
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "식재료 추가하기"
+        label.text = "품앗이 등록하기"
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textAlignment = .center
         return label
@@ -228,13 +228,15 @@ class ExchangeRegisterDetailView: UIView {
     
     private func setupConstraints() {
         backButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-20)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
             $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(44)
         }
-        
+
         closeButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-20)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
             $0.trailing.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(44)
         }
         
         titleLabel.snp.makeConstraints {

@@ -16,5 +16,5 @@ struct CategoryResponse: Codable {
 
 struct CategoryResult: Codable {
     let majorCategory: String
-    let minorCategoryList: [String]
+    var minorCategoryList: [String]
 }

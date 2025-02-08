@@ -90,8 +90,8 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         ingredientNameLabel.text = model.name // e.g., "콩나물"
     }
     
-    func configureSimple(with model: IngredientSimpleModel) {
+    func configureSimple(with minorCategory: String) {
         expiryLabel.text = "" // 단순 모델에서는 소비기한 표시 안 함
-        ingredientNameLabel.text = model.name // e.g., "우유"
+        ingredientNameLabel.text = minorCategory // e.g., "우유"
     }
 }

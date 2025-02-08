@@ -77,10 +77,11 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
     }
     
     let decrementButton = UIButton().then {
-        $0.setImage(.decrementButton, for: .normal)
+        $0.setImage(UIImage(systemName: "minus"), for: .normal)
         $0.layer.cornerRadius = 8.91
         $0.backgroundColor = .white
         $0.isHidden = true
+        $0.tintColor = .black
     }
     
     let countLabel = UILabel().then {
@@ -91,14 +92,15 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
     }
     
     let incrementButton = UIButton().then {
-        $0.setImage(.incrementButton, for: .normal)
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
         $0.layer.cornerRadius = 8.91
         $0.backgroundColor = .white
         $0.isHidden = true
+        $0.tintColor = .black
     }
     
     let deleteButton = UIButton().then {
-        $0.setImage(.trash, for: .normal)
+        $0.setImage(UIImage(systemName: "trash"), for: .normal)
         $0.layer.cornerRadius = 4
         $0.backgroundColor = UIColor(hex: 0xD9D9D9)
         $0.tintColor = .white

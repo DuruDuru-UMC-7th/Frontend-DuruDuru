@@ -8,31 +8,10 @@
 import UIKit
 
 class AddIngredientViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
-
+    
+    var setIngredientRequest: SetIngredientRequest!
+    
     // MARK: - UI Components
-    
-    private let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
-    
-    private let closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "식재료 추가하기"
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.textAlignment = .center
-        return label
-    }()
-    
     private let topSeparator: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.systemGreen
@@ -44,6 +23,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         label.text = "Step.1"
         label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.textColor = .gray
+        label.textAlignment = .center
         return label
     }()
     
@@ -57,7 +37,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         return label
     }()
     
-
+    
     private let imageView: UIView = {
         let view = UIView()
         view.backgroundColor = .lightGray
@@ -94,7 +74,36 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         button.layer.cornerRadius = 8
         return button
     }()
-
+    
+    private let count: UILabel = {
+        let label = UILabel()
+        label.text = "수량"
+        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .gray
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let countLabel = UILabel().then {
+        $0.text = "0"
+        $0.textAlignment = .center
+        $0.font = .boldSystemFont(ofSize: 24)
+    }
+    
+    let decrementButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "minus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5)
+        $0.tintColor = .black
+    }
+    
+    let incrementButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5)
+        $0.tintColor = .black
+    }
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -108,10 +117,15 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
     // MARK: - Setup
     
     private func setupUI() {
+        // 상단바
+        let backImage = UIImage(systemName: "chevron.left")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(didTapBackButton))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
+        self.title = "식재료 추가하기"
+
         view.backgroundColor = .white
-        view.addSubview(backButton)
-        view.addSubview(closeButton)
-        view.addSubview(titleLabel)
         view.addSubview(topSeparator)
         view.addSubview(stepLabel)
         view.addSubview(instructionLabel)
@@ -119,46 +133,35 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         view.addSubview(nameLabel)
         view.addSubview(nameTextField)
         view.addSubview(nextButton)
+        view.addSubview(count)
+        view.addSubview(countLabel)
+        view.addSubview(decrementButton)
+        view.addSubview(incrementButton)
         
         navigationItem.hidesBackButton = true
-        
-        backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
-        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
+        decrementButton.addTarget(self, action: #selector(decrementButtonClicked), for: .touchUpInside)
+        incrementButton.addTarget(self, action: #selector(incrementButtonClicked), for: .touchUpInside)
     }
     
     private func setupConstraints() {
-        backButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.leading.equalToSuperview().offset(16)
-        }
-        
-        closeButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(backButton)
-            $0.centerX.equalToSuperview()
-        }
-        
         topSeparator.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(13)
+            $0.top.equalToSuperview().offset(98)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1) 
+            $0.height.equalTo(2)
         }
         
         stepLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(24)
+            $0.top.equalTo(topSeparator.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(22)
         }
         
         instructionLabel.snp.makeConstraints {
             $0.top.equalTo(stepLabel.snp.bottom).offset(9)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
-
+        
         imageView.snp.makeConstraints {
             $0.top.equalTo(instructionLabel.snp.bottom).offset(19)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -181,6 +184,30 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
+        
+        count.snp.makeConstraints {
+            $0.top.equalTo(nameTextField.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(22)
+        }
+        
+        decrementButton.snp.makeConstraints {
+            $0.width.height.equalTo(26)
+            $0.top.equalTo(count.snp.bottom).offset(15)
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        countLabel.snp.makeConstraints {
+            $0.width.height.equalTo(22)
+            $0.top.equalTo(count.snp.bottom).offset(17)
+            $0.leading.equalTo(decrementButton.snp.trailing).offset(18)
+        }
+        
+        incrementButton.snp.makeConstraints {
+            $0.width.height.equalTo(26)
+            $0.top.equalTo(count.snp.bottom).offset(15)
+            $0.leading.equalTo(countLabel.snp.trailing).offset(18)
+        }
     }
     
     // MARK: - Actions
@@ -189,20 +216,78 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         navigationController?.popViewController(animated: true)
     }
     
-    @objc private func didTapCloseButton() {
-        dismiss(animated: true, completion: nil)
-    }
-    
     @objc private func didTapNextButton() {
+        guard let ingredientName = nameTextField.text, !ingredientName.isEmpty,
+              let countText = countLabel.text, let ingredientCount = Int(countText) else {
+            // 입력 값이 올바르지 않을 경우 처리
+            print("식재료 이름과 수량을 입력해 주세요.")
+            return
+        }
+        
+        setIngredientRequest = SetIngredientRequest(ingredientName: ingredientName, count: ingredientCount)
+        
+        // API 호출
+        setTown(setIngredientRequest: setIngredientRequest)
         let nextVC = IngredientTypeViewController() // 종류 설정 화면
         navigationController?.pushViewController(nextVC, animated: true)
     }
     
-    /// textField return 누를때 동작
+    // '-' 버튼 클릭시
+    @objc func decrementButtonClicked() {
+        guard let currentCount = Int(countLabel.text ?? "0"), currentCount > 1 else { return }
+        
+        let newCount = currentCount - 1
+        countLabel.text = "\(newCount)"
+    }
+    
+    // '+' 버튼 클릭시
+    @objc func incrementButtonClicked() {
+        guard let currentCount = Int(countLabel.text ?? "0") else { return }
+        
+        let newCount = currentCount + 1
+        countLabel.text = "\(newCount)"
+    }
+    
+    // textField return 누를때 동작
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if(textField.isEqual(nameTextField)){ /// 리턴 누르면
             nameTextField.resignFirstResponder()
         }
         return true
+    }
+    
+    // MARK: - API 관련
+    
+    // 식재료 등록 API
+    func setTown(setIngredientRequest: SetIngredientRequest) {
+        let url = "http://3.35.252.162:8080/ingredient/"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        let requestBody = setIngredientRequest
+        
+        // API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!식재료 이름 등록 성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
     }
 }

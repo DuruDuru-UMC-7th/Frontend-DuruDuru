@@ -62,8 +62,9 @@ class AddReceiptView: UIView {
                                             padding: 0)
     
     let backButton = UIButton().then {
-        $0.setImage(.whiteXButton, for: .normal)
+        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
+        $0.tintColor = .white
     }
     
     var completeIcon = UIImageView().then {

@@ -64,7 +64,7 @@ class ExchangeRegisterDetailView: UIView {
     let expiryLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .systemGray
+        label.textColor = .black
         return label
     }()
     
@@ -72,7 +72,7 @@ class ExchangeRegisterDetailView: UIView {
     let quantityLabel: UILabel = {
         let label = UILabel()
         label.text = "수량"
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
     
@@ -81,10 +81,9 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("−", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 4
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+        button.backgroundColor = UIColor.systemGray6
+        button.layer.cornerRadius = 8
         return button
     }()
     
@@ -93,10 +92,9 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("+", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 4
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+        button.backgroundColor = UIColor.systemGray6
+        button.layer.cornerRadius = 8
         return button
     }()
     
@@ -105,11 +103,8 @@ class ExchangeRegisterDetailView: UIView {
         let label = UILabel()
         label.text = "0"
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.layer.borderWidth = 1
-        label.layer.borderColor = UIColor.lightGray.cgColor
-        label.layer.cornerRadius = 4
-        label.clipsToBounds = true
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .black
         return label
     }()
     
@@ -139,9 +134,11 @@ class ExchangeRegisterDetailView: UIView {
         textView.layer.borderWidth = 1
         textView.layer.borderColor = UIColor.lightGray.cgColor
         textView.layer.cornerRadius = 8
-        textView.font = .systemFont(ofSize: 16)
+        textView.font = .systemFont(ofSize: 14)
         textView.text = "품앗이 할 식재료의 상태를 자세히 설명해주세요.\n건강하고 알뜰한 품앗이 문화를 함께 만들어나가요!"
         textView.textColor = .systemGray
+        textView.textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 10, right: 10)
+
         return textView
     }()
     
@@ -158,7 +155,7 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("나눔", for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.cornerRadius = 8
@@ -170,17 +167,17 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("교환", for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.cornerRadius = 8
         return button
     }()
 
-    /// 하단 "다음으로" 버튼
+    /// 하단 "품앗이 등록 완료" 버튼
     let nextButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("다음으로", for: .normal)
+        button.setTitle("품앗이 등록 완료", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemGreen
@@ -253,43 +250,42 @@ class ExchangeRegisterDetailView: UIView {
         ingredientImageView.snp.makeConstraints {
             $0.top.equalTo(topSeparator.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(80)
+            $0.width.height.equalTo(118)
         }
         
         ingredientNameLabel.snp.makeConstraints {
-            $0.top.equalTo(ingredientImageView)
-            $0.leading.equalTo(ingredientImageView.snp.trailing).offset(16)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.top.equalTo(topSeparator.snp.bottom).offset(38.5)
+            $0.leading.equalTo(ingredientImageView.snp.trailing).offset(15)
         }
         
         expiryLabel.snp.makeConstraints {
-            $0.top.equalTo(ingredientNameLabel.snp.bottom).offset(8)
+            $0.top.equalTo(ingredientNameLabel.snp.bottom).offset(18.5)
             $0.leading.equalTo(ingredientImageView.snp.trailing).offset(16)
             $0.trailing.equalToSuperview().offset(-16)
         }
         
         quantityLabel.snp.makeConstraints {
-            $0.top.equalTo(ingredientImageView.snp.bottom).offset(20)
+            $0.top.equalTo(ingredientImageView.snp.bottom).offset(30)
             $0.leading.equalToSuperview().offset(16)
         }
         
         minusButton.snp.makeConstraints {
-            $0.top.equalTo(quantityLabel.snp.bottom).offset(10)
+            $0.top.equalTo(quantityLabel.snp.bottom).offset(15)
             $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(40)
+            $0.width.height.equalTo(26)
         }
         
         quantityValueLabel.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(minusButton.snp.trailing).offset(8)
+            $0.leading.equalTo(minusButton.snp.trailing).offset(6)
             $0.width.equalTo(50)
             $0.height.equalTo(40)
         }
         
         plusButton.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(8)
-            $0.width.height.equalTo(40)
+            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(6)
+            $0.width.height.equalTo(26)
         }
         
         unitButton.snp.makeConstraints {
@@ -300,18 +296,19 @@ class ExchangeRegisterDetailView: UIView {
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(300) // 기존 컴포넌트 아래에 적절히 위치
+            $0.top.equalTo(quantityLabel.snp.bottom).offset(67)
             $0.leading.equalToSuperview().offset(16)
         }
         
         descriptionTextView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(8)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(150)
+            $0.height.equalTo(186)
+            $0.width.equalTo(370)
         }
         
         methodLabel.snp.makeConstraints {
-            $0.top.equalTo(descriptionTextView.snp.bottom).offset(20)
+            $0.top.equalTo(descriptionTextView.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
         }
         
@@ -319,14 +316,14 @@ class ExchangeRegisterDetailView: UIView {
             $0.top.equalTo(methodLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
             $0.width.equalTo(80)
-            $0.height.equalTo(40)
+            $0.height.equalTo(32)
         }
         
         exchangeButton.snp.makeConstraints {
             $0.centerY.equalTo(shareButton)
-            $0.leading.equalTo(shareButton.snp.trailing).offset(16)
+            $0.leading.equalTo(shareButton.snp.trailing).offset(13)
             $0.width.equalTo(80)
-            $0.height.equalTo(40)
+            $0.height.equalTo(32)
         }
         
         nextButton.snp.makeConstraints {

@@ -108,18 +108,35 @@ class ExchangeRegisterDetailView: UIView {
         return label
     }()
     
-    /// 단위 선택 버튼 (드롭다운)
+    /// 단위 버튼 (UILabel + UIImageView 조합)
     let unitButton: UIButton = {
         let button = UIButton()
-        button.setTitle("단위", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 4
+        button.layer.cornerRadius = 8
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "단위"
+        titleLabel.font = UIFont.systemFont(ofSize: 14)
+        titleLabel.textColor = .systemGray
+        
+        let arrowImageView = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrowImageView.tintColor = .gray
+        arrowImageView.contentMode = .scaleAspectFit
+        
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, arrowImageView])
+        stackView.axis = .horizontal
+        stackView.spacing = 25 
+        stackView.alignment = .center
+        
+        button.addSubview(stackView)
+        stackView.snp.makeConstraints { $0.center.equalToSuperview() }
+
         return button
     }()
-    
+
+
+
     /// 설명 라벨
     let descriptionLabel: UILabel = {
         let label = UILabel()
@@ -290,9 +307,9 @@ class ExchangeRegisterDetailView: UIView {
         
         unitButton.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(plusButton.snp.trailing).offset(16)
-            $0.width.equalTo(80)
-            $0.height.equalTo(40)
+            $0.leading.equalTo(plusButton.snp.trailing).offset(10)
+            $0.width.equalTo(94)
+            $0.height.equalTo(36)
         }
         
         descriptionLabel.snp.makeConstraints {

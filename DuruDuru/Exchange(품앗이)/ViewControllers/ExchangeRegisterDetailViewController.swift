@@ -78,19 +78,62 @@ class ExchangeRegisterDetailViewController: UIViewController {
         detailView.quantityValueLabel.text = "\(quantity)"
     }
     
+    // 단위버튼
     @objc private func didTapUnitButton() {
-        // 드롭다운 메뉴 구현 (UIAlertController 사용)
-        let alert = UIAlertController(title: "단위 선택", message: nil, preferredStyle: .actionSheet)
-        let units = ["g", "kg", "개", "봉지"] // 단위 리스트
-        for unit in units {
-            alert.addAction(UIAlertAction(title: unit, style: .default, handler: { _ in
-                self.detailView.unitButton.setTitle(unit, for: .normal)
-            }))
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+
+        let dropdownView = UnitDropdownView()
+
+        let buttonFrame = detailView.unitButton.convert(detailView.unitButton.bounds, to: window)
+
+        dropdownView.frame = CGRect(
+            x: buttonFrame.origin.x,
+            y: buttonFrame.origin.y + buttonFrame.height + 5,
+            width: buttonFrame.width,
+            height: 0
+        )
+
+        // 단위 선택 시 버튼 업데이트 + 드롭다운 닫기
+        dropdownView.didSelectUnit = { [weak self] selectedUnit in
+            guard let self = self else { return }
+
+            self.detailView.unitButton.setTitle("", for: .normal)
+            self.detailView.unitButton.setImage(nil, for: .normal)
+           
+            let unitLabel = UILabel()
+            unitLabel.text = selectedUnit
+            unitLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+            unitLabel.textColor = .black
+            unitLabel.textAlignment = .center
+
+            // 기존 서브뷰 제거 후 새롭게 추가
+            self.detailView.unitButton.subviews.forEach { $0.removeFromSuperview() }
+            self.detailView.unitButton.addSubview(unitLabel)
+
+            unitLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+
+            self.hideDropdown(dropdownView)
         }
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
+
+        // 윈도우에 추가 후 애니메이션 적용
+        window.addSubview(dropdownView)
+        UIView.animate(withDuration: 0.2) {
+            dropdownView.frame.size.height = 150
+        }
     }
-    
+
+    // 드롭다운 숨기기
+    private func hideDropdown(_ dropdownView: UnitDropdownView) {
+        UIView.animate(withDuration: 0.2, animations: {
+            dropdownView.alpha = 0
+        }) { _ in
+            dropdownView.removeFromSuperview()
+        }
+    }
+
     @objc private func didTapShareButton() {
         selectedMethod = "나눔"
         detailView.updateButtonStyle(

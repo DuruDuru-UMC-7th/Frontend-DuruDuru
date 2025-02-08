@@ -46,6 +46,7 @@ class ExchangeRegisterDetailViewController: UIViewController {
         detailView.unitButton.addTarget(self, action: #selector(didTapUnitButton), for: .touchUpInside)
         detailView.shareButton.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
         detailView.exchangeButton.addTarget(self, action: #selector(didTapExchangeButton), for: .touchUpInside)
+        detailView.nextButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
     }
     
     
@@ -149,4 +150,16 @@ class ExchangeRegisterDetailViewController: UIViewController {
             deselectedButton: detailView.shareButton
         )
     }
+    
+    // 품앗이 등록 완료
+    @objc private func didTapCompleteButton() {
+        if let navigationController = self.navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+            let mainVC = ExchangeViewController()
+            mainVC.modalPresentationStyle = .fullScreen
+            present(mainVC, animated: true, completion: nil)
+        }
+    }
+
 }

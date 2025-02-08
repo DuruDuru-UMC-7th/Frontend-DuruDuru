@@ -364,7 +364,7 @@ class ExchangeDetailView: UIView {
         }
     }
     
-    public func configure(trade: TradeModel) {
+    public func configure(trade: TradeResult) {
         count.text = String(trade.ingredientCount) + "개"
         remainDate.text = trade.expiryDate ?? "10일"
         title.text = trade.title

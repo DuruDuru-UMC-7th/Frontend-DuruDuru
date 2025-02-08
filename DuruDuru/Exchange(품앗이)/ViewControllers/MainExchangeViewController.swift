@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainExchangeViewController: UIViewController, SettingTownDelegate {
+class MainExchangeViewController: UIViewController {
     
     // MARK: - Properties
     
@@ -28,6 +28,13 @@ class MainExchangeViewController: UIViewController, SettingTownDelegate {
         exchangeVC = ExchangeViewController()
         eatTogetherVC = EatTogetherViewController()
         add(asChildViewController: exchangeVC)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // API 요청
+        getTown()
     }
     
     // MARK: - Function
@@ -63,7 +70,7 @@ class MainExchangeViewController: UIViewController, SettingTownDelegate {
     /// 동네 설정 버튼 클릭 시 동작
     @objc private func didTapLocationButton() {
         let settingTownVC = SettingTownViewController()
-        settingTownVC.delegate = self
+//        settingTownVC.delegate = self
         settingTownVC.hidesBottomBarWhenPushed = true
         settingTownVC.isTownRegistered = self.isTownRegistered
         navigationController?.pushViewController(settingTownVC, animated: true)
@@ -110,8 +117,35 @@ class MainExchangeViewController: UIViewController, SettingTownDelegate {
         viewController.didMove(toParent: self)
     }
     
-    func didUpdateTownData(dong: String, isTownRegistered: Bool) {
-        mainExchangeView.locationButton.setTitle(dong, for: .normal)
-        self.isTownRegistered = isTownRegistered
+//    func didUpdateTownData(dong: String, isTownRegistered: Bool) {
+//        self.isTownRegistered = isTownRegistered
+//    }
+    
+    // MARK: - API 관련
+    
+    // 동네 조회 API
+    func getTown() {
+        let url = "http://3.35.252.162:8080/town/"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        /// API 요청
+        APIClient.shared.request(urlWithQuery, method: .get) { [self] (result: Result<TownResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!동네 등록 성공!!")
+                print(response)
+                isTownRegistered = true
+                mainExchangeView.locationButton.setTitle(response.result!.eupmyeondong, for: .normal)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
     }
 }

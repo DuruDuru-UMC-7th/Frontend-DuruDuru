@@ -11,10 +11,10 @@ struct TradeResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: TradeModel?
+    let result: TradeResult?
 }
 
-struct TradeModel: Codable {
+struct TradeResult: Codable {
     let tradeId: Int
     let memberId: Int
     let ingredientId: Int

@@ -21,7 +21,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
-    weak var delegate: SettingTownDelegate?
+//    weak var delegate: SettingTownDelegate?
     var setTownRequest: SetTownRequest!
     var isTownRegistered: Bool! // 동네 등록 여부 변수
     
@@ -69,7 +69,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
             // 동네 등록 API 호출
             setTown(setTownRequest: self.setTownRequest)
         }
-        delegate?.didUpdateTownData(dong: self.setTownRequest.eupmyeondong, isTownRegistered: true)
+//        delegate?.didUpdateTownData(dong: self.setTownRequest.eupmyeondong, isTownRegistered: true)
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -157,7 +157,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         
         /// 쿼리 파라미터
         let queryParameters: [String: Any] = [
-            "memberId": 3, /// 임시로 넣은 memberId
+            "memberId": 2, /// 임시로 넣은 memberId
         ]
         
         let queryString = APIClient.shared.createQueryString(from: queryParameters)
@@ -196,7 +196,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         
         /// 쿼리 파라미터
         let queryParameters: [String: Any] = [
-            "memberId": 3, /// 임시로 넣은 memberId
+            "memberId": 2, /// 임시로 넣은 memberId
         ]
         
         let queryString = APIClient.shared.createQueryString(from: queryParameters)
@@ -231,6 +231,6 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     
 }
 
-protocol SettingTownDelegate: AnyObject {
-    func didUpdateTownData(dong: String, isTownRegistered: Bool)
-}
+//protocol SettingTownDelegate: AnyObject {
+//    func didUpdateTownData(dong: String, isTownRegistered: Bool)
+//}

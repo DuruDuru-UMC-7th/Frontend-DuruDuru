@@ -27,7 +27,9 @@ class ExchangeDetailViewController: UIViewController {
         setUpdelegate()
         exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10) /// 다른 품앗이보기 height 설정
         exchangeDetailView.pageControl.numberOfPages = images.count /// 이미지 pageControl
-        getTrade(tradeId: tradeId) /// API 요청
+        
+        // API 요청
+        getTrade(tradeId: tradeId)
     }
     
     // MARK: - Functions
@@ -96,70 +98,70 @@ class ExchangeDetailViewController: UIViewController {
         }
     }
 }
-
-// MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
-
-extension ExchangeDetailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        if collectionView == exchangeDetailView.imageCollectionView {
-            return 1
-        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-            return 1
+    // MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+    
+    extension ExchangeDetailViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+        
+        func numberOfSections(in collectionView: UICollectionView) -> Int {
+            if collectionView == exchangeDetailView.imageCollectionView {
+                return 1
+            } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+                return 1
+            }
+            return 0
         }
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == exchangeDetailView.imageCollectionView {
-            return images.count
-        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-            return 10
+        
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            if collectionView == exchangeDetailView.imageCollectionView {
+                return images.count
+            } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+                return 10
+            }
+            return 0
         }
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == exchangeDetailView.imageCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-            
-            cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-            
-            _ = UIImageView(image: images[indexPath.item]).then {
-                $0.contentMode = .scaleAspectFill
-                $0.clipsToBounds = true
-                cell.contentView.addSubview($0)
-                $0.snp.makeConstraints { make in
-                    make.edges.equalToSuperview()
+        
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            if collectionView == exchangeDetailView.imageCollectionView {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+                
+                cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+                
+                _ = UIImageView(image: images[indexPath.item]).then {
+                    $0.contentMode = .scaleAspectFill
+                    $0.clipsToBounds = true
+                    cell.contentView.addSubview($0)
+                    $0.snp.makeConstraints { make in
+                        make.edges.equalToSuperview()
+                    }
                 }
+                
+                return cell
+            } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: OtherExchangeCollectionViewCell.identifier,
+                    for: indexPath
+                ) as? OtherExchangeCollectionViewCell else {
+                    print("cell")
+                    return UICollectionViewCell()
+                }
+                return cell
             }
-            
-            return cell
-        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: OtherExchangeCollectionViewCell.identifier,
-                for: indexPath
-            ) as? OtherExchangeCollectionViewCell else {
-                print("cell")
-                return UICollectionViewCell()
-            }
-            return cell
+            return UICollectionViewCell()
         }
-        return UICollectionViewCell()
+        
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            if collectionView == exchangeDetailView.imageCollectionView {
+                return exchangeDetailView.imageCollectionView.bounds.size
+            } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+                return CGSize(width: 173, height: 130)
+            }
+            return CGSize(width: 100, height: 100)
+        }
+        
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            let pageIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
+            exchangeDetailView.pageControl.currentPage = pageIndex
+        }
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == exchangeDetailView.imageCollectionView {
-            return exchangeDetailView.imageCollectionView.bounds.size
-        } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-            return CGSize(width: 173, height: 130) 
-        }
-        return CGSize(width: 100, height: 100)
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let pageIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
-        exchangeDetailView.pageControl.currentPage = pageIndex
-    }
-}
-

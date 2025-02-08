@@ -11,10 +11,10 @@ struct TownResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: TownModel?
+    let result: TownResult?
 }
 
-struct TownModel: Codable {
+struct TownResult: Codable {
     let townId: Int
     let memberId: Int
     let latitude: Double

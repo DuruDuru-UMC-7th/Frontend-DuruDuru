@@ -126,12 +126,12 @@ class IngredientTypeView: UIView {
         }
         
         stepLabel.snp.makeConstraints {
-            $0.top.equalTo(topSeparator.snp.bottom).offset(10)
+            $0.top.equalTo(topSeparator.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(16)
         }
         
         questionLabel.snp.makeConstraints {
-            $0.top.equalTo(stepLabel.snp.bottom).offset(9)
+            $0.top.equalTo(stepLabel.snp.bottom).offset(0)
             $0.leading.equalToSuperview().offset(16)
         }
         

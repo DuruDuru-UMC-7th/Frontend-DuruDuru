@@ -18,7 +18,7 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
         backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
         layer.cornerRadius = 4
         addComponents()
-        constraints()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -29,44 +29,39 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     
     /// 아이콘
     let icon = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
+        $0.clipsToBounds = true
     }
     
-    // 카테고리 이름
+    /// 카테고리 이름
     let categoryName = UILabel().then {
-        $0.font = .systemFont(ofSize: 11)
+        $0.font = .systemFont(ofSize: 11, weight: .medium)
         $0.textColor = .black
     }
     
-    let container = UIView()
+    /// StackView
+    let stackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.alignment = .center
+        $0.spacing = 6
+    }
+
+    // MARK: - Constraints & Add Function
     
-    // MARK: - Constaints & Add Function
-    
-    /// 컴포넌트 생성
     private func addComponents() {
-        addSubview(container)
-        container.addSubview(icon)
-        container.addSubview(categoryName)
+        stackView.addArrangedSubview(icon)
+        stackView.addArrangedSubview(categoryName)
+        addSubview(stackView)
     }
     
-    /// 오토레이아웃 설정
-    private func constraints() {
+    private func setupConstraints() {
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.left.right.equalToSuperview().inset(8)
+        }
+
         icon.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.left.equalToSuperview()
-        }
-        
-        categoryName.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.right.equalToSuperview()
-            $0.left.equalTo(icon.snp.right).offset(4)
-        }
-        
-        container.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(7)
-            $0.bottom.equalToSuperview().offset(-7)
-            $0.right.left.equalToSuperview().inset(8)
+            $0.width.height.equalTo(20)
         }
     }
     

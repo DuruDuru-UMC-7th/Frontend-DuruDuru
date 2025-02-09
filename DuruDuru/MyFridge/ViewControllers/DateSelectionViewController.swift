@@ -34,6 +34,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     private func setupActions() {
         dateSelectionView.confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
         dateSelectionView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        dateSelectionView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
     }
     
     private func setupIconConstraints() {
@@ -60,6 +61,16 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func didTapCloseButton() {
+        
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+        }
     }
     
     //키보드 delegate

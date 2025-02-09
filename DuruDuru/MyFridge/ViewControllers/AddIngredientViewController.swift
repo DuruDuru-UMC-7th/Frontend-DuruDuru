@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class AddIngredientViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     var setIngredientRequest: SetIngredientRequest!
@@ -104,18 +105,28 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         $0.tintColor = .black
     }
     
+class AddIngredientViewController: UIViewController, UITextFieldDelegate {
+
+    
+    private let addIngredientView = AddIngredientView()
+
+    private var quantity: Int = 0
+    
     // MARK: - Lifecycle
+    
+    override func loadView() {
+        self.view = addIngredientView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupConstraints()
-        
-        nameTextField.delegate = self
+        setupActions()
+        addIngredientView.nameTextField.delegate = self
+        navigationItem.hidesBackButton = true
     }
     
-    // MARK: - Setup
-    
+    // MARK: - Actions 설정
+   
     private func setupUI() {
         // 상단바
         let backImage = UIImage(systemName: "chevron.left")
@@ -178,11 +189,26 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(44)
         }
+      
+    private func setupActions() {
+        addIngredientView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        addIngredientView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
+        addIngredientView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
+        addIngredientView.minusButton.addTarget(self, action: #selector(didTapMinusButton), for: .touchUpInside)
+        addIngredientView.plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func didTapCloseButton() {
         
-        nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
         }
         
         count.snp.makeConstraints {
@@ -210,10 +236,20 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         }
     }
     
-    // MARK: - Actions
+    @objc private func didTapMinusButton() {
+        if quantity > 0 { // 0 이하로 내려가지 않음
+            quantity -= 1
+            updateQuantityLabel()
+        }
+    }
     
-    @objc private func didTapBackButton() {
-        navigationController?.popViewController(animated: true)
+    @objc private func didTapPlusButton() {
+        quantity += 1
+        updateQuantityLabel()
+    }
+    
+    private func updateQuantityLabel() {
+        addIngredientView.quantityValueLabel.text = "\(quantity)"
     }
     
     @objc private func didTapNextButton() {
@@ -247,12 +283,9 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIText
         let newCount = currentCount + 1
         countLabel.text = "\(newCount)"
     }
-    
-    // textField return 누를때 동작
+   
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if(textField.isEqual(nameTextField)){ /// 리턴 누르면
-            nameTextField.resignFirstResponder()
-        }
+        addIngredientView.nameTextField.resignFirstResponder()
         return true
     }
     

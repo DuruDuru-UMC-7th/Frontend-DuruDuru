@@ -177,7 +177,13 @@ class IngredientTypeViewController: UIViewController {
     }
 
     @objc private func didTapCloseButton() {
-        dismiss(animated: true, completion: nil)
+        
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+        }
     }
     
     @objc private func didTapDateButton() {

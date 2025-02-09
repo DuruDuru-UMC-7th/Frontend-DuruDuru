@@ -29,8 +29,8 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     
     /// 아이콘
     let icon = UIImageView().then {
-        $0.contentMode = .scaleAspectFit  // ✅ 아이콘 비율 유지
-        $0.clipsToBounds = true           // ✅ 넘치는 이미지 방지
+        $0.contentMode = .scaleAspectFit
+        $0.clipsToBounds = true
     }
     
     /// 카테고리 이름
@@ -39,31 +39,29 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
         $0.textColor = .black
     }
     
-    /// **StackView 추가 → 아이콘과 텍스트 정렬 보장**
+    /// StackView
     let stackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.alignment = .center // ✅ 아이콘과 텍스트 완전 중앙 정렬
-        $0.spacing = 6         // ✅ 간격 조정 (기본 6)
+        $0.alignment = .center
+        $0.spacing = 6
     }
 
     // MARK: - Constraints & Add Function
     
-    /// **컴포넌트 추가**
     private func addComponents() {
         stackView.addArrangedSubview(icon)
         stackView.addArrangedSubview(categoryName)
         addSubview(stackView)
     }
     
-    /// **오토레이아웃 설정**
     private func setupConstraints() {
         stackView.snp.makeConstraints {
-            $0.center.equalToSuperview()  // ✅ 버튼 중앙 정렬
+            $0.center.equalToSuperview()
             $0.left.right.equalToSuperview().inset(8)
         }
 
         icon.snp.makeConstraints {
-            $0.width.height.equalTo(20)  // ✅ 모든 아이콘 크기 통일
+            $0.width.height.equalTo(20)
         }
     }
     

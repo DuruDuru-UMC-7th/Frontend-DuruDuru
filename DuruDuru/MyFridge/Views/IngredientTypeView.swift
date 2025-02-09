@@ -145,13 +145,15 @@ class IngredientTypeView: UIView {
     
     private func setupConstraints() {
         backButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
             $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(44)
         }
-        
+
         closeButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(16)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
             $0.trailing.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(44)
         }
         
         titleLabel.snp.makeConstraints {

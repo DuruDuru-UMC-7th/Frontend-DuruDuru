@@ -30,7 +30,7 @@ class IngredientTypeViewController: UIViewController {
         super.viewDidLoad()
         setupActions()
         setupDelegates()
-        navigationItem.hidesBackButton = true
+        setUpUI()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
@@ -45,9 +45,23 @@ class IngredientTypeViewController: UIViewController {
     }
 
     // MARK: - Setup
+    
+    private func setUpUI() {
+        // 상단바
+        let backImage = UIImage(systemName: "chevron.left")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(didTapBackButton))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
+        let closeImage = UIImage(systemName: "xmark")
+        let closeButton = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(didTapCloseButton))
+        self.navigationItem.rightBarButtonItem = closeButton
+        closeButton.tintColor = .black
+        
+        self.title = "식재료 추가하기"
+    }
+    
     private func setupActions() {
-        ingredientTypeView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
-        ingredientTypeView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         ingredientTypeView.dateButton.addTarget(self, action: #selector(didTapDateButton), for: .touchUpInside)
         ingredientTypeView.allButton.addTarget(self, action: #selector(didTapAllButton), for: .touchUpInside)
     }
@@ -170,7 +184,14 @@ class IngredientTypeViewController: UIViewController {
     }
 
     @objc private func didTapCloseButton() {
-        dismiss(animated: true, completion: nil)
+        if let viewControllers = navigationController?.viewControllers {
+            for viewController in viewControllers {
+                if viewController is IngredientsViewController { 
+                    navigationController?.popToViewController(viewController, animated: true)
+                    return
+                }
+            }
+        }
     }
     
     @objc private func didTapDateButton() {

@@ -21,7 +21,7 @@ extension IngredientsDataModel {
     static func dummy() -> [IngredientsDataModel] {
         return [
             IngredientsDataModel(
-                category: IngredientCategoryModel(icon: .fruit, categoryName: "과일"),
+                category: IngredientCategoryModel(icon: .fruits, categoryName: "과일"),
                 ingredients: [
                     IngredientSimpleModel(name: "사과"),
                     IngredientSimpleModel(name: "배"),
@@ -35,7 +35,7 @@ extension IngredientsDataModel {
                     IngredientSimpleModel(name: "소고기"),
                     IngredientSimpleModel(name: "돼지고기"),
                     IngredientSimpleModel(name: "닭고기"),
-                    IngredientSimpleModel(name: "가공육") // (베이컨, 햄 등 가공육 포함)
+                    IngredientSimpleModel(name: "가공육")
                 ]
             ),
             IngredientsDataModel(
@@ -55,7 +55,7 @@ extension IngredientsDataModel {
                 ]
             ),
             IngredientsDataModel(
-                category: IngredientCategoryModel(icon: .milk, categoryName: "채소"),
+                category: IngredientCategoryModel(icon: .vegetable, categoryName: "채소"),
                 ingredients: [
                     IngredientSimpleModel(name: "상추"),
                     IngredientSimpleModel(name: "깻잎"),
@@ -64,7 +64,7 @@ extension IngredientsDataModel {
                 ]
             ),
             IngredientsDataModel(
-                category: IngredientCategoryModel(icon: .milk, categoryName: "버섯"),
+                category: IngredientCategoryModel(icon: .mushroom, categoryName: "버섯"),
                 ingredients: [
                     IngredientSimpleModel(name: "팽이버섯"),
                     IngredientSimpleModel(name: "새송이버섯")

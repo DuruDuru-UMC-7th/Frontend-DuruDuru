@@ -11,28 +11,6 @@ import SnapKit
 class IngredientTypeView: UIView {
 
     // MARK: - Components
-    let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
-    
-    let closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
-    
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "식재료 추가하기"
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.textAlignment = .center
-        return label
-    }()
-    
     let topSeparator: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.systemGreen
@@ -129,9 +107,6 @@ class IngredientTypeView: UIView {
     // MARK: - Setup
     private func setupUI() {
         backgroundColor = .white
-        addSubview(backButton)
-        addSubview(closeButton)
-        addSubview(titleLabel)
         addSubview(topSeparator)
         addSubview(stepLabel)
         addSubview(questionLabel)
@@ -144,27 +119,10 @@ class IngredientTypeView: UIView {
     }
     
     private func setupConstraints() {
-        backButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-            $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(44)
-        }
-
-        closeButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(44)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(backButton)
-            $0.centerX.equalToSuperview()
-        }
-        
         topSeparator.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
+            $0.top.equalToSuperview().offset(98)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(2)
         }
         
         stepLabel.snp.makeConstraints {

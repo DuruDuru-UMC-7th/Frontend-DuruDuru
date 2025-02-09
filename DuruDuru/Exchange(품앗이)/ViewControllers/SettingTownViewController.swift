@@ -21,7 +21,6 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
-//    weak var delegate: SettingTownDelegate?
     var setTownRequest: SetTownRequest!
     var isTownRegistered: Bool! // 동네 등록 여부 변수
     
@@ -69,7 +68,6 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
             // 동네 등록 API 호출
             setTown(setTownRequest: self.setTownRequest)
         }
-//        delegate?.didUpdateTownData(dong: self.setTownRequest.eupmyeondong, isTownRegistered: true)
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -164,11 +162,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         let urlWithQuery = "\(url)?\(queryString)"
         
         /// requestBody
-        let requestBody = SetTownRequest(latitude: setTownRequest.latitude,
-                                         longitude: setTownRequest.longitude,
-                                         sido: setTownRequest.sido,
-                                         sigungu: setTownRequest.sigungu,
-                                         eupmyeondong: setTownRequest.eupmyeondong)
+        let requestBody = setTownRequest
         
         /// API 요청
         do {
@@ -203,11 +197,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
         let urlWithQuery = "\(url)?\(queryString)"
         
         /// requestBody
-        let requestBody = SetTownRequest(latitude: setTownRequest.latitude,
-                                         longitude: setTownRequest.longitude,
-                                         sido: setTownRequest.sido,
-                                         sigungu: setTownRequest.sigungu,
-                                         eupmyeondong: setTownRequest.eupmyeondong)
+        let requestBody = setTownRequest
         
         /// API 요청
         do {
@@ -230,7 +220,3 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     }
     
 }
-
-//protocol SettingTownDelegate: AnyObject {
-//    func didUpdateTownData(dong: String, isTownRegistered: Bool)
-//}

@@ -291,7 +291,7 @@ class IngredientDetailView: UIView {
         recipeTableView.snp.makeConstraints {
             $0.top.equalTo(label.snp.bottom)
             $0.left.right.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalTo(bottomView.snp.top)
         }
         
         bottomView.snp.makeConstraints {

@@ -24,8 +24,9 @@ class CustomCameraView: UIView {
     // MARK: - Components
     
     let backButton = UIButton().then {
-        $0.setImage(.whiteXButton, for: .normal)
+        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
+        $0.tintColor = .white
     }
     
     let captureButton = UIButton().then {
@@ -69,8 +70,9 @@ class CustomCameraView: UIView {
     }
     
     let tipCloseButton = UIButton().then {
-        $0.setImage(.whiteXButton, for: .normal)
+        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
+        $0.tintColor = .white
     }
 
     private let cameraGuide = UIImageView().then {

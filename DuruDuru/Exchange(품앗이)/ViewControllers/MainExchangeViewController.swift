@@ -40,7 +40,7 @@ class MainExchangeViewController: UIViewController {
     // MARK: - Function
     
     private func setupAction() {
-        /// segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정
+        // segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정
         mainExchangeView.segmentedControl.addTarget(self, action: #selector(segmentChanged(segment:)),for: .valueChanged)
         mainExchangeView.locationButton.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
     }
@@ -117,10 +117,6 @@ class MainExchangeViewController: UIViewController {
         viewController.didMove(toParent: self)
     }
     
-//    func didUpdateTownData(dong: String, isTownRegistered: Bool) {
-//        self.isTownRegistered = isTownRegistered
-//    }
-    
     // MARK: - API 관련
     
     // 동네 조회 API
@@ -129,7 +125,7 @@ class MainExchangeViewController: UIViewController {
         
         /// 쿼리 파라미터
         let queryParameters: [String: Any] = [
-            "memberId": 2, /// 임시로 넣은 memberId
+            "memberId": 2, // 임시로 넣은 memberId
         ]
         
         let queryString = APIClient.shared.createQueryString(from: queryParameters)

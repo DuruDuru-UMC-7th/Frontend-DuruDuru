@@ -19,19 +19,6 @@ class IngredientsView: UIView {
         $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
     }
     
-//    /// 검색창
-//    let searchBar = UITextField().then {
-//        $0.backgroundColor = UIColor(red: 118/255, green: 118/255, blue: 128/255, alpha: 0.12)
-//        $0.layer.cornerRadius = 10
-//    }
-//    
-//    /// 검색창 이미지
-//    let searchImageView = UIImageView().then {
-//        $0.image = UIImage(named: "Search")
-//        $0.contentMode = .scaleAspectFit
-//        $0.translatesAutoresizingMaskIntoConstraints = false
-//    }
-    
     let searchBarContainer = UIView().then {
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true
@@ -50,7 +37,6 @@ class IngredientsView: UIView {
             textField.backgroundColor = .clear
         }
     }
-    
     
     let allButton = UIButton().then {
         $0.setImage(.allCategory, for: .normal)

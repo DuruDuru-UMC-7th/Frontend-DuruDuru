@@ -9,13 +9,15 @@ import UIKit
 
 class AddIngredientViewController: UIViewController, UITextFieldDelegate {
 
-    // ✅ **뷰 분리**
+    
     private let addIngredientView = AddIngredientView()
 
+    private var quantity: Int = 0
+    
     // MARK: - Lifecycle
     
     override func loadView() {
-        self.view = addIngredientView // ✅ 뷰를 커스텀 뷰로 변경
+        self.view = addIngredientView
     }
     
     override func viewDidLoad() {
@@ -31,6 +33,8 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         addIngredientView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
         addIngredientView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         addIngredientView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
+        addIngredientView.minusButton.addTarget(self, action: #selector(didTapMinusButton), for: .touchUpInside)
+        addIngredientView.plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
     }
     
     @objc private func didTapBackButton() {
@@ -47,10 +51,27 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    @objc private func didTapMinusButton() {
+        if quantity > 0 { // 0 이하로 내려가지 않음
+            quantity -= 1
+            updateQuantityLabel()
+        }
+    }
+    
+    @objc private func didTapPlusButton() {
+        quantity += 1
+        updateQuantityLabel()
+    }
+    
+    private func updateQuantityLabel() {
+        addIngredientView.quantityValueLabel.text = "\(quantity)"
+    }
+    
     @objc private func didTapNextButton() {
         let nextVC = IngredientTypeViewController() // 종류 설정 화면
         navigationController?.pushViewController(nextVC, animated: true)
     }
+    
     
     /// textField return 누를때 동작
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

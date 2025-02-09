@@ -77,7 +77,7 @@ class IngredientTypeViewController: UIViewController {
         popupView.tag = 999 // 중복 방지를 위한 태그 설정
 
         // 팝업 높이 설정
-        let popupHeight: CGFloat = 250
+        let popupHeight: CGFloat = 150
 
         // 팝업 제목
         let titleLabel = UILabel()
@@ -131,7 +131,7 @@ class IngredientTypeViewController: UIViewController {
         NSLayoutConstraint.activate([
             popupView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             popupView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            popupView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            popupView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
             popupView.heightAnchor.constraint(equalToConstant: popupHeight),
 
             titleLabel.topAnchor.constraint(equalTo: popupView.topAnchor, constant: 16),
@@ -193,8 +193,8 @@ class IngredientTypeViewController: UIViewController {
     
     private func configureButton(_ button: UIButton, title: String) {
         button.setTitle(title, for: .normal)
-        button.backgroundColor = .lightGray // 기본 회색
-        button.setTitleColor(.darkGray, for: .normal) // 기본 진한 회색 글씨
+        button.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+        button.setTitleColor(.gray, for: .normal) 
         button.layer.cornerRadius = 8
     }
     
@@ -323,7 +323,7 @@ extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
             let spacing: CGFloat = 8
             let totalSpacing = spacing * 4
             let cellWidth = (collectionView.frame.width - totalSpacing) / 3
-            return CGSize(width: cellWidth, height: cellWidth)
+            return CGSize(width: cellWidth, height: cellWidth + 30)
         }
         return CGSize.zero
     }

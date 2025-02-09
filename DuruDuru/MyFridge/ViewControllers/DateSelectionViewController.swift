@@ -20,7 +20,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         super.viewDidLoad()
         setupActions()
         setupIconConstraints()
-        navigationItem.hidesBackButton = true
+        setUpUI()
         
         dateSelectionView.dateTextField.delegate = self
     }
@@ -31,10 +31,24 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     }
     
     // MARK: - Setup Methods
+    
+    private func setUpUI() {
+        // 상단바
+        let backImage = UIImage(systemName: "chevron.left")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(didTapBackButton))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
+        let closeImage = UIImage(systemName: "xmark")
+        let closeButton = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(didTapCloseButton))
+        self.navigationItem.rightBarButtonItem = closeButton
+        closeButton.tintColor = .black
+        
+        self.title = "식재료 추가하기"
+    }
+    
     private func setupActions() {
         dateSelectionView.confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
-        dateSelectionView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
-        dateSelectionView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
     }
     
     private func setupIconConstraints() {

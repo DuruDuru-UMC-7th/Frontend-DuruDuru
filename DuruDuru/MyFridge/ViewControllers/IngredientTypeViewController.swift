@@ -74,7 +74,7 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.searchBar.delegate = self
     }
 
-    private func showBottomPopup(for ingredient: IngredientSimpleModel) {
+    private func showBottomPopup() {
         // 팝업 컨테이너 뷰
         let popupView = UIView()
         popupView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
@@ -184,13 +184,10 @@ class IngredientTypeViewController: UIViewController {
     }
 
     @objc private func didTapCloseButton() {
-        if let viewControllers = navigationController?.viewControllers {
-            for viewController in viewControllers {
-                if viewController is IngredientsViewController { 
-                    navigationController?.popToViewController(viewController, animated: true)
-                    return
-                }
-            }
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
         }
     }
     
@@ -351,7 +348,7 @@ extension IngredientTypeViewController: UICollectionViewDelegate {
 //            print("선택된 식재료: \(selectedIngredient.name)")
             
             // 팝업 띄우기
-//            showBottomPopup(for: selectedIngredient)
+            showBottomPopup()
         }
     }
 

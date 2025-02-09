@@ -123,6 +123,7 @@ class IngredientTypeView: UIView {
             $0.top.equalToSuperview().offset(98)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(2)
+            $0.width.equalTo(UIScreen.main.bounds.width * (2 / 3))
         }
         
         stepLabel.snp.makeConstraints {

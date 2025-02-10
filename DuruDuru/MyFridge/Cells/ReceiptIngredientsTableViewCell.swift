@@ -39,6 +39,8 @@ class ReceiptIngredientsTableViewCell: UITableViewCell, UITextFieldDelegate {
         self.decrementButton.addTarget(self, action: #selector(decrementButtonClicked), for: .touchUpInside)
         self.incrementButton.addTarget(self, action: #selector(incrementButtonClicked), for: .touchUpInside)
         self.deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
+        
+        ingredientName.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -216,10 +218,20 @@ class ReceiptIngredientsTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     // MARK: - UITextFieldDelegate
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder() // 키보드 숨기기
+        if let text = textField.text, !text.isEmpty {
+            // 텍스트 필드의 내용을 countLabel에 반영
+            ingredientName.text = text
+        }
         return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        // 텍스트 필드의 내용을 countLabel에 반영
+        if let text = textField.text, !text.isEmpty {
+            ingredientName.text = text
+        }
     }
 }
 

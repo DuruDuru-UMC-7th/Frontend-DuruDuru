@@ -304,21 +304,33 @@ class EditReceiptIngredientsView: UIView {
     func configure(receiptResult: ReceiptResult!) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        if let date = dateFormatter.date(from: receiptResult.purchaseDate ?? "2020-01-01") {
+        
+        // 기본 날짜 설정
+        let defaultDate = "2020-01-01"
+        let purchaseDateString = receiptResult.purchaseDate ?? defaultDate
+        
+        // 날짜 변환
+        if let date = dateFormatter.date(from: purchaseDateString) {
+            // 요일 찾기
+            let calendar = Calendar.current
+            let weekday = calendar.component(.weekday, from: date)
+            
+            // 요일 이름 배열 (1: 일요일, 2: 월요일, ..., 7: 토요일)
+            let weekdays = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"]
+            let weekdayName = weekdays[weekday - 1] // 배열 인덱스 조정
+            
+            // 날짜 형식 변경
             dateFormatter.dateFormat = "yyyy년 M월 d일"
             let formattedDate = dateFormatter.string(from: date)
             
-            /// 아직 서버에서 week 못 받음
-//            dateTitleLabel.text = "\(formattedDate) \(receipt.week)"
-//            buyDateValue.text = "\(formattedDate) \(receipt.week)"
-            dateTitleLabel.text = "\(formattedDate) 금요일"
-            buyDateValue.text = "\(formattedDate) 금요일"
+            // UILabel에 설정
+            dateTitleLabel.text = "\(formattedDate) \(weekdayName)"
+            buyDateValue.text = "\(formattedDate) \(weekdayName)"
         } else {
             dateTitleLabel.text = "날짜 형식 오류"
             buyDateValue.text = "날짜 형식 오류"
         }
         
         countTitleLabel.text = "\(receiptResult.ingredients.count)개"
-        
     }
 }

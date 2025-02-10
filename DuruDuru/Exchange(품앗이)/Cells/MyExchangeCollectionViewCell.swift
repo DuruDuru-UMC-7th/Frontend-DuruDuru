@@ -69,7 +69,7 @@ class MyExchangeCollectionViewCell: UICollectionViewCell {
     }
     
     let moreButton = UIButton().then {
-        $0.setImage(.moreButton.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.setImage(UIImage(named: "moreButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.28)
     }
     

@@ -40,16 +40,16 @@ class ExchangeDetailViewController: UIViewController {
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear
         
         /// 뒤로 가기 버튼
-        let backButton = UIBarButtonItem(image: .arrow3, style: .plain, target: self, action: #selector(backButtonTapped))
+        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped))
         self.navigationItem.leftBarButtonItem = backButton
         backButton.tintColor = .black
         
         /// 내보내기 이미지
-        let exportButton = UIBarButtonItem(image: .export, style: .plain, target: self, action: #selector(imageButtonTapped))
-        exportButton.tintColor = .black
+        let exportButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(imageButtonTapped)) // 'push'를 유효한 아이콘으로 변경
+            exportButton.tintColor = .black
         
         /// moreButton 추가
-        let moreButton = UIBarButtonItem(image: .moreButton, style: .plain, target: self, action: #selector(moreButtonTapped))
+        let moreButton = UIBarButtonItem(image: UIImage(named: "moreButton"), style: .plain, target: self, action: #selector(moreButtonTapped))
         moreButton.tintColor = .black
         
         /// moreButton 오른쪽 간격

@@ -60,7 +60,8 @@ class IngredientsTableViewCell: UITableViewCell {
     
     /// 레시피 페이지 버튼
     let recipeViewButton = UIButton().then {
-        $0.setImage(.arrow2, for: .normal)
+        $0.setImage(UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysOriginal), for: .normal) 
+        $0.tintColor = .black
         $0.imageView?.contentMode = .scaleAspectFit
         $0.contentHorizontalAlignment = .right
     }

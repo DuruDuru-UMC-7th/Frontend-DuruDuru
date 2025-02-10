@@ -149,7 +149,7 @@ class ExchangeDetailView: UIView {
     
     /// 좋아요 버튼
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "likeButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.setImage(UIImage(systemName: "heart")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
     }
     

@@ -37,7 +37,8 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     }
     
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "Heart"), for: .normal)
+        $0.setImage(UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate), for: .normal) // 채워진 하트 이미지 사용
+        $0.tintColor = .white
     }
     
     // MARK: - Constaints & Add Function

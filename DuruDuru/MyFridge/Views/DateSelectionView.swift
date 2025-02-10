@@ -92,8 +92,9 @@ class DateSelectionView: UIView {
         let button = UIButton()
         button.setTitle("식재료 추가", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = .systemGray4 
         button.layer.cornerRadius = 8
+        button.isEnabled = false
         return button
     }()
     

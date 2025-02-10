@@ -11,25 +11,13 @@ import SnapKit
 class AddIngredientView: UIView {
 
     // MARK: - UI Components
-    
-//    let backButton = UIButton().then {
-//        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-//        $0.tintColor = .black
-//    }
-//    
-//    let closeButton = UIButton().then {
-//        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
-//        $0.tintColor = .black
-//    }
-//    
-//    let titleLabel = UILabel().then {
-//        $0.text = "식재료 추가하기"
-//        $0.font = UIFont.boldSystemFont(ofSize: 16)
-//        $0.textAlignment = .center
-//    }
-    
     let topSeparator = UIView().then {
         $0.backgroundColor = UIColor.systemGreen
+    }
+    
+    let topSeparator2 = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0x37383C
+                                     , alpha: 0.16)
     }
     
     let stepLabel = UILabel().then {
@@ -132,10 +120,8 @@ class AddIngredientView: UIView {
     
     private func setupUI() {
         backgroundColor = .white
-//        addSubview(backButton)
-//        addSubview(closeButton)
-//        addSubview(titleLabel)
         addSubview(topSeparator)
+        addSubview(topSeparator2)
         addSubview(stepLabel)
         addSubview(instructionLabel)
         addSubview(imageView)
@@ -151,28 +137,18 @@ class AddIngredientView: UIView {
     // MARK: - 오토레이아웃 설정
     
     private func setupConstraints() {
-//        backButton.snp.makeConstraints {
-//            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-//            $0.leading.equalToSuperview().offset(16)
-//            $0.width.height.equalTo(44)
-//        }
-//
-//        closeButton.snp.makeConstraints {
-//            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-//            $0.trailing.equalToSuperview().offset(-16)
-//            $0.width.height.equalTo(44)
-//        }
-//        
-//        titleLabel.snp.makeConstraints {
-//            $0.centerY.equalTo(backButton)
-//            $0.centerX.equalToSuperview()
-//        }
-        
         topSeparator.snp.makeConstraints {
             $0.top.equalToSuperview().offset(98)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalToSuperview()
             $0.height.equalTo(2)
             $0.width.equalTo(UIScreen.main.bounds.width * (1 / 3))
+        }
+        
+        topSeparator2.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(98)
+            $0.leading.equalTo(topSeparator.snp.trailing)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
         }
         
         stepLabel.snp.makeConstraints {
@@ -200,7 +176,6 @@ class AddIngredientView: UIView {
             $0.top.equalTo(nameLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(36)
-            $0.width.equalTo(371)
         }
         
         quantityLabel.snp.makeConstraints {

@@ -12,7 +12,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
-    var allIngredientData = IngredientsDataModel.dummy()[0] // 모든 식재료 데이터
+    var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
     var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
     var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
     var minorCategoryList: [String] = []
@@ -55,14 +55,14 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         selectedCategory = category
         
         
-//        if let category = category {
-//            filteredIngredients = allIngredientData
-//                .first(where: { $0.category.categoryName == category.categoryName })?
-//                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
-//        } else {
-//            // 전체 보기
-//            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
-//        }
+        if let category = category {
+            filteredIngredients = allIngredientData
+                .first(where: { $0.category.categoryName == category.categoryName })?
+                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
+        } else {
+            // 전체 보기
+            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+        }
         ingredientsView.ingredientsCircleCollectionView.reloadData()
     }
     
@@ -240,7 +240,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
             return categoryData.count
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            return allIngredientData.ingredients.count
+            return filteredIngredients.count
         }
         return 0
     }
@@ -262,7 +262,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = allIngredientData.ingredients[indexPath.item]
+            let ingredient = filteredIngredients[indexPath.item]
             cell.configure(with: ingredient) // 셀에 데이터 설정
             return cell
         }

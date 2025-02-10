@@ -45,6 +45,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         addIngredientView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         addIngredientView.minusButton.addTarget(self, action: #selector(didTapMinusButton), for: .touchUpInside)
         addIngredientView.plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
+        addIngredientView.nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
     }
     
     @objc private func didTapBackButton() {
@@ -83,6 +84,11 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         setIngredeint(setIngredientRequest: request)
         let nextVC = IngredientTypeViewController() // 종류 설정 화면
         navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        let isNotEmpty = !(textField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        addIngredientView.updateNextButtonState(isEnabled: isNotEmpty)
     }
     
     // textField return 누를때 동작

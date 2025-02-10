@@ -12,22 +12,6 @@ class AddIngredientView: UIView {
 
     // MARK: - UI Components
     
-//    let backButton = UIButton().then {
-//        $0.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-//        $0.tintColor = .black
-//    }
-//    
-//    let closeButton = UIButton().then {
-//        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
-//        $0.tintColor = .black
-//    }
-//    
-//    let titleLabel = UILabel().then {
-//        $0.text = "식재료 추가하기"
-//        $0.font = UIFont.boldSystemFont(ofSize: 16)
-//        $0.textAlignment = .center
-//    }
-    
     let topSeparator = UIView().then {
         $0.backgroundColor = UIColor.systemGreen
     }
@@ -111,11 +95,16 @@ class AddIngredientView: UIView {
     let nextButton = UIButton().then {
         $0.setTitle("종류 설정하러 가기", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        $0.backgroundColor = .systemGreen
+        $0.backgroundColor = .systemGray4
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 8
+        $0.isEnabled = false
     }
 
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        nextButton.backgroundColor = isEnabled ? .systemGreen : .systemGray4
+    }
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -132,9 +121,6 @@ class AddIngredientView: UIView {
     
     private func setupUI() {
         backgroundColor = .white
-//        addSubview(backButton)
-//        addSubview(closeButton)
-//        addSubview(titleLabel)
         addSubview(topSeparator)
         addSubview(stepLabel)
         addSubview(instructionLabel)
@@ -151,22 +137,7 @@ class AddIngredientView: UIView {
     // MARK: - 오토레이아웃 설정
     
     private func setupConstraints() {
-//        backButton.snp.makeConstraints {
-//            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-//            $0.leading.equalToSuperview().offset(16)
-//            $0.width.height.equalTo(44)
-//        }
-//
-//        closeButton.snp.makeConstraints {
-//            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-//            $0.trailing.equalToSuperview().offset(-16)
-//            $0.width.height.equalTo(44)
-//        }
-//        
-//        titleLabel.snp.makeConstraints {
-//            $0.centerY.equalTo(backButton)
-//            $0.centerX.equalToSuperview()
-//        }
+
         
         topSeparator.snp.makeConstraints {
             $0.top.equalToSuperview().offset(98)

@@ -13,6 +13,7 @@ class ExchangeViewController: UIViewController {
     
     private var exchangeView: ExchangeView!
     private var isFloatingExpanded = false
+    var isTownRegistered = false // 동네 등록 여부 변수
     
     private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
     private var otherTradeItems: [OtherTradeModel] = OtherTradeModel.dummy()
@@ -23,22 +24,46 @@ class ExchangeViewController: UIViewController {
         
         exchangeView = ExchangeView(frame: self.view.bounds)
         self.view = exchangeView
+        setUpUIBar()
         setupDelegate()
         setupActions()
-        exchangeView.updateTableViewHeight(dataCnt: 14)
+        exchangeView.updateTableViewHeight(dataCnt: OtherTradeModel.dummy().count)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // API 요청
+        getTown()
+    }
+    
+    // MARK: - Functions
     
     private func setupDelegate(){
         exchangeView.myExchangeCollectionView.dataSource = self
         exchangeView.myExchangeCollectionView.delegate = self
         exchangeView.exchangeTableView.delegate = self
         exchangeView.exchangeTableView.dataSource = self
+        exchangeView.locationButton.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
     }
     
     private func setupActions() {
         exchangeView.floatingButton.addTarget(self, action: #selector(didTapFloatingButton), for: .touchUpInside)
         exchangeView.registerPoomButton.addTarget(self, action: #selector(didTapRegisterPoom), for: .touchUpInside)
         exchangeView.registerTogetherButton.addTarget(self, action: #selector(didTapRegisterTogether), for: .touchUpInside)
+    }
+    
+    func setUpUIBar() {
+        let townButton = UIBarButtonItem(customView: exchangeView.locationButton)
+        let downButton = UIBarButtonItem(customView: exchangeView.downImage)
+        
+        // UIStackView를 사용하여 간격 조정
+        let stackView = UIStackView(arrangedSubviews: [townButton.customView!, downButton.customView!])
+        stackView.axis = .horizontal
+        stackView.spacing = 0
+        
+        // 상단 바에 스택 뷰 추가
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: stackView)
     }
     
     /// 플로팅 버튼 클릭 시 동작
@@ -61,6 +86,13 @@ class ExchangeViewController: UIViewController {
     @objc private func didTapRegisterTogether() {
         let togetherVC = ExchangeRegisterDetailViewController()
         navigationController?.pushViewController(togetherVC, animated: true)
+    }
+    
+    @objc private func didTapLocationButton() {
+        let settingTownVC = SettingTownViewController()
+        settingTownVC.hidesBottomBarWhenPushed = true
+        settingTownVC.isTownRegistered = self.isTownRegistered
+        navigationController?.pushViewController(settingTownVC, animated: true)
     }
 }
 
@@ -95,6 +127,34 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             
         }
         return UICollectionViewCell()
+    }
+    
+    // MARK: - API 관련
+    
+    // 동네 조회 API
+    func getTown() {
+        let url = "http://3.35.252.162:8080/town/"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, // 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        /// API 요청
+        APIClient.shared.request(urlWithQuery, method: .get) { [self] (result: Result<TownResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!동네 조회 성공!!")
+                print(response)
+                isTownRegistered = true
+                exchangeView.locationButton.setTitle(response.result!.eupmyeondong, for: .normal)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
     }
 }
 

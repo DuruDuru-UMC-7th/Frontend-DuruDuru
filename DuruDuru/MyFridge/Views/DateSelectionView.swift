@@ -115,7 +115,7 @@ class DateSelectionView: UIView {
         buttonStackView.addArrangedSubview(purchaseDateButton)
         buttonStackView.addArrangedSubview(expirationDateButton)
 
-        [topSeparator, stepLabel, questionLabel, buttonStackView,dateLabel,
+        [topSeparator, topSeparator2, stepLabel, questionLabel, buttonStackView,dateLabel,
          descriptionLabel, dateTextField, confirmButton].forEach { addSubview($0) }
     }
     
@@ -123,7 +123,7 @@ class DateSelectionView: UIView {
         topSeparator.snp.makeConstraints {
             $0.top.equalToSuperview().offset(98)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(2)
         }
         
         stepLabel.snp.makeConstraints {

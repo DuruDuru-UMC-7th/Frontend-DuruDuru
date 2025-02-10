@@ -14,7 +14,8 @@ class ExchangeViewController: UIViewController {
     private var exchangeView: ExchangeView!
     private var isFloatingExpanded = false
     
-    
+    private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
+    private var otherTradeItems: [OtherTradeModel] = OtherTradeModel.dummy()
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -69,7 +70,7 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == exchangeView.myExchangeCollectionView {
-            return 4
+            return tradeItems.count
         }
         return 0
     }
@@ -82,6 +83,14 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             ) as? MyExchangeCollectionViewCell else {
                 return UICollectionViewCell()
             }
+            
+            let tradeItem = tradeItems[indexPath.item]
+            cell.name.text = tradeItem.name // 이름 설정
+            if let imageURL = URL(string: tradeItem.image) {
+                cell.titleImage.kf.setImage(with: imageURL)
+            }
+            cell.isChange.text = tradeItem.tradeType
+            
             return cell
             
         }
@@ -93,14 +102,17 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
 
 extension ExchangeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 14
+        return otherTradeItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ExchangeTableViewCell.identifier, for: indexPath) as? ExchangeTableViewCell else {
             return UITableViewCell()
         }
-        cell.name.text = String(indexPath.row)
+        let tradeItem = otherTradeItems[indexPath.row]
+        cell.name.text = tradeItem.name // 이름 설정
+        // 이미지 설정: 이미지 이름을 사용하여 UIImage를 생성
+        cell.titleImage.image = UIImage(named: tradeItem.image)
         return cell
     }
     

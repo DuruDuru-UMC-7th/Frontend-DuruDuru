@@ -13,7 +13,7 @@ class ExchangeDetailViewController: UIViewController {
     
     private var exchangeDetailView: ExchangeDetailView!
     private var pageControl: UIPageControl!
-    private var images: [UIImage] = [.thumbnail, .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
+    private var images: [UIImage] = [UIImage(named: "자른미역") ?? UIImage(), .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
     var tradeId: Int!
     
     // MARK: - Lifecycle

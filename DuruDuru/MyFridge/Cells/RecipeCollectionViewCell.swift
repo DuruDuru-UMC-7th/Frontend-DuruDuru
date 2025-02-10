@@ -72,10 +72,10 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     // MARK: - Configuration
     
     public func configure(imageURL: String) {
-        guard let url = URL(string: imageURL) else {
-            titleImage.image = nil 
-            return
-        }
-        titleImage.kf.setImage(with: url)
+//        guard let url = URL(string: imageURL) else {
+//            titleImage.image = nil 
+//            return
+//        }
+        titleImage.image = UIImage(named: imageURL)
     }
 }

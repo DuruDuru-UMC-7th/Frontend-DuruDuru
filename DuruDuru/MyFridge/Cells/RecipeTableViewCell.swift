@@ -130,9 +130,10 @@ class RecipeTableViewCell: UITableViewCell {
     }
     
     public func configure(recipe: RecipeModel) {
-        if let imageURL = URL(string: recipe.titleImage) {
-            titleImage.kf.setImage(with: imageURL)
-        }
+//        if let imageURL = URL(string: recipe.titleImage) {
+//            titleImage.kf.setImage(with: imageURL)
+//        }
+        titleImage.image = UIImage(named: recipe.titleImage)
         recipeName.text = recipe.recipeName
         tags = recipe.tags
         

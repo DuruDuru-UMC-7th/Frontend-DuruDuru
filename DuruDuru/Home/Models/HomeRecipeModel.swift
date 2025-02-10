@@ -17,28 +17,20 @@ extension HomeRecipeModel {
     static func dummyRecipe() -> [HomeRecipeModel] {
         return [
             HomeRecipeModel(
-                imageName: "Kevin",
+                imageName: "_계란 레시피3",
                 title: "폭탄계란찜",
                 ingredients: ["계란", "대파", "우유", "치즈", "버터"]
             ),
             HomeRecipeModel(
-                imageName: "Kevin",
-                title: "샐러드",
-                ingredients: ["연근", "감자", "오이", "가지", "연어"]
+                imageName: "계란 레시피1",
+                title: "양파덮밥",
+                ingredients: ["양파", "계란", "대파", "연어"]
             ),
             HomeRecipeModel(
-                imageName: "Kevin",
-                title: "크림파스타",
-                ingredients: ["파스타", "크림", "치즈", "버섯",]
-            ),
-            HomeRecipeModel(
-                imageName: "Kevin",
-                title: "카레",
-                ingredients: ["강황", "소금", "감자", "당근"]),
-            HomeRecipeModel(
-                imageName: "Kevin",
-                title: "마라탕후루",
-                ingredients: ["마라", "라탕", "탕후", "후루", "루"]),
+                imageName: "어묵우동",
+                title: "어묵우동",
+                ingredients: ["어묵", "우동사리", "버섯",]
+            )
         ]
     }
 }

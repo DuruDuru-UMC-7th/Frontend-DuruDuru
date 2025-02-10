@@ -86,7 +86,7 @@ extension ExchangeRegisterViewController: UICollectionViewDelegate, UICollection
             return UICollectionViewCell()
         }
         let ingredient = ingredients[indexPath.row]
-        cell.configure(with: ingredient)
+//        cell.configure(with: ingredient)
         return cell
     }
     

@@ -16,18 +16,11 @@ struct MyIngredientModel {
 extension MyIngredientModel {
     static func dummyIngredient() -> [MyIngredientModel] {
         return [
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "두부"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "소고기"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "돼지고기"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "연근"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "오이"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "가지"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "올리브오일"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "광어"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "방어"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "커피"),
-            MyIngredientModel(ingredientImage: UIImage(named: "Kevin") ?? UIImage(), ingredientName: "밀가루")
-            
+            MyIngredientModel(ingredientImage: UIImage(named: "다진마늘") ?? UIImage(), ingredientName: "다진마늘"),
+            MyIngredientModel(ingredientImage: UIImage(named: "콩나물") ?? UIImage(), ingredientName: "콩나물"),
+            MyIngredientModel(ingredientImage: UIImage(named: "우유") ?? UIImage(), ingredientName: "우유"),
+            MyIngredientModel(ingredientImage: UIImage(named: "삼겹살") ?? UIImage(), ingredientName: "삼겹살"),
+            MyIngredientModel(ingredientImage: UIImage(named: "가래떡") ?? UIImage(), ingredientName: "가래떡")
         ]
     }
 }

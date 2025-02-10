@@ -41,7 +41,7 @@ class RecipeDetailView: UIView {
     
     /// 레시피 대표 이미지
     let titleImageView = UIImageView().then {
-        $0.image = .thumbnail
+        $0.image = UIImage(named: "계란 레시피1")
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }

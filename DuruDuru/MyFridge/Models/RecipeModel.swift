@@ -25,50 +25,29 @@ struct RecipeModel {
 extension IngredientModel{
     static func dummy() ->[IngredientModel]{
         return[
-            IngredientModel(name:"우유", recipes: [
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/14/2d/17/142d17d25981c516a8b07c9919da2459.jpg", recipeName: "우유 레시피1"
-                            ,tags: ["#초보", "#왕초보", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/a0/e1/f7/a0e1f7e365bb3ccda6eb0f7e930bc6e2.jpg", recipeName: "우유 레시피2"
-                           ,tags: ["#우유", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/fd/ff/d3/fdffd36cf60633860d748300f94d4239.jpg", recipeName: "우유 레시피3"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식"])
-            ]),
             IngredientModel(name:"계란", recipes: [
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/e4/cb/0e/e4cb0e0ed31a13ebc6ed18ecd56e001e.jpg", recipeName: "계란 레시피1"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식","#우유", "#양식", "쉬운요리"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/bf/26/f3/bf26f3425113e774d3aaa2a45776df5d.jpg", recipeName: "게란 레시피2"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/1a/12/0e/1a120e77cd19cbc1132d8b9fcf06546e.jpg", recipeName: "계란 레시피3"
-                            ,tags: ["#우유", "#양식", "쉬운요리", "한식"])
+                RecipeModel(titleImage: "계란 레시피1", recipeName: "황금계란볶음밥"
+                            ,tags: ["#초보", "#왕초보", "쉬운요리", "한식"]),
+                RecipeModel(titleImage: "계란 레시피2", recipeName: "계란조림"
+                            ,tags: ["#계란", "#양식", "쉬운요리", "한식"]),
+                RecipeModel(titleImage: "_계란 레시피3", recipeName: "폭탄계란찜"
+                            ,tags: ["#계란", "#양식", "쉬운요리", "한식"])
             ]),
             IngredientModel(name:"사과", recipes: [
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/3c/fc/24/3cfc24cc29f2a0e9d0a74a2fbdecfdb9.jpg", recipeName: "사과 레시피1"
-                            ,tags: ["#사과", "#양식", "초보"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/46/6f/c1/466fc1aa9cc06febf5bbac39d12699f3.jpg", recipeName: "사과 레시피2"
-                            ,tags: ["#사과", "#초보", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/3c/fc/24/3cfc24cc29f2a0e9d0a74a2fbdecfdb9.jpg", recipeName: "사과 레시피3"
-                            ,tags: ["#사과", "#양식", "쉬운요리", "한식"])
+                RecipeModel(titleImage: "사과 레 1", recipeName: "사과 샌드위치"
+                            ,tags: ["#양식", "쉬운요리"]),
+                RecipeModel(titleImage: "사과 레 2", recipeName: "사과 토스트"
+                            ,tags: ["#양식", "쉬운요리"]),
             ]),
             IngredientModel(name:"돼지고기", recipes: [
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/bf/d9/e9/bfd9e9c6e57c2d75b5e156c4959ec7c5.jpg", recipeName: "돼지고기 레시피1"
-                            ,tags: ["#돼지고기", "#초보", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/db/5c/d7/db5cd739b23b3029aaddeebd565c4b00.jpg", recipeName: "돼지고기 레시피2"
-                            ,tags: ["#돼지고기", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/bf/d9/e9/bfd9e9c6e57c2d75b5e156c4959ec7c5.jpg", recipeName: "돼지고기 레시피3"
-                            ,tags: ["#돼지고기", "#초보", "쉬운요리", "한식"])
-            ]),
-            IngredientModel(name:"두부", recipes: [
-                RecipeModel(titleImage: "https://i.pinimg.com/736x/14/2d/17/142d17d25981c516a8b07c9919da2459.jpg", recipeName: "두부 레시피1"
-                            ,tags: ["#두부", "#초보", "양식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/c4/e6/20/c4e62081d3ec4df10dd39693a2bece4b.jpg", recipeName: "두부 레시피2"
-                            ,tags: ["#두부", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "https://i.pinimg.com/474x/e9/e5/8f/e9e58f523baa5854652c57385da099d6.jpg", recipeName: "두부 레시피3"
-                            ,tags: ["#두부", "#양식", "쉬운요리", "한식"])
-            ]),
+                RecipeModel(titleImage: "돼지 레 1", recipeName: "동파육"
+                            ,tags: ["#돼지", "#중식", "초보"]),
+                RecipeModel(titleImage: "돼지 레 2", recipeName: "삼겹살 덮밥"
+                            ,tags: ["#돼지", "한식"]),
+                RecipeModel(titleImage: "제육볶음", recipeName: "제육볶음"
+                            ,tags: ["#돼지", "제육볶음"])
+            ])
+
         ]
     }
 }

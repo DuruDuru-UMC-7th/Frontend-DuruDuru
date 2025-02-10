@@ -41,31 +41,31 @@ class MainExchangeViewController: UIViewController {
     
     private func setupAction() {
         // segmentedControl의 valueChanged 이벤트에 대한 타겟 및 액션 설정
-        mainExchangeView.segmentedControl.addTarget(self, action: #selector(segmentChanged(segment:)),for: .valueChanged)
+//        mainExchangeView.segmentedControl.addTarget(self, action: #selector(segmentChanged(segment:)),for: .valueChanged)
         mainExchangeView.locationButton.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
     }
     
-    @objc
-    private func segmentChanged(segment: UISegmentedControl) {
-        if segment.selectedSegmentIndex == 0 {
-            switchToChildViewController(exchangeVC)
-        } else {
-            switchToChildViewController(eatTogetherVC)
-        }
-        
-        /// 세그먼트의 너비 계산
-        let segmentWidth = mainExchangeView.segmentedControl.frame.width / CGFloat(mainExchangeView.segmentedControl.numberOfSegments)
-        let selectedSegmentIndex = CGFloat(segment.selectedSegmentIndex)
-        
-        /// 언더라인 애니메이션
-        UIView.animate(withDuration: 0.3) {
-            /// 언더라인의 제약 조건 업데이트
-            self.mainExchangeView.underline.snp.updateConstraints {
-                $0.left.equalTo(self.mainExchangeView.segmentedControl.snp.left).offset(segmentWidth * selectedSegmentIndex)
-            }
-            self.view.layoutIfNeeded()
-        }
-    }
+//    @objc
+//    private func segmentChanged(segment: UISegmentedControl) {
+//        if segment.selectedSegmentIndex == 0 {
+//            switchToChildViewController(exchangeVC)
+//        } else {
+//            switchToChildViewController(eatTogetherVC)
+//        }
+//        
+//        /// 세그먼트의 너비 계산
+//        let segmentWidth = mainExchangeView.segmentedControl.frame.width / CGFloat(mainExchangeView.segmentedControl.numberOfSegments)
+//        let selectedSegmentIndex = CGFloat(segment.selectedSegmentIndex)
+//        
+//        /// 언더라인 애니메이션
+//        UIView.animate(withDuration: 0.3) {
+//            /// 언더라인의 제약 조건 업데이트
+//            self.mainExchangeView.underline.snp.updateConstraints {
+//                $0.left.equalTo(self.mainExchangeView.segmentedControl.snp.left).offset(segmentWidth * selectedSegmentIndex)
+//            }
+//            self.view.layoutIfNeeded()
+//        }
+//    }
     
     /// 동네 설정 버튼 클릭 시 동작
     @objc private func didTapLocationButton() {

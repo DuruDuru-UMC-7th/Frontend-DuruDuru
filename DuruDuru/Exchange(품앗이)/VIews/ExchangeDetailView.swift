@@ -50,7 +50,7 @@ class ExchangeDetailView: UIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 18
-        $0.image = .thumbnail
+        $0.image = .thum
     }
     
     /// 프로필 이름

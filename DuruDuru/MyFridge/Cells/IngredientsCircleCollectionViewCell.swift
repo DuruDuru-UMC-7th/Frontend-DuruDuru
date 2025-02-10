@@ -22,6 +22,10 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    var imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
+    
     /// 남은 소비기한 라벨 (원 내부)
     private let expiryLabel = UILabel().then {
         $0.font = .boldSystemFont(ofSize: 14)
@@ -56,6 +60,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     private func addComponents() {
         addSubview(circleView)
         circleView.addSubview(expiryLabel)
+        circleView.addSubview(imageView)
         addSubview(ingredientNameLabel)
     }
     
@@ -68,6 +73,10 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(circleView.snp.width) // 원형 유지
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         // 원 내부 텍스트 (소비기한)
@@ -85,9 +94,10 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Configure Cell
     
-    func configure(with model: IngredientsModel) {
-        expiryLabel.text = model.daysRemaining // e.g., "D-3"
+    func configure(with model: IngredientSimpleModel) {
+        expiryLabel.text = "D-3" // e.g., "D-3"
         ingredientNameLabel.text = model.name // e.g., "콩나물"
+        imageView.image = UIImage(named: model.image) // e.g., "콩나물"
     }
     
     func configureSimple(with minorCategory: String) {

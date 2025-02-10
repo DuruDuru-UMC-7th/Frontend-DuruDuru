@@ -17,6 +17,11 @@ class IngredientTypeView: UIView {
         return view
     }()
     
+    let topSeparator2 = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0x37383C
+                                     , alpha: 0.16)
+    }
+    
     let stepLabel: UILabel = {
         let label = UILabel()
         label.text = "Step.2"
@@ -108,6 +113,7 @@ class IngredientTypeView: UIView {
     private func setupUI() {
         backgroundColor = .white
         addSubview(topSeparator)
+        addSubview(topSeparator2)
         addSubview(stepLabel)
         addSubview(questionLabel)
         addSubview(searchBarContainer)
@@ -121,9 +127,16 @@ class IngredientTypeView: UIView {
     private func setupConstraints() {
         topSeparator.snp.makeConstraints {
             $0.top.equalToSuperview().offset(98)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.equalToSuperview()
             $0.height.equalTo(2)
             $0.width.equalTo(UIScreen.main.bounds.width * (2 / 3))
+        }
+        
+        topSeparator2.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(98)
+            $0.leading.equalTo(topSeparator.snp.trailing)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
         }
         
         stepLabel.snp.makeConstraints {

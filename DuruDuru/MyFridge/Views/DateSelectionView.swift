@@ -20,15 +20,51 @@ class DateSelectionView: UIView {
         let label = UILabel()
         label.text = "Step.3"
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.textColor = .systemGray
+        label.textColor = .gray
         return label
     }()
     
     let questionLabel: UILabel = {
         let label = UILabel()
-        label.text = "식재료를 구매한 날짜는 \n언제인가요?"
+        label.text = "식재료 소비기한을 어떻게 입력할까요?"
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.numberOfLines = 0
+        return label
+    }()
+    
+    // 버튼 스택뷰
+    let buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+
+    let purchaseDateButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("구매한 날짜를 입력할게요.", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.systemGreen
+        button.layer.cornerRadius = 8
+        button.titleLabel?.font = .systemFont(ofSize: 13)
+        return button
+    }()
+
+    let expirationDateButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("표기된 소비기한을 입력할게요.", for: .normal)
+        button.setTitleColor(.gray, for: .normal)
+        button.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
+        button.layer.cornerRadius = 8
+        button.titleLabel?.font = .systemFont(ofSize: 13)
+        return button
+    }()
+
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "구매한 날짜 입력하기"
+        label.font = UIFont.boldSystemFont(ofSize: 14)
         return label
     }()
     
@@ -47,31 +83,7 @@ class DateSelectionView: UIView {
         textField.borderStyle = .roundedRect
         textField.textAlignment = .center
         
-        // LeftView에 Calendar 아이콘 추가
-//        let iconView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-//        let iconImageView = UIImageView(image: UIImage(systemName: "calendar"))
-//        iconImageView.tintColor = .gray
-//        iconView.addSubview(iconImageView)
-//        textField.leftView = iconView
-//        textField.leftViewMode = .always
-//        
-        
         return textField
-    }()
-    
-    let noMemoryLabel: UILabel = {
-        let label = UILabel()
-        label.text = "기억이 나지 않습니다"
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .systemGray
-        
-        // 밑줄 스타일 추가
-        let attributedString = NSAttributedString(
-            string: "기억이 나지 않습니다",
-            attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue]
-        )
-        label.attributedText = attributedString
-        return label
     }()
     
     let confirmButton: UIButton = {
@@ -97,8 +109,11 @@ class DateSelectionView: UIView {
     // MARK: - Setup Methods
     private func setupUI() {
         backgroundColor = .white
-        [  topSeparator, stepLabel, questionLabel,
-         descriptionLabel, dateTextField, noMemoryLabel, confirmButton].forEach { addSubview($0) }
+        buttonStackView.addArrangedSubview(purchaseDateButton)
+        buttonStackView.addArrangedSubview(expirationDateButton)
+
+        [topSeparator, stepLabel, questionLabel, buttonStackView,dateLabel,
+         descriptionLabel, dateTextField, confirmButton].forEach { addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -109,17 +124,28 @@ class DateSelectionView: UIView {
         }
         
         stepLabel.snp.makeConstraints {
-            $0.top.equalTo(topSeparator.snp.bottom).offset(10)
+            $0.top.equalTo(topSeparator.snp.bottom).offset(190)
             $0.leading.equalToSuperview().offset(16)
         }
         
         questionLabel.snp.makeConstraints {
-            $0.top.equalTo(stepLabel.snp.bottom).offset(10)
+            $0.top.equalTo(stepLabel.snp.bottom).offset(0)
+            $0.leading.trailing.equalToSuperview().inset(16)
+        }
+        
+        buttonStackView.snp.makeConstraints {
+            $0.top.equalTo(questionLabel.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(32)
+        }
+        
+        dateLabel.snp.makeConstraints{
+            $0.top.equalTo(buttonStackView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(questionLabel.snp.bottom).offset(10)
+            $0.top.equalTo(dateLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
         
@@ -127,11 +153,6 @@ class DateSelectionView: UIView {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(237.5)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(44)
-        }
-        
-        noMemoryLabel.snp.makeConstraints {
-            $0.top.equalTo(dateTextField.snp.bottom).offset(10)
-            $0.trailing.equalTo(dateTextField.snp.trailing)
         }
         
         confirmButton.snp.makeConstraints {

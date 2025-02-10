@@ -24,27 +24,39 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         
         setupDelegate()
         
-        /// configure
+        // configure
         editReceiptIngredientsView.configure(receiptResult: receiptResult)
         
-        /// 'X' 버튼
+        setUpActions()
+        
+        // 키보드 이벤트
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Functions
+    
+    private func setUpActions() {
+        // 'X' 버튼
         editReceiptIngredientsView.backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         
-        /// '이대로 추가할게요' 버튼
+        // '이대로 추가할게요' 버튼
         editReceiptIngredientsView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
-        /// '식재료 편집' 버튼
+        // '식재료 편집' 버튼
         editReceiptIngredientsView.editIngredientsButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         
-        /// '저장' 버튼
+        // '저장' 버튼
         editReceiptIngredientsView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         
         editReceiptIngredientsView.saveDateButton.addTarget(self, action: #selector(saveDateButtonTapped), for: .touchUpInside)
         
         editReceiptIngredientsView.editDateButton.addTarget(self, action: #selector(editDateButtonTapped), for: .touchUpInside)
     }
-    
-    // MARK: - Functions
     
     @objc private func backButtonTapped() {
         self.presentingViewController?.dismiss(animated: true, completion: nil)
@@ -145,6 +157,20 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         textField.resignFirstResponder() // 키보드 숨기기
         return true
     }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        editReceiptIngredientsView.ingredientsTableView.contentInset.bottom = keyboardHeight
+        editReceiptIngredientsView.ingredientsTableView.scrollIndicatorInsets.bottom = keyboardHeight
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        editReceiptIngredientsView.ingredientsTableView.contentInset.bottom = 0
+        editReceiptIngredientsView.ingredientsTableView.scrollIndicatorInsets.bottom = 0
+    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -187,8 +213,6 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         
         /// 데이터 모델에서 카운트 업데이트
         receiptResult.ingredients[indexPath.row].setCount(newCount: newCount)
-        
-        editReceiptIngredientsView.ingredientsTableView.reloadRows(at: [indexPath], with: .none)
     }
     
     // MARK: - API 관련
@@ -231,8 +255,8 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
     }
     
     func patchDate(receiptResult: ReceiptResult) {
-        let url = "http://3.35.252.162:8080/OCR/ingredient/\(receiptResult.ingredients[0].receiptId)"
-        
+        let url = "http://3.35.252.162:8080/OCR/\(receiptResult.ingredients[0].receiptId)/purchase-date"
+    
         // 날짜 변환
         let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
 
@@ -284,14 +308,5 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
             return outputFormatter.string(from: date)
         }
         return nil // 변환 실패 시 nil 반환
-    }
-    
-    // 요일 변환
-    func getDayOfWeek(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEEEE"
-        formatter.locale = Locale(identifier:"ko_KR")
-        let convertStr = formatter.string(from: date)
-        return convertStr
     }
 }

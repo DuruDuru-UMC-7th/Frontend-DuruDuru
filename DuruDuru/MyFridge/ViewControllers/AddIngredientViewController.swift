@@ -11,6 +11,8 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
 
     private let addIngredientView = AddIngredientView()
     private var quantity: Int = 0
+    private var image: UIImage?
+    private var ingredientId: Int?
     
     // MARK: - Lifecycle
     
@@ -83,7 +85,14 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
         let ingredientName = addIngredientView.nameTextField.text ?? ""
         let request = SetIngredientRequest(ingredientName: ingredientName, count: quantity)
         
-        setIngredeint(setIngredientRequest: request)
+        // 식재료 등록
+        setIngredeint(setIngredientRequest: request) { [weak self] in
+            // 이미지가 선택된 경우에만 이미지 등록
+            if let image = self?.image, let ingredientId = self?.ingredientId {
+                self?.setIngredeintImage(image: image, ingredientId: ingredientId)
+            }
+        }
+        
         let nextVC = IngredientTypeViewController() // 종류 설정 화면
         navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -110,6 +119,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[.originalImage] as? UIImage {
                 addIngredientView.imageView.image = selectedImage
+                self.image = selectedImage
             }
             picker.dismiss(animated: true, completion: nil)
         }
@@ -121,7 +131,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
     // MARK: - API 관련
     
     // 식재료 등록 API
-    func setIngredeint(setIngredientRequest: SetIngredientRequest) {
+    func setIngredeint(setIngredientRequest: SetIngredientRequest, completion: @escaping () -> Void) {
         let url = "http://3.35.252.162:8080/ingredient/"
         
         // 쿼리 파라미터
@@ -144,12 +154,36 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
                 case .success(let response):
                     print("!!식재료 이름 등록 성공!!")
                     print(response)
+                    self.ingredientId = response.result?.ingredientId // 옵셔널 처리
+                    print("ingredientId: ", self.ingredientId)
+                    completion() // 클로저 호출
                 case .failure(let error):
                     print("네트워킹 오류: \(error)")
                 }
             }
         } catch {
             print("인코딩 오류: \(error)")
+        }
+    }
+    
+    // 식재료 이미지 등록 API
+    func setIngredeintImage(image: UIImage, ingredientId: Int) {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId)/photo"
+        
+        // 이미지 데이터로 변환
+        guard let imageData = image.pngData() else {
+            print("이미지 변환 실패")
+            return
+        }
+        
+        // multipart/form-data 요청
+        APIClient.shared.upload(url: url, memberId: 2, imageData: imageData, name: "image") { (result: Result<SetIngredientImageResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("식재료 이미지 등록 성공")
+            case .failure(let error):
+                print("식재료 이미지 등록 네트워킹 오류: \(error)")
+            }
         }
     }
 }

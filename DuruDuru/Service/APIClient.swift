@@ -51,6 +51,7 @@ final class APIClient {
         url: String,
         memberId: Int,
         imageData: Data,
+        name: String,
         completion: @escaping (Result<T, Error>) -> Void) {
             
             let headers: HTTPHeaders = [
@@ -61,7 +62,7 @@ final class APIClient {
             session.upload(multipartFormData: { multipartFormData in
                 multipartFormData.append(Data(String(memberId).utf8),
                                          withName: "memberId")
-                multipartFormData.append(imageData, withName: "file", fileName: "image.png", mimeType: "image/png")
+                multipartFormData.append(imageData, withName: name, fileName: "image.png", mimeType: "image/png")
             }, to: url, method: .post, headers: headers)
             .validate()
             .responseDecodable(of: T.self) { response in

@@ -82,9 +82,11 @@ class DateSelectionView: UIView {
         textField.placeholder = "YYYY / MM / DD"
         textField.borderStyle = .roundedRect
         textField.textAlignment = .center
-        
+        textField.font = .systemFont(ofSize: 15)
+        textField.textColor = .gray
         return textField
     }()
+    
     
     let confirmButton: UIButton = {
         let button = UIButton()
@@ -150,9 +152,9 @@ class DateSelectionView: UIView {
         }
         
         dateTextField.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(237.5)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(44)
+            $0.height.equalTo(35)
         }
         
         confirmButton.snp.makeConstraints {

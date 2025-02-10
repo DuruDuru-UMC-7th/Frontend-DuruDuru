@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import SwiftUI
 
 class DateSelectionViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     // MARK: - Properties
     private let dateSelectionView = DateSelectionView()
+    private var selectedDate = Date()
     
     // MARK: - Lifecycle
     override func loadView() {
@@ -50,6 +52,10 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         dateSelectionView.confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
         dateSelectionView.purchaseDateButton.addTarget(self, action: #selector(didTapPurchaseDate), for: .touchUpInside)
         dateSelectionView.expirationDateButton.addTarget(self, action: #selector(didTapExpirationDate), for: .touchUpInside)
+        // 캘린더
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateFieldTapped))
+        dateSelectionView.dateTextField.addGestureRecognizer(tapGesture)
+        dateSelectionView.dateTextField.isUserInteractionEnabled = true
     }
     
     private func setupIconConstraints() {
@@ -108,6 +114,19 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         )
     }
 
+    @objc private func dateFieldTapped() {
+        let calendarVC = UIHostingController(
+            rootView: CalendarView(initialDate: selectedDate) { selected in
+                self.selectedDate = selected
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy / MM / dd"
+                self.dateSelectionView.dateTextField.text = formatter.string(from: selected)
+            }
+        )
+        present(calendarVC, animated: true)
+    }
+
+    
     // 버튼 & 라벨 업데이트
     private func updateUIForSelection(
         selectedButton: UIButton,

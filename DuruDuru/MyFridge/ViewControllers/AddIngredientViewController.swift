@@ -7,11 +7,9 @@
 
 import UIKit
 
-class AddIngredientViewController: UIViewController, UITextFieldDelegate {
+class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    
     private let addIngredientView = AddIngredientView()
-
     private var quantity: Int = 0
     
     // MARK: - Lifecycle
@@ -27,6 +25,10 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         navigationItem.hidesBackButton = true
         
         setUpUI()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
+        addIngredientView.imageView.isUserInteractionEnabled = true
+        addIngredientView.imageView.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Actions 설정
@@ -96,6 +98,25 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate {
         addIngredientView.nameTextField.resignFirstResponder()
         return true
     }
+    
+    @objc private func imageViewTapped() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary // 앨범에서 사진 선택
+        imagePicker.allowsEditing = false // 편집 허용 여부
+        present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let selectedImage = info[.originalImage] as? UIImage {
+                addIngredientView.imageView.image = selectedImage
+            }
+            picker.dismiss(animated: true, completion: nil)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true, completion: nil)
+        }
     
     // MARK: - API 관련
     

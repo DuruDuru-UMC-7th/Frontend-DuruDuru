@@ -18,3 +18,11 @@ struct CategoryResult: Codable {
     let majorCategory: String
     var minorCategoryList: [String]
 }
+
+struct MinorCategoryResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: [String]
+}
+

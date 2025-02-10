@@ -77,10 +77,10 @@ class AddReceiptViewController: UIViewController {
         }
         
         // multipart/form-data 요청
-        APIClient.shared.upload(url: url, memberId: memberId, imageData: imageData) { (result: Result<ReceiptResponse, Error>) in
+        APIClient.shared.upload(url: url, memberId: memberId, imageData: imageData, name: "file") { (result: Result<ReceiptResponse, Error>) in
             switch result {
             case .success(let response):
-                print("성공")
+                print("영수증 등록 성공")
                 self.receipt = response.result
             case .failure(let error):
                 print("네트워킹 오류: \(error)")

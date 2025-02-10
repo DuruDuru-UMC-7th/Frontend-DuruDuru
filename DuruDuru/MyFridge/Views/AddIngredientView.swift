@@ -34,7 +34,7 @@ class AddIngredientView: UIView {
         $0.textAlignment = .left
     }
     
-    let imageView = UIView().then {
+    let imageView = UIImageView().then {
         $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true

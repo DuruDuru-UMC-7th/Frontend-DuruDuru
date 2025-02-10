@@ -14,11 +14,7 @@ class IngredientTypeViewController: UIViewController {
     
     // 카테고리 데이터
     private let categories = IngredientCategoryModel.dummy()
-    
-    // 식재료 데이터 (IngredientSimpleModel 기반)
-    private var ingredientData = IngredientsDataModel.dummy()
-    
-    private var filteredIngredients: CategoryResult! // 현재 선택된 카테고리의 식재료
+    private var filteredIngredients: [String] = [] // 현재 선택된 카테고리의 식재료
     
     // MARK: - Lifecycle
     override func loadView() {
@@ -32,16 +28,11 @@ class IngredientTypeViewController: UIViewController {
         setupDelegates()
         setUpUI()
         
+        getAllMinorCategory()
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // API 요청
-        getMinorCategory(majorCategory: "과일") // 전체로 수정 필요
     }
 
     // MARK: - Setup
@@ -219,7 +210,7 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapAllButton(_ sender: UIButton) {
-        getMinorCategory(majorCategory: "과일") // 전체로 수정 필요
+        getAllMinorCategory()
     }
 
     private func resetButtonStates() {
@@ -268,7 +259,7 @@ class IngredientTypeViewController: UIViewController {
     
     // MARK: - API 관련
     
-    // 소분류 카테고리 조회 API
+    // 대분류 카테고리로 소분류 카테고리 조회 API
     func getMinorCategory(majorCategory: String) {
         let url = "http://3.35.252.162:8080/ingredient/category/major-to-minor"
         
@@ -285,6 +276,23 @@ class IngredientTypeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print(response)
+                self.filteredIngredients = response.result.minorCategoryList
+                self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
+    
+    // 소분류 카테고리 모두 조회 API
+    func getAllMinorCategory() {
+        let url = "http://3.35.252.162:8080/ingredient/minorCategory"
+                
+        // API 요청
+        APIClient.shared.request(url, method: .get) { (result: Result<MinorCategoryResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!소분류 카테고리 모두 조회 성공!!")
                 self.filteredIngredients = response.result
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
@@ -301,12 +309,7 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
             return categories.count // 카테고리 개수
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-                return categories.count // 카테고리 개수
-            } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-                return filteredIngredients?.minorCategoryList.count ?? 0 // nil일 경우 0 반환
-            }
-            return 0
+            return filteredIngredients.count
         }
         return 0
     }
@@ -329,7 +332,7 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = filteredIngredients.minorCategoryList[indexPath.item]
+            let ingredient = filteredIngredients[indexPath.item]
             cell.configureSimple(with: ingredient) // 심플 모델 기반 셀 구성
             return cell
         }
@@ -344,8 +347,7 @@ extension IngredientTypeViewController: UICollectionViewDelegate {
             let selectedCategory = categories[indexPath.item]
             getMinorCategory(majorCategory: selectedCategory.categoryName)
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            let selectedIngredient = filteredIngredients.minorCategoryList[indexPath.item]
-//            print("선택된 식재료: \(selectedIngredient.name)")
+//            let selectedIngredient = filteredIngredients.minorCategoryList[indexPath.item]
             
             // 팝업 띄우기
             showBottomPopup()

@@ -99,11 +99,16 @@ class AddIngredientView: UIView {
     let nextButton = UIButton().then {
         $0.setTitle("종류 설정하러 가기", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        $0.backgroundColor = .systemGreen
+        $0.backgroundColor = .systemGray4
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 8
+        $0.isEnabled = false
     }
 
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        nextButton.backgroundColor = isEnabled ? .systemGreen : .systemGray4
+    }
     // MARK: - Init
     
     override init(frame: CGRect) {

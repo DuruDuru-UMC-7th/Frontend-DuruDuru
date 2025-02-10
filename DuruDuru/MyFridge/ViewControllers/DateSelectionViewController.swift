@@ -56,6 +56,9 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateFieldTapped))
         dateSelectionView.dateTextField.addGestureRecognizer(tapGesture)
         dateSelectionView.dateTextField.isUserInteractionEnabled = true
+        
+        dateSelectionView.dateTextField.delegate = self
+        dateSelectionView.dateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
     }
     
     private func setupIconConstraints() {
@@ -114,6 +117,16 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         )
     }
 
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        let isNotEmpty = !(textField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        updateConfirmButtonState(isEnabled: isNotEmpty)
+    }
+
+    private func updateConfirmButtonState(isEnabled: Bool) {
+        dateSelectionView.confirmButton.isEnabled = isEnabled
+        dateSelectionView.confirmButton.backgroundColor = isEnabled ? .systemGreen : .systemGray4
+    }
+
     @objc private func dateFieldTapped() {
         let calendarVC = UIHostingController(
             rootView: CalendarView(initialDate: selectedDate) { selected in
@@ -121,6 +134,9 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy / MM / dd"
                 self.dateSelectionView.dateTextField.text = formatter.string(from: selected)
+                
+                // 날짜 선택 시 버튼 활성화
+                self.updateConfirmButtonState(isEnabled: true)
             }
         )
         present(calendarVC, animated: true)

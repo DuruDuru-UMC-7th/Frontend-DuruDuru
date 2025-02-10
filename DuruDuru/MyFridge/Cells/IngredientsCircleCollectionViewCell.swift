@@ -35,7 +35,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     /// 식재료 이름 라벨 (원 아래)
     private let ingredientNameLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12)
+        $0.font = .systemFont(ofSize: 14)
         $0.textColor = .black
         $0.textAlignment = .center
     }

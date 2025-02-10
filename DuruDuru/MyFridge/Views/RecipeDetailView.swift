@@ -220,7 +220,7 @@ class RecipeDetailView: UIView {
         titleImageView.snp.makeConstraints {
             $0.top.equalTo(contentView).offset(20)
             $0.left.right.equalToSuperview().inset(16)
-            $0.width.height.equalTo(370)
+            $0.width.height.equalTo(UIScreen.main.bounds.width - 32)
         }
         
         recipeName.snp.makeConstraints {

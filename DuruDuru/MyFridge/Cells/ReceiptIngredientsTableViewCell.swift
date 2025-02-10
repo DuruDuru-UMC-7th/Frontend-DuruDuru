@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ReceiptIngredientsTableViewCell: UITableViewCell {
+class ReceiptIngredientsTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     // MARK: - Init
     
@@ -57,9 +57,10 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         $0.layer.cornerRadius = 10
     }
     
-    let ingredientName = UILabel().then {
+    let ingredientName = UITextField().then {
         $0.font = .boldSystemFont(ofSize: 13)
         $0.textColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.isUserInteractionEnabled = false // 처음에는 수정 불가
     }
     
     let count = UILabel().then {
@@ -184,6 +185,9 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         incrementButton.isHidden = !isEditing
         deleteButton.isHidden = !isEditing
         count.isHidden = isEditing
+        
+        // 수정 가능 여부 설정
+        ingredientName.isUserInteractionEnabled = isEditing
     }
     
     /// '-' 버튼 클릭시
@@ -195,7 +199,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
         
         delegate?.didUpdateCount(in: self, newCount: newCount)
     }
-
+    
     /// '+' 버튼 클릭시
     @objc func incrementButtonClicked() {
         guard let currentCount = Int(countLabel.text ?? "0") else { return }
@@ -209,6 +213,13 @@ class ReceiptIngredientsTableViewCell: UITableViewCell {
     /// 삭제 버튼 클릭시
     @objc func deleteButtonClicked() {
         delegate?.didTapDeleteButton(in: self)
+    }
+    
+    // MARK: - UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // 키보드 숨기기
+        return true
     }
 }
 

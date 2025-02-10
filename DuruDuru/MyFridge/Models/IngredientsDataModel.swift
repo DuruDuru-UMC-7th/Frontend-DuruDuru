@@ -14,6 +14,7 @@ struct IngredientsDataModel {
 
 // daysRemaining이 없는 단순 모델
 struct IngredientSimpleModel {
+    let image: String
     let name: String
 }
 
@@ -23,52 +24,57 @@ extension IngredientsDataModel {
             IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .fruits, categoryName: "과일"),
                 ingredients: [
-                    IngredientSimpleModel(name: "사과"),
-                    IngredientSimpleModel(name: "배"),
-                    IngredientSimpleModel(name: "포도"),
-                    IngredientSimpleModel(name: "감")
+                    IngredientSimpleModel(image: "사과", name: "사과"),
+                    IngredientSimpleModel(image: "배", name: "배"),
+                    IngredientSimpleModel(image: "망고", name: "망고"),
+                    IngredientSimpleModel(image: "멜론", name: "멜론"),
+                    IngredientSimpleModel(image: "청포도", name: "청포도"),
+                    IngredientSimpleModel(image: "삼겹살", name: "삼겹살"),
+                    IngredientSimpleModel(image: "어묵", name: "어묵"),
+                    IngredientSimpleModel(image: "우유", name: "우유"),
+                    IngredientSimpleModel(image: "아이스크림", name: "아이스크림"),
+                    IngredientSimpleModel(image: "버터", name: "버터"),
+                    IngredientSimpleModel(image: "요거트", name: "요거트")
                 ]
             ),
             IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .meat, categoryName: "육류"),
                 ingredients: [
-                    IngredientSimpleModel(name: "소고기"),
-                    IngredientSimpleModel(name: "돼지고기"),
-                    IngredientSimpleModel(name: "닭고기"),
-                    IngredientSimpleModel(name: "가공육")
-                ]
+                    IngredientSimpleModel(image: "감겹살", name: "삼겹살")
+                    ]
             ),
             IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .fish, categoryName: "수산물"),
                 ingredients: [
-                    IngredientSimpleModel(name: "대구"),
-                    IngredientSimpleModel(name: "명태"),
-                    IngredientSimpleModel(name: "참치")
-                ]
+                    IngredientSimpleModel(image: "어묵", name: "어묵")
+                    ]
             ),
             IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .milk, categoryName: "유제품"),
                 ingredients: [
-                    IngredientSimpleModel(name: "우유"),
-                    IngredientSimpleModel(name: "버터"),
-                    IngredientSimpleModel(name: "요거트")
+                    IngredientSimpleModel(image: "우유", name: "우유"),
+                    IngredientSimpleModel(image: "아이스크림", name: "아이스크림"),
+                    IngredientSimpleModel(image: "버터", name: "버터"),
+                    IngredientSimpleModel(image: "요거트", name: "요거트")
                 ]
             ),
             IngredientsDataModel(
                 category: IngredientCategoryModel(icon: .vegetable, categoryName: "채소"),
                 ingredients: [
-                    IngredientSimpleModel(name: "상추"),
-                    IngredientSimpleModel(name: "깻잎"),
-                    IngredientSimpleModel(name: "오이"),
-                    IngredientSimpleModel(name: "다진마늘")
+                    IngredientSimpleModel(image: "콩나물", name: "콩나물")
                 ]
             ),
             IngredientsDataModel(
-                category: IngredientCategoryModel(icon: .mushroom, categoryName: "버섯"),
+                category: IngredientCategoryModel(icon: .mushroom, categoryName: "건조식품"),
                 ingredients: [
-                    IngredientSimpleModel(name: "팽이버섯"),
-                    IngredientSimpleModel(name: "새송이버섯")
-                ]
+                    IngredientSimpleModel(image:"자른미역", name: "마른 미역")
+                    ]
+            ),
+            IngredientsDataModel(
+                category: IngredientCategoryModel(icon: .mushroom, categoryName: "계란"),
+                ingredients: [
+                    IngredientSimpleModel(image:"품앗이-계란 미역", name: "계란")
+                    ]
             )
         ]
     }

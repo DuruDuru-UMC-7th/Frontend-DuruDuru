@@ -20,12 +20,12 @@ struct IngredientResult: Codable {
     let receiptId: Int
     let fridgeId: Int
     let ingredientId: Int
-    let ingredientName: String
+    var ingredientName: String
     var count: Int
     let majorCategory: String
     let minorCategory: String
     let storageType: String
-    let expireDate: String
+    var expireDate: String
     
     mutating func setCount(newCount: Int) {
         self.count = newCount

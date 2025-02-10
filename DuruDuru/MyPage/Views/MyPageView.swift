@@ -322,7 +322,7 @@ class MyPageView: UIView {
         }
         
         let arrowButton = UIButton().then {
-            let arrowImage = UIImage(named: "Arrow2")?.withRenderingMode(.alwaysTemplate)
+            let arrowImage = UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate)
                 $0.setImage(arrowImage, for: .normal)
                 $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.28)
         }

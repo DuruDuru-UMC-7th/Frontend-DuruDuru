@@ -25,7 +25,7 @@ class IngredientDetailView: UIView {
     // MARK: - Components
     
     let imageView = UIImageView().then {
-        $0.image = UIImage(resource: .thumbnail)
+        $0.image = UIImage(named: "삼겹살")
         $0.contentMode = .scaleAspectFit
         $0.layer.cornerRadius = 50
         $0.clipsToBounds = true

@@ -16,6 +16,6 @@ struct ReceiptResponse: Codable {
 
 struct ReceiptResult: Codable {
     
-    let purchaseDate: String?
+    var purchaseDate: String?
     var ingredients: [IngredientResult]
 }

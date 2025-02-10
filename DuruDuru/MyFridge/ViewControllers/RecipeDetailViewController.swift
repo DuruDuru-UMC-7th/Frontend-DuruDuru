@@ -24,13 +24,13 @@ class RecipeDetailViewController: UIViewController {
         self.title = "한식 식사"
         
         /// 뒤로 가기 버튼
-        let backImage = UIImage(named: "Arrow3")
+        let backImage = UIImage(systemName: "chevron.left")
         let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
         self.navigationItem.leftBarButtonItem = backButton
         backButton.tintColor = .black
         
         /// 내보내기 이미지
-        let image = UIImage(named: "export")
+        let image = UIImage(named: "push")
         let imageButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(imageButtonTapped))
         imageButton.tintColor = .black
         self.navigationItem.rightBarButtonItem = imageButton

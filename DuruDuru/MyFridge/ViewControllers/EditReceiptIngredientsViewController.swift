@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EditReceiptIngredientsViewController: UIViewController{
+class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegate{
     
     // MARK: - Properties
     
@@ -38,6 +38,10 @@ class EditReceiptIngredientsViewController: UIViewController{
         
         /// '저장' 버튼
         editReceiptIngredientsView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        
+        editReceiptIngredientsView.saveDateButton.addTarget(self, action: #selector(saveDateButtonTapped), for: .touchUpInside)
+        
+        editReceiptIngredientsView.editDateButton.addTarget(self, action: #selector(editDateButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Functions
@@ -50,6 +54,22 @@ class EditReceiptIngredientsViewController: UIViewController{
         self.presentingViewController?.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
+    @objc private func editDateButtonTapped() {
+        editReceiptIngredientsView.editDateButton.isHidden = true
+        editReceiptIngredientsView.saveDateButton.isHidden = false
+        editReceiptIngredientsView.buyDateValue.isUserInteractionEnabled = true
+    }
+    
+    @objc private func saveDateButtonTapped() {
+        if let updatedDate = editReceiptIngredientsView.buyDateValue.text {
+            receiptResult.purchaseDate = updatedDate
+        }
+        editReceiptIngredientsView.editDateButton.isHidden = false
+        editReceiptIngredientsView.saveDateButton.isHidden = true
+        editReceiptIngredientsView.buyDateValue.isUserInteractionEnabled = false
+        
+        patchDate(receiptResult: self.receiptResult)
+    }
     
     @objc private func editButtonTapped() {
         isEditingMode.toggle()
@@ -82,12 +102,16 @@ class EditReceiptIngredientsViewController: UIViewController{
         isEditingMode.toggle()
         for cell in editReceiptIngredientsView.ingredientsTableView.visibleCells {
             if let ingredientCell = cell as? ReceiptIngredientsTableViewCell {
+                if let updatedName = ingredientCell.ingredientName.text {
+                    guard let indexPath = editReceiptIngredientsView.ingredientsTableView.indexPath(for: ingredientCell) else { return }
+                    receiptResult.ingredients[indexPath.row].ingredientName = updatedName
+                }
                 ingredientCell.decrementButton.isHidden = !isEditingMode
                 ingredientCell.countLabel.isHidden = !isEditingMode
                 ingredientCell.incrementButton.isHidden = !isEditingMode
                 ingredientCell.deleteButton.isHidden = !isEditingMode
                 
-                /// count 레이블 숨기기
+                // count 레이블 숨기기
                 ingredientCell.count.isHidden = isEditingMode
             }
         }
@@ -106,10 +130,6 @@ class EditReceiptIngredientsViewController: UIViewController{
         
         /// ingredient 수정 API 요청
         for ingredient in receiptResult.ingredients {
-            print(ingredient.receiptId)
-            print(ingredient.ingredientId)
-            print(ingredient.ingredientName)
-            print(ingredient.count)
             patchIngredient(ingredietResult: ingredient)
         }
     }
@@ -117,6 +137,13 @@ class EditReceiptIngredientsViewController: UIViewController{
     private func setupDelegate(){
         editReceiptIngredientsView.ingredientsTableView.dataSource = self
         editReceiptIngredientsView.ingredientsTableView.delegate = self
+    }
+    
+    // MARK: - UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // 키보드 숨기기
+        return true
     }
 }
 
@@ -135,6 +162,8 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         }
         cell.configure(ingredient: receiptResult.ingredients[indexPath.row], isEditing: isEditingMode)
         cell.delegate = self
+        
+        cell.ingredientName.delegate = cell
         
         return cell
     }
@@ -201,4 +230,68 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         }
     }
     
+    func patchDate(receiptResult: ReceiptResult) {
+        let url = "http://3.35.252.162:8080/OCR/ingredient/\(receiptResult.ingredients[0].receiptId)"
+        
+        // 날짜 변환
+        let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
+
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        print(urlWithQuery)
+        print(formattedPurchaseDate)
+        
+        // requestBody
+        let requestBody = PatchReceiptPurchaseDate(purchaseDate: formattedPurchaseDate)
+
+        // API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+
+    
+    // 날짜 변환
+    func convertPurchaseDate(purchaseDate: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.locale = Locale(identifier: "ko_KR")
+        inputFormatter.dateFormat = "yyyy년 MM월 dd일 EEEE" // 현재 형식
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy-MM-dd" // 원하는 형식
+
+        if let date = inputFormatter.date(from: purchaseDate) {
+            return outputFormatter.string(from: date)
+        }
+        return nil // 변환 실패 시 nil 반환
+    }
+    
+    // 요일 변환
+    func getDayOfWeek(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEEEE"
+        formatter.locale = Locale(identifier:"ko_KR")
+        let convertStr = formatter.string(from: date)
+        return convertStr
+    }
 }

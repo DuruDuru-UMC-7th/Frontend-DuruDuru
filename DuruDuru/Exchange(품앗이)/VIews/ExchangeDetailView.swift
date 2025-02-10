@@ -50,7 +50,7 @@ class ExchangeDetailView: UIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 18
-        $0.image = .thumbnail
+        $0.image = .thum
     }
     
     /// 프로필 이름
@@ -149,7 +149,7 @@ class ExchangeDetailView: UIView {
     
     /// 좋아요 버튼
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "likeButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        $0.setImage(UIImage(systemName: "heart")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
     }
     

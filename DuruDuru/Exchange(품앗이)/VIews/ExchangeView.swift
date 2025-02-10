@@ -23,6 +23,20 @@ class ExchangeView: UIView {
     
     // MARK: - Components
     
+    /// 주소 바꾸기 버튼
+    let locationButton = UIButton().then {
+        $0.setTitle("내 동네 설정", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+    }
+    
+    let downImage = UIImageView().then {
+        $0.image = UIImage(systemName: "chevron.down")?.withRenderingMode(.alwaysTemplate)
+            $0.tintColor = .black
+        $0.contentMode = .scaleAspectFit
+        $0.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+    }
+    
     /// 스크롤 뷰
     let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = true

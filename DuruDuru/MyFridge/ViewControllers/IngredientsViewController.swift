@@ -12,7 +12,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
-    var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
+    var allIngredientData = IngredientsDataModel.dummy()[0] // 모든 식재료 데이터
     var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
     var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
     var minorCategoryList: [String] = []
@@ -54,14 +54,15 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     private func filterIngredients(by category: IngredientCategoryModel?) {
         selectedCategory = category
         
-        if let category = category {
-            filteredIngredients = allIngredientData
-                .first(where: { $0.category.categoryName == category.categoryName })?
-                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
-        } else {
-            // 전체 보기
-            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
-        }
+        
+//        if let category = category {
+//            filteredIngredients = allIngredientData
+//                .first(where: { $0.category.categoryName == category.categoryName })?
+//                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
+//        } else {
+//            // 전체 보기
+//            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+//        }
         ingredientsView.ingredientsCircleCollectionView.reloadData()
     }
     
@@ -208,9 +209,9 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         }
         
         // 현재 필터링된 데이터에서 검색어가 포함된 항목만 필터링
-        filteredIngredients = allIngredientData.flatMap { $0.ingredients }
-            .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
-            .filter { $0.name.contains(searchText) }
+//        filteredIngredients = allIngredientData.flatMap { $0.ingredients }
+//            .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+//            .filter { $0.name.contains(searchText) }
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -239,7 +240,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
             return categoryData.count
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            return filteredIngredients.count
+            return allIngredientData.ingredients.count
         }
         return 0
     }
@@ -261,8 +262,8 @@ extension IngredientsViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = filteredIngredients[indexPath.item]
-            cell.configure(with: ingredient)
+            let ingredient = allIngredientData.ingredients[indexPath.item]
+            cell.configure(with: ingredient) // 셀에 데이터 설정
             return cell
         }
         return UICollectionViewCell()

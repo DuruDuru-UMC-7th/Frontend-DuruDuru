@@ -59,7 +59,8 @@ class RecipeTableViewCell: UITableViewCell {
     
     /// 좋아요 버튼
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "Heart"), for: .normal)
+        $0.setImage(UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate), for: .normal) // 채워진 하트 이미지 사용
+        $0.tintColor = .white
     }
     
     /// 레시피 이름
@@ -130,9 +131,10 @@ class RecipeTableViewCell: UITableViewCell {
     }
     
     public func configure(recipe: RecipeModel) {
-        if let imageURL = URL(string: recipe.titleImage) {
-            titleImage.kf.setImage(with: imageURL)
-        }
+//        if let imageURL = URL(string: recipe.titleImage) {
+//            titleImage.kf.setImage(with: imageURL)
+//        }
+        titleImage.image = UIImage(named: recipe.titleImage)
         recipeName.text = recipe.recipeName
         tags = recipe.tags
         

@@ -75,16 +75,24 @@ class EditReceiptIngredientsView: UIView {
         $0.layer.cornerRadius = 10
     }
     
-    let buyDateValue = UILabel().then {
+    let buyDateValue = UITextField().then {
         $0.text = "2024년 2월 21일 금요일"
         $0.font = .boldSystemFont(ofSize: 13)
         $0.textColor = UIColor(hex: 0x2E2F33, alpha: 0.88)
+        $0.isUserInteractionEnabled = false // 처음에는 수정 불가
     }
     
     let editDateButton = UIButton().then {
         $0.setTitle("수정", for: .normal)
         $0.setTitleColor(UIColor(hex: 0x00C269), for: .normal)
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+    }
+    
+    let saveDateButton = UIButton().then {
+        $0.setTitle("저장", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x00C269), for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        $0.isHidden = true
     }
     
     let ListOfIngredients = UILabel().then {
@@ -167,7 +175,8 @@ class EditReceiptIngredientsView: UIView {
         
         [
             buyDateValue,
-            editDateButton
+            editDateButton,
+            saveDateButton
         ].forEach {
             dateView.addSubview($0)
         }
@@ -243,6 +252,11 @@ class EditReceiptIngredientsView: UIView {
         }
         
         editDateButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalTo(buyDateValue.snp.right).offset(7)
+        }
+        
+        saveDateButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(buyDateValue.snp.right).offset(7)
         }

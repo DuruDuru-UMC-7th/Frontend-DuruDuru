@@ -41,7 +41,7 @@ class RecipeDetailView: UIView {
     
     /// 레시피 대표 이미지
     let titleImageView = UIImageView().then {
-        $0.image = .thumbnail
+        $0.image = UIImage(named: "계란 레시피1")
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }
@@ -54,14 +54,15 @@ class RecipeDetailView: UIView {
     
     /// 좋아요 버튼
     let likeButton = UIButton().then {
-        $0.setImage(UIImage(named: "Heart")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        $0.setImage(UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate), for: .normal) // 채워진 하트 이미지 사용
+        $0.tintColor = .lightGray
     }
     
     ///  조리시간 앞에 있는 아이콘
     let timeIcon = UIImageView().then {
-        $0.image = .timeIcon
+        $0.image = UIImage(systemName: "clock")
         $0.contentMode = .scaleAspectFill
+        $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.61)
     }
     
     /// 조리시간
@@ -70,9 +71,9 @@ class RecipeDetailView: UIView {
         $0.textColor = UIColor(hex: 0x37383C, alpha: 0.61)
     }
     
-    /// 레시피 대표 이미지
+    /// 찜 아이콘
     let heartIcon = UIImageView().then {
-        $0.image = UIImage(named: "Heart")?.withRenderingMode(.alwaysTemplate)
+        $0.image = UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate)
         $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.61)
         $0.contentMode = .scaleAspectFill
     }
@@ -230,11 +231,13 @@ class RecipeDetailView: UIView {
         likeButton.snp.makeConstraints {
             $0.top.equalTo(titleImageView.snp.bottom).offset(20)
             $0.right.equalToSuperview().inset(16)
+            $0.width.height.equalTo(24)
         }
         
         timeIcon.snp.makeConstraints {
             $0.top.equalTo(recipeName.snp.bottom).offset(24)
             $0.left.equalToSuperview().inset(16)
+            $0.height.width.equalTo(14)
         }
         
         time.snp.makeConstraints {
@@ -243,10 +246,9 @@ class RecipeDetailView: UIView {
         }
         
         heartIcon.snp.makeConstraints {
-            $0.top.equalTo(recipeName.snp.bottom).offset(25)
+            $0.top.equalTo(recipeName.snp.bottom).offset(24)
             $0.left.equalTo(time.snp.right).offset(5)
-            $0.width.equalTo(12.13)
-            $0.height.equalTo(10.88)
+            $0.height.width.equalTo(14)
         }
         
         likeLabel.snp.makeConstraints {

@@ -18,7 +18,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     private let myIngredientView = MyIngredientView()
     private let nearbyView = NearbyView()
-    private let togetherEatView = TogetherEatView()
     private let homeRecipeView = HomeRecipeView()
     
     // MARK: - Lifecycle
@@ -61,7 +60,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         
         contentView.addSubview(myIngredientView)
         contentView.addSubview(nearbyView)
-        contentView.addSubview(togetherEatView)
         contentView.addSubview(homeRecipeView)
     }
     
@@ -114,13 +112,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             $0.left.right.equalToSuperview()
         }
         
-        togetherEatView.snp.makeConstraints {
-            $0.top.equalTo(nearbyView.snp.bottom).offset(10)
-            $0.left.right.equalToSuperview()
-        }
-        
         homeRecipeView.snp.makeConstraints {
-            $0.top.equalTo(togetherEatView.snp.bottom).offset(10)
+            $0.top.equalTo(nearbyView.snp.bottom).offset(10)
             $0.left.right.equalToSuperview()
             $0.bottom.equalToSuperview()
         }

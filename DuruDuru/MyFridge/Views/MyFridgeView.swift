@@ -76,7 +76,7 @@ class MyFridgeView: UIView {
             $0.top.equalToSuperview().offset(88)
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview()
-            $0.height.equalTo(48)
+            $0.height.equalTo(42)
         }
         
         underline.snp.makeConstraints {

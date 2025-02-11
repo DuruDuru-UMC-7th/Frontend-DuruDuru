@@ -48,6 +48,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView.receiptButton.addTarget(self, action: #selector(didTapReceiptAddButton), for: .touchUpInside)
         
         ingredientsView.allButton.addTarget(self, action: #selector(didTapAllCategoryButton), for: .touchUpInside)
+        ingredientsView.expiryDropdownButton.addTarget(self, action: #selector(didTapFilteringButton), for: .touchUpInside)
+        ingredientsView.menuCloseButton.addTarget(self, action: #selector(didTapMenuCloseButton), for: .touchUpInside)
     }
     
     /// 특정 카테고리에 해당하는 식재료만 필터링
@@ -138,6 +140,16 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         let addIngredientVC = AddIngredientViewController()
         addIngredientVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(addIngredientVC, animated: true)
+    }
+    
+    @objc private func didTapFilteringButton() {
+        ingredientsView.optionsView.isHidden = false
+        ingredientsView.darkBackgroundView.isHidden = false
+    }
+    
+    @objc private func didTapMenuCloseButton() {
+        ingredientsView.optionsView.isHidden = true
+        ingredientsView.darkBackgroundView.isHidden = true
     }
     
     @objc private func didTapReceiptAddButton() {

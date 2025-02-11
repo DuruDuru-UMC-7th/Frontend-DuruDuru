@@ -37,3 +37,10 @@ struct ReceiptIngredient: Codable {
         self.count = newCount
     }
 }
+
+struct ReceiptIngredientEditResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: ReceiptIngredient
+}

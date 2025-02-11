@@ -240,10 +240,10 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
             let jsonData = try encoder.encode(requestBody)
             let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<IngredientResponse, Error>) in
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<ReceiptIngredientEditResponse, Error>) in
                 switch result {
                 case .success(let response):
-                    print("!!성공!!")
+                    print("!!영수증 식재료 이름 수정 성공!!")
                     print(response)
                 case .failure(let error):
                     print("네트워킹 오류: \(error)")

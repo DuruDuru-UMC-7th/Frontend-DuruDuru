@@ -64,7 +64,7 @@ class IngredientsView: UIView {
         $0.configuration?.imagePlacement = .trailing // 화살표를 텍스트 오른쪽에 배치
         $0.configuration?.imagePadding = 8 // 텍스트와 이미지 간격
         $0.configuration?.baseForegroundColor = .gray
-        $0.configuration?.attributedTitle = AttributedString("소비기한 임박순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+        $0.configuration?.attributedTitle = AttributedString("최신 등록순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
     }
     
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -135,20 +135,20 @@ class IngredientsView: UIView {
     
     let recentFilter = UIButton().then {
         $0.setTitle("최신 등록순", for: .normal)
-        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
     
     let nearExpiryDateFilter = UIButton().then {
         $0.setTitle("소비기한 임박순", for: .normal)
         $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
-        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     }
     
     let farExpiryFilter = UIButton().then {
         $0.setTitle("소비기한 여유순", for: .normal)
         $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
-        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     }
     
     let menuCloseButton = UIButton().then {
@@ -180,10 +180,10 @@ class IngredientsView: UIView {
         addSubview(ingredientCategoryCollectionView)
         addSubview(expiryDropdownButton)
         addSubview(ingredientsCircleCollectionView)
+        addSubview(darkBackgroundView)
         addSubview(floatingButton)
         addSubview(receiptButton)
         addSubview(manualButton)
-        addSubview(darkBackgroundView)
         addSubview(optionsView)
         optionsView.addSubview(filterLabel)
         optionsView.addSubview(recentFilter)

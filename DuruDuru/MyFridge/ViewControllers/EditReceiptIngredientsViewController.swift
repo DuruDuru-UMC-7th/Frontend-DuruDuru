@@ -142,7 +142,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         
         /// ingredient 수정 API 요청
         for ingredient in receiptResult.ingredients {
-            patchIngredient(ingredietResult: ingredient)
+            patchIngredient(receiptIngredient: ingredient)
         }
     }
     
@@ -217,12 +217,12 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
     
     // MARK: - API 관련
     
-    func patchIngredient(ingredietResult: IngredientResult) {
-        let url = "http://3.35.252.162:8080/OCR/ingredient/\(ingredietResult.ingredientId)"
+    func patchIngredient(receiptIngredient: ReceiptIngredient) {
+        let url = "http://3.35.252.162:8080/OCR/ingredient/\(receiptIngredient.ingredientId)"
         
         /// 쿼리 파라미터
         let queryParameters: [String: Any] = [
-            "receiptId": ingredietResult.receiptId,
+            "receiptId": receiptIngredient.receiptId,
             "memberId": 2, /// 임시로 넣은 memberId
         ]
         
@@ -232,7 +232,7 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         print(urlWithQuery)
         
         /// requestBody
-        let requestBody = PatchIngredientRequest(ingredientName: ingredietResult.ingredientName, count: ingredietResult.count)
+        let requestBody = PatchIngredientRequest(ingredientName: receiptIngredient.ingredientName, count: receiptIngredient.count)
         
         /// API 요청
         do {

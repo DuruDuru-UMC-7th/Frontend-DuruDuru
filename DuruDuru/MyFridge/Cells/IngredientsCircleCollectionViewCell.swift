@@ -94,9 +94,9 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Configure Cell
     
-    func configure(with model: IngredientsModel) {
+    func configure(with model: MyIngredient) {
         expiryLabel.text = "D-3" // e.g., "D-3"
-        ingredientNameLabel.text = model.name // e.g., "콩나물"
+        ingredientNameLabel.text = model.ingredientName // e.g., "콩나물"
 //        imageView.image = UIImage(named: model.image) // e.g., "콩나물"
     }
     

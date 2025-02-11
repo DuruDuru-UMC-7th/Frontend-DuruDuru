@@ -177,7 +177,7 @@ class ReceiptIngredientsTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     /// configure
-    public func configure(ingredient: IngredientResult!, isEditing: Bool) {
+    public func configure(ingredient: ReceiptIngredient!, isEditing: Bool) {
         ingredientName.text = ingredient.ingredientName
         count.text = "x" + String(ingredient.count)
         countLabel.text = String(ingredient.count)

@@ -12,10 +12,13 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
-    var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
-    var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
-    var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
-    var minorCategoryList: [String] = []
+//    var allIngredientData = IngredientsDataModel.dummy() // 모든 식재료 데이터
+//    var filteredIngredients: [IngredientsModel] = [] // 필터링된 데이터
+//    var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
+//    var minorCategoryList: [String] = []
+    
+    // API 연결 관련
+    var ingredients: [MyIngredient] = []
     
     // MARK: - Lifecycle
     
@@ -24,14 +27,20 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView = IngredientsView(frame: self.view.bounds)
         self.view = ingredientsView
         setupDelegate()
-        setupFloatingButtonActions()
-        
-        filterIngredients(by: nil)
+        setupButtonActions()
+//        filterIngredients(by: nil)
         
         /// 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // API 요청
+        getOrderBy(order: "all/recent")
     }
     
     private func setupDelegate() {
@@ -42,53 +51,56 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView.searchBar.delegate = self
     }
     
-    private func setupFloatingButtonActions() {
+    private func setupButtonActions() {
         ingredientsView.floatingButton.addTarget(self, action: #selector(togglePopupButtons), for: .touchUpInside)
         ingredientsView.manualButton.addTarget(self, action: #selector(didTapDirectAddButton), for: .touchUpInside)
         ingredientsView.receiptButton.addTarget(self, action: #selector(didTapReceiptAddButton), for: .touchUpInside)
         
         ingredientsView.allButton.addTarget(self, action: #selector(didTapAllCategoryButton), for: .touchUpInside)
+        ingredientsView.expiryDropdownButton.addTarget(self, action: #selector(didTapFilteringButton), for: .touchUpInside)
+        ingredientsView.menuCloseButton.addTarget(self, action: #selector(didTapMenuCloseButton), for: .touchUpInside)
+        ingredientsView.recentFilter.addTarget(self, action: #selector(didTapRecent), for: .touchUpInside)
+        ingredientsView.nearExpiryDateFilter.addTarget(self, action: #selector(didTapNearExpiryDate), for: .touchUpInside)
+        ingredientsView.farExpiryFilter.addTarget(self, action: #selector(didTapFarExpiryDate), for: .touchUpInside)
     }
     
     /// 특정 카테고리에 해당하는 식재료만 필터링
-    private func filterIngredients(by category: IngredientCategoryModel?) {
-        selectedCategory = category
-        
-        
-        if let category = category {
-            filteredIngredients = allIngredientData
-                .first(where: { $0.category.categoryName == category.categoryName })?
-                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
-        } else {
-            // 전체 보기
-            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
-        }
-        ingredientsView.ingredientsCircleCollectionView.reloadData()
-    }
+//    private func filterIngredients(by category: IngredientCategoryModel?) {
+//        selectedCategory = category
+//        
+//        
+//        if let category = category {
+//            filteredIngredients = allIngredientData
+//                .first(where: { $0.category.categoryName == category.categoryName })?
+//                .ingredients.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") } ?? []
+//        } else {
+//            // 전체 보기
+//            filteredIngredients = allIngredientData.flatMap { $0.ingredients }.map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
+//        }
+//        ingredientsView.ingredientsCircleCollectionView.reloadData()
+//    }
     
     
     // 대분류에 따른 소분류 조회 api 연결
-    private func fetchIngredientCategories(for majorCategory: String) {
-        print("API 요청: majorCategory = \(majorCategory)") // 디버깅용 출력
-        
-        APIClient.shared.getIngredientCategories(majorCategory: majorCategory) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let categories):
-                    self.minorCategoryList = categories
-                    print("소분류 카테고리: \(categories)") // ✅ 결과 확인
-                    self.ingredientsView.ingredientsCircleCollectionView.reloadData()
-                case .failure(let error):
-                    print("오류 발생: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-
-    
+//    private func fetchIngredientCategories(for majorCategory: String) {
+//        print("API 요청: majorCategory = \(majorCategory)") // 디버깅용 출력
+//        
+//        APIClient.shared.getIngredientCategories(majorCategory: majorCategory) { result in
+//            DispatchQueue.main.async {
+//                switch result {
+//                case .success(let categories):
+//                    self.minorCategoryList = categories
+//                    print("소분류 카테고리: \(categories)") // ✅ 결과 확인
+//                    self.ingredientsView.ingredientsCircleCollectionView.reloadData()
+//                case .failure(let error):
+//                    print("오류 발생: \(error.localizedDescription)")
+//                }
+//            }
+//        }
+//    }
     
     /// 식재료 삭제 팝업 (전체 데이터에서도 삭제)
-    private func showDeletePopup(for ingredient: IngredientsModel, at indexPath: IndexPath) {
+    private func showDeletePopup(for ingredient: MyIngredient, at indexPath: IndexPath) {
         let alertController = UIAlertController(
             title: "이 식재료를 냉장고에서 삭제할까요?",
             message: "삭제한 식재료는 다시 복구할 수 없어요.",
@@ -128,6 +140,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     @objc private func togglePopupButtons() {
         let isHidden = ingredientsView.receiptButton.isHidden
+        ingredientsView.darkBackgroundView.isHidden = !isHidden
         ingredientsView.receiptButton.isHidden = !isHidden
         ingredientsView.manualButton.isHidden = !isHidden
         let newImage = isHidden ? UIImage(named: "close") : UIImage(named: "exchangeFloating")
@@ -138,6 +151,52 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         let addIngredientVC = AddIngredientViewController()
         addIngredientVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(addIngredientVC, animated: true)
+    }
+    
+    @objc private func didTapFilteringButton() {
+        ingredientsView.optionsView.isHidden = false
+        ingredientsView.darkBackgroundView.isHidden = false
+    }
+    
+    @objc private func didTapMenuCloseButton() {
+        ingredientsView.optionsView.isHidden = true
+        ingredientsView.darkBackgroundView.isHidden = true
+    }
+    
+    // 최신 등록순 클릭시
+    @objc private func didTapRecent() {
+        updateSelectedFilter(ingredientsView.recentFilter)
+        getOrderBy(order: "all/recent")
+    }
+    
+    // 소비기한 임박순 클릭시
+    @objc private func didTapNearExpiryDate() {
+        updateSelectedFilter(ingredientsView.nearExpiryDateFilter)
+        getOrderBy(order: "near-expiry")
+    }
+    
+    // 소비기한 여유순 클릭시
+    @objc private func didTapFarExpiryDate() {
+        updateSelectedFilter(ingredientsView.farExpiryFilter)
+        getOrderBy(order: "far-expiry")
+    }
+    
+    private func updateSelectedFilter(_ selectedButton: UIButton) {
+        // 모든 버튼의 타이틀을 일반으로 설정
+        ingredientsView.recentFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientsView.nearExpiryDateFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientsView.farExpiryFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+
+        // 선택된 버튼의 타이틀을 볼드체로 설정
+        selectedButton.setTitleColor(.black, for: .normal)
+        selectedButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14) // 볼드체로 설정
+
+        // 드롭다운 버튼의 타이틀 업데이트
+        ingredientsView.expiryDropdownButton.configuration?.attributedTitle = AttributedString(selectedButton.title(for: .normal) ?? "", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+
+        // 메뉴 숨기기
+        ingredientsView.optionsView.isHidden = true
+        ingredientsView.darkBackgroundView.isHidden = true
     }
     
     @objc private func didTapReceiptAddButton() {
@@ -196,17 +255,17 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     @objc private func didTapAllCategoryButton() {
         print("전체 카테고리 버튼 클릭됨")
         
-        filterIngredients(by: nil) // 전체 카테고리 선택 시 모든 데이터 표시
-        selectedCategory = nil
-        ingredientsView.ingredientCategoryCollectionView.reloadData()
+//        filterIngredients(by: nil) // 전체 카테고리 선택 시 모든 데이터 표시
+//        selectedCategory = nil
+//        ingredientsView.ingredientCategoryCollectionView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // 텍스트가 변경될 때 호출
-        guard !searchText.isEmpty else {
-            filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
-            return
-        }
+//        guard !searchText.isEmpty else {
+//            filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
+//            return
+//        }
         
         // 현재 필터링된 데이터에서 검색어가 포함된 항목만 필터링
 //        filteredIngredients = allIngredientData.flatMap { $0.ingredients }
@@ -230,6 +289,24 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         }
     }
     
+    // MARK: - API 관련
+    
+    // 식재료 조회 필터링
+    func getOrderBy(order: String) {
+        let url = "http://3.35.252.162:8080/fridge/2/\(order)"
+        
+        // API 요청
+        APIClient.shared.request(url, method: .get) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 조회 정렬 성공!!")
+                self.ingredients = response.result.ingredients
+                self.ingredientsView.ingredientsCircleCollectionView.reloadData()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -240,7 +317,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
             return categoryData.count
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            return filteredIngredients.count
+            return ingredients.count
         }
         return 0
     }
@@ -262,7 +339,7 @@ extension IngredientsViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = filteredIngredients[indexPath.item]
+            let ingredient = ingredients[indexPath.item]
             cell.configure(with: ingredient) // 셀에 데이터 설정
             return cell
         }
@@ -279,9 +356,9 @@ extension IngredientsViewController: UICollectionViewDelegate {
             print("사용자가 선택한 카테고리: \(selectedCategory)") // 디버깅 출력
             
             // 테고리 선택 시 API 요청 실행
-            fetchIngredientCategories(for: selectedCategory)
+//            fetchIngredientCategories(for: selectedCategory)
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
-            let selectedIngredient = filteredIngredients[indexPath.item]
+            let selectedIngredient = ingredients[indexPath.item]
             showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출
         }
     }

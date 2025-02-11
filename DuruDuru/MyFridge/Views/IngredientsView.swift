@@ -64,7 +64,7 @@ class IngredientsView: UIView {
         $0.configuration?.imagePlacement = .trailing // 화살표를 텍스트 오른쪽에 배치
         $0.configuration?.imagePadding = 8 // 텍스트와 이미지 간격
         $0.configuration?.baseForegroundColor = .gray
-        $0.configuration?.attributedTitle = AttributedString("소비기한 임박순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+        $0.configuration?.attributedTitle = AttributedString("최신 등록순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
     }
     
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -76,7 +76,6 @@ class IngredientsView: UIView {
         $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)
         $0.showsVerticalScrollIndicator = false
     }
-    
     
     /// 플로팅 버튼
     let floatingButton = UIButton().then {
@@ -100,7 +99,7 @@ class IngredientsView: UIView {
         $0.layer.masksToBounds = true
         $0.isHidden = true
     }
-
+    
     /// 직접 추가하기 버튼
     let manualButton = UIButton().then {
         let configuration = UIButton.Configuration.plain()
@@ -115,13 +114,54 @@ class IngredientsView: UIView {
         $0.isHidden = true
     }
     
+    let darkBackgroundView = UIView().then {
+        $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        $0.isHidden = true // 처음에는 숨김
+    }
+    
+    // 메뉴 뷰
+    let optionsView = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 30
+        $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        $0.isHidden = true
+    }
+    
+    let filterLabel = UILabel().then {
+        $0.text = "정렬"
+        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.textColor = .black
+    }
+    
+    let recentFilter = UIButton().then {
+        $0.setTitle("최신 등록순", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+    }
+    
+    let nearExpiryDateFilter = UIButton().then {
+        $0.setTitle("소비기한 임박순", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+    }
+    
+    let farExpiryFilter = UIButton().then {
+        $0.setTitle("소비기한 여유순", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+    }
+    
+    let menuCloseButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+        $0.tintColor = .black
+    }
     
     // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
-
+        
         addComponents()
         setupConstraints()
     }
@@ -140,9 +180,16 @@ class IngredientsView: UIView {
         addSubview(ingredientCategoryCollectionView)
         addSubview(expiryDropdownButton)
         addSubview(ingredientsCircleCollectionView)
+        addSubview(darkBackgroundView)
         addSubview(floatingButton)
         addSubview(receiptButton)
         addSubview(manualButton)
+        addSubview(optionsView)
+        optionsView.addSubview(filterLabel)
+        optionsView.addSubview(recentFilter)
+        optionsView.addSubview(nearExpiryDateFilter)
+        optionsView.addSubview(farExpiryFilter)
+        optionsView.addSubview(menuCloseButton)
     }
     
     // MARK: - Setup Constraints
@@ -177,7 +224,6 @@ class IngredientsView: UIView {
         expiryDropdownButton.snp.makeConstraints {
             $0.top.equalTo(ingredientCategoryCollectionView.snp.bottom).offset(11)
             $0.trailing.equalToSuperview().offset(-16)
-            
         }
         
         ingredientsCircleCollectionView.snp.makeConstraints {
@@ -200,12 +246,50 @@ class IngredientsView: UIView {
             $0.width.equalTo(126)
             $0.height.equalTo(40)
         }
-
+        
         receiptButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-16)
             $0.bottom.equalTo(manualButton.snp.top).offset(-10)
             $0.width.equalTo(160)
             $0.height.equalTo(40)
+        }
+        
+        darkBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview() // 전체 화면을 채움
+        }
+        
+        optionsView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(185)
+        }
+        
+        filterLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(22)
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        recentFilter.snp.makeConstraints {
+            $0.top.equalTo(filterLabel.snp.bottom).offset(21)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(17)
+        }
+        
+        nearExpiryDateFilter.snp.makeConstraints {
+            $0.top.equalTo(recentFilter.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(17)
+        }
+        
+        farExpiryFilter.snp.makeConstraints {
+            $0.top.equalTo(nearExpiryDateFilter.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(17)
+        }
+        
+        menuCloseButton.snp.makeConstraints {
+            $0.centerY.equalTo(filterLabel)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(24)
         }
     }
 }

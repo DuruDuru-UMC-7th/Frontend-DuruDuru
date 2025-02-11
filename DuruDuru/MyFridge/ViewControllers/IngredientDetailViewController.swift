@@ -12,7 +12,7 @@ class IngredientDetailViewController: UIViewController {
     // MARK: - Properties
     
     private var ingredientDetailView: IngredientDetailView!
-    var ingredient: IngredientsModel?
+    var ingredient: MyIngredient?
     var recipes = IngredientModel.dummy()[0].recipes
 
     // MARK: - Lifecycle
@@ -22,7 +22,7 @@ class IngredientDetailViewController: UIViewController {
 
         ingredientDetailView = IngredientDetailView(frame: self.view.bounds)
         self.view = ingredientDetailView
-        ingredientDetailView.ingredientName.text = ingredient?.name
+        ingredientDetailView.ingredientName.text = ingredient?.ingredientName
         
         setUpUIBar()
         setupDelegate()

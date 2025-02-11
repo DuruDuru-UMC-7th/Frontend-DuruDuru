@@ -11,23 +11,27 @@ struct IngredientResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: IngredientResult?
+    let result: IngredientResult
 }
 
 struct IngredientResult: Codable {
+    let count: Int
+    let ingredients: [MyIngredient]
+}
+
+struct MyIngredient: Codable {
     
     let memberId: Int
-    let receiptId: Int
     let fridgeId: Int
     let ingredientId: Int
     var ingredientName: String
     var count: Int
+    var purchaseDate: String
+    var expiryDate: String
+    let storageType: String
     let majorCategory: String
     let minorCategory: String
-    let storageType: String
-    var expireDate: String
-    
-    mutating func setCount(newCount: Int) {
-        self.count = newCount
-    }
+    let ingredientImageUrl: String
+    let createdAt: String
+    let updatedAt: String
 }

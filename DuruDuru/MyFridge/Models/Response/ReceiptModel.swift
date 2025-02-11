@@ -17,5 +17,23 @@ struct ReceiptResponse: Codable {
 struct ReceiptResult: Codable {
     
     var purchaseDate: String?
-    var ingredients: [IngredientResult]
+    var ingredients: [ReceiptIngredient]
+}
+
+struct ReceiptIngredient: Codable {
+    
+    let memberId: Int
+    let receiptId: Int
+    let fridgeId: Int
+    let ingredientId: Int
+    var ingredientName: String
+    var count: Int
+    let majorCategory: String
+    let minorCategory: String
+    let storageType: String
+    var expireDate: String
+    
+    mutating func setCount(newCount: Int) {
+        self.count = newCount
+    }
 }

@@ -14,6 +14,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
     private var editReceiptIngredientsView: EditReceiptIngredientsView!
     var receiptResult: ReceiptResult! /// 영수증 스캔 결과
     private var isEditingMode = false /// 식재료 편집 버튼 상태
+    private var deletedIngredientId: [Int] = []
     
     // MARK: - Lifecycle
     
@@ -140,15 +141,130 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         editReceiptIngredientsView.addButton.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
         editReceiptIngredientsView.addButton.setTitleColor(.white, for: .normal)
         
-        /// ingredient 수정 API 요청
+        // ingredient 수정 API 요청
         for ingredient in receiptResult.ingredients {
             patchIngredient(receiptIngredient: ingredient)
+        }
+        
+        // ingredient 삭제 API 요청
+        for idx in deletedIngredientId {
+            deleteIngredient(deletedIngredientId: idx)
         }
     }
     
     private func setupDelegate(){
         editReceiptIngredientsView.ingredientsTableView.dataSource = self
         editReceiptIngredientsView.ingredientsTableView.delegate = self
+    }
+    
+    // MARK: - API 관련
+    
+    func patchIngredient(receiptIngredient: ReceiptIngredient) {
+        let url = "http://3.35.252.162:8080/OCR/ingredient/\(receiptIngredient.ingredientId)"
+        
+        /// 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "receiptId": receiptIngredient.receiptId,
+            "memberId": 2, /// 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        /// requestBody
+        let requestBody = PatchIngredientRequest(ingredientName: receiptIngredient.ingredientName, count: receiptIngredient.count)
+        
+        /// API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<ReceiptIngredientEditResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!영수증 식재료 이름 수정 성공!!")
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+    func patchDate(receiptResult: ReceiptResult) {
+        let url = "http://3.35.252.162:8080/OCR/\(receiptResult.ingredients[0].receiptId)/purchase-date"
+    
+        // 날짜 변환
+        let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
+
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // requestBody
+        let requestBody = PatchReceiptPurchaseDate(purchaseDate: formattedPurchaseDate)
+
+        // API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!성공!!")
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+    func deleteIngredient(deletedIngredientId: Int) {
+        let url = "http://3.35.252.162:8080/ingredient/\(deletedIngredientId)"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, // 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // API 요청
+        APIClient.shared.request(urlWithQuery, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 삭제 성공!!")
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
+
+    
+    // 날짜 변환
+    func convertPurchaseDate(purchaseDate: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.locale = Locale(identifier: "ko_KR")
+        inputFormatter.dateFormat = "yyyy년 MM월 dd일 EEEE" // 현재 형식
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy-MM-dd" // 원하는 형식
+
+        if let date = inputFormatter.date(from: purchaseDate) {
+            return outputFormatter.string(from: date)
+        }
+        return nil // 변환 실패 시 nil 반환
     }
     
     // MARK: - UITextFieldDelegate
@@ -201,10 +317,11 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
     func didTapDeleteButton(in cell: ReceiptIngredientsTableViewCell) {
         guard let indexPath = editReceiptIngredientsView.ingredientsTableView.indexPath(for: cell) else { return }
         
-        /// 데이터 모델에서 해당 아이템 삭제
+        // 데이터 모델에서 해당 아이템 삭제
+        deletedIngredientId.append(receiptResult.ingredients[indexPath.row].ingredientId)
         receiptResult.ingredients.remove(at: indexPath.row)
         
-        /// 셀 삭제
+        // 셀 삭제
         editReceiptIngredientsView.ingredientsTableView.deleteRows(at: [indexPath], with: .automatic)
     }
     
@@ -213,100 +330,5 @@ extension EditReceiptIngredientsViewController: UITableViewDataSource, UITableVi
         
         /// 데이터 모델에서 카운트 업데이트
         receiptResult.ingredients[indexPath.row].setCount(newCount: newCount)
-    }
-    
-    // MARK: - API 관련
-    
-    func patchIngredient(receiptIngredient: ReceiptIngredient) {
-        let url = "http://3.35.252.162:8080/OCR/ingredient/\(receiptIngredient.ingredientId)"
-        
-        /// 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "receiptId": receiptIngredient.receiptId,
-            "memberId": 2, /// 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
-        print(urlWithQuery)
-        
-        /// requestBody
-        let requestBody = PatchIngredientRequest(ingredientName: receiptIngredient.ingredientName, count: receiptIngredient.count)
-        
-        /// API 요청
-        do {
-            let encoder = JSONEncoder()
-            let jsonData = try encoder.encode(requestBody)
-            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
-            
-            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<ReceiptIngredientEditResponse, Error>) in
-                switch result {
-                case .success(let response):
-                    print("!!영수증 식재료 이름 수정 성공!!")
-                    print(response)
-                case .failure(let error):
-                    print("네트워킹 오류: \(error)")
-                }
-            }
-        } catch {
-            print("인코딩 오류: \(error)")
-        }
-    }
-    
-    func patchDate(receiptResult: ReceiptResult) {
-        let url = "http://3.35.252.162:8080/OCR/\(receiptResult.ingredients[0].receiptId)/purchase-date"
-    
-        // 날짜 변환
-        let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
-
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
-        print(urlWithQuery)
-        print(formattedPurchaseDate)
-        
-        // requestBody
-        let requestBody = PatchReceiptPurchaseDate(purchaseDate: formattedPurchaseDate)
-
-        // API 요청
-        do {
-            let encoder = JSONEncoder()
-            let jsonData = try encoder.encode(requestBody)
-            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
-            
-            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
-                switch result {
-                case .success(let response):
-                    print("!!성공!!")
-                    print(response)
-                case .failure(let error):
-                    print("네트워킹 오류: \(error)")
-                }
-            }
-        } catch {
-            print("인코딩 오류: \(error)")
-        }
-    }
-
-    
-    // 날짜 변환
-    func convertPurchaseDate(purchaseDate: String) -> String? {
-        let inputFormatter = DateFormatter()
-        inputFormatter.locale = Locale(identifier: "ko_KR")
-        inputFormatter.dateFormat = "yyyy년 MM월 dd일 EEEE" // 현재 형식
-
-        let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "yyyy-MM-dd" // 원하는 형식
-
-        if let date = inputFormatter.date(from: purchaseDate) {
-            return outputFormatter.string(from: date)
-        }
-        return nil // 변환 실패 시 nil 반환
     }
 }

@@ -35,3 +35,9 @@ struct MyIngredient: Codable {
     let createdAt: String
     let updatedAt: String
 }
+
+struct DeleteIngredientResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+}

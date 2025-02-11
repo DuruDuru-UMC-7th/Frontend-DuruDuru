@@ -27,11 +27,12 @@ class SignUpSecondView: UIView {
     // MARK: -Property
     
     /// 뒤로가기
-    public lazy var backImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "Left")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    public lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Left"), for: .normal) // 버튼 이미지 설정
+        button.contentMode = .scaleAspectFit // 이미지 비율 유지
+        button.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 시 필수
+        return button
     }()
     
     /// "회원가입" 라벨
@@ -163,7 +164,7 @@ class SignUpSecondView: UIView {
     
     /// 컴포넌트 생성
     private func addComponents() {
-        self.addSubview(backImage)
+        self.addSubview(backButton)
         self.addSubview(titleLabel)
         self.addSubview(borderLine)
         self.addSubview(phoneLabel)
@@ -176,29 +177,29 @@ class SignUpSecondView: UIView {
     
     /// 오토레이아웃 설정
     private func constraints(){
-        backImage.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+        backButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(65)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+            $0.top.equalToSuperview().offset(65)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(115)
             $0.height.equalTo(22)
         }
         
         borderLine.snp.makeConstraints {
-            $0.top.equalTo(backImage.snp.bottom).offset(9)
+            $0.top.equalTo(backButton.snp.bottom).offset(9)
             $0.left.equalToSuperview()
             $0.width.equalTo(402)
             $0.height.equalTo(2)
         }
         
         phoneLabel.snp.makeConstraints {
-            $0.top.equalTo(borderLine.snp.bottom).offset(244.5)
+            $0.top.equalTo(borderLine.snp.bottom).offset(259.5)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(370)
             $0.height.equalTo(22)
@@ -235,3 +236,4 @@ class SignUpSecondView: UIView {
     }
 
 }
+

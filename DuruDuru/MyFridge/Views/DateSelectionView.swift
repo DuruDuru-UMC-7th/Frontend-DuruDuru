@@ -115,7 +115,7 @@ class DateSelectionView: UIView {
         buttonStackView.addArrangedSubview(purchaseDateButton)
         buttonStackView.addArrangedSubview(expirationDateButton)
 
-        [topSeparator, topSeparator2, stepLabel, questionLabel, buttonStackView,dateLabel,
+        [topSeparator, stepLabel, questionLabel, buttonStackView,dateLabel,
          descriptionLabel, dateTextField, confirmButton].forEach { addSubview($0) }
     }
     

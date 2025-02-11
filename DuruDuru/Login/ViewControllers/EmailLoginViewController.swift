@@ -30,6 +30,7 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
         let view = EmailLoginView()
         view.backButton.addTarget(self, action: #selector(backFunction), for: .touchUpInside)
         view.loginBtn.addTarget(self, action: #selector(loginFunction), for: .touchUpInside)
+        view.signUpButton.addTarget(self, action: #selector(toSignUpFunction), for: .touchUpInside)
         return view
     }()
 
@@ -91,6 +92,16 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
     /// 뒤로가기 함수
     @objc private func backFunction() {
         let VC = LoginViewController()
+        
+        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene, let sceneDelegate = window.delegate as? SceneDelegate, let window = sceneDelegate.window {
+            window.rootViewController = VC
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        }
+    }
+    
+    /// 회원가입으로 이동 함수
+    @objc private func toSignUpFunction() {
+        let VC = SignUpFirstViewController()
         
         if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene, let sceneDelegate = window.delegate as? SceneDelegate, let window = sceneDelegate.window {
             window.rootViewController = VC

@@ -150,14 +150,14 @@ class SignUpFirstView: UIView {
     /// 오토레이아웃 설정
     private func constraints(){
         backButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+            $0.top.equalToSuperview().offset(65)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(95)
+            $0.top.equalToSuperview().offset(65)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(115)
             $0.height.equalTo(22)
@@ -220,3 +220,4 @@ class SignUpFirstView: UIView {
         }
     }
 }
+

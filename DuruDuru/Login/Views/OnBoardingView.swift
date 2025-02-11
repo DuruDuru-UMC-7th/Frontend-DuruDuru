@@ -30,7 +30,7 @@ class OnBoardingView: UIView {
     /// 두루두루 그림
     private lazy var duruduruImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "DuruDuruImage")
+        imageView.image = UIImage(named: "OnLogo")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -47,10 +47,9 @@ class OnBoardingView: UIView {
     private func constraints(){
         duruduruImage.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(207)
+            $0.width.equalTo(402)
             $0.height.equalTo(100)
             $0.top.equalToSuperview().offset(387)
         }
     }
 }
-

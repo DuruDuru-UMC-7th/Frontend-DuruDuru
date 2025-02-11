@@ -69,7 +69,7 @@ class EmailLoginView: UIView {
     }()
     
     /// 회원가입(초록색) 버튼 -> 텍스트만 보이도록 설정
-    private lazy var signUpButton: UIButton = {
+    lazy var signUpButton: UIButton = {
         var config = UIButton.Configuration.plain() // plain 스타일 사용
         config.title = "회원가입" // 버튼 텍스트
         config.titleAlignment = .center

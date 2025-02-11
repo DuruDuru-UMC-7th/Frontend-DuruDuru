@@ -17,6 +17,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
 //    var selectedCategory: IngredientCategoryModel? = nil // 현재 선택된 카테고리
 //    var minorCategoryList: [String] = []
     
+    private var selectedCategoryIndex: IndexPath?
+    
     // API 연결 관련
     var ingredients: [MyIngredient] = []
     
@@ -40,7 +42,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         super.viewWillAppear(animated)
         
         // API 요청
-        getOrderBy(order: "all/recent")
+        getOrderBy(order: "near-expiry")
     }
     
     private func setupDelegate() {
@@ -56,7 +58,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView.manualButton.addTarget(self, action: #selector(didTapDirectAddButton), for: .touchUpInside)
         ingredientsView.receiptButton.addTarget(self, action: #selector(didTapReceiptAddButton), for: .touchUpInside)
         
-        ingredientsView.allButton.addTarget(self, action: #selector(didTapAllCategoryButton), for: .touchUpInside)
+        ingredientsView.allButton.addTarget(self, action: #selector(didTapAllButton), for: .touchUpInside)
         ingredientsView.expiryDropdownButton.addTarget(self, action: #selector(didTapFilteringButton), for: .touchUpInside)
         ingredientsView.menuCloseButton.addTarget(self, action: #selector(didTapMenuCloseButton), for: .touchUpInside)
         ingredientsView.recentFilter.addTarget(self, action: #selector(didTapRecent), for: .touchUpInside)
@@ -181,6 +183,23 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         getOrderBy(order: "far-expiry")
     }
     
+    // 모두 조회 버튼 클릭시
+    @objc private func didTapAllButton() {
+        selectedCategoryIndex = nil
+        for index in 0..<categoryData.count {
+            if let cell = ingredientsView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = UIColor.black
+                cell.categoryName.textColor = .black
+            }
+        }
+        ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        ingredientsView.allButton.tintColor = .white
+        
+        updateSelectedFilter(ingredientsView.nearExpiryDateFilter)
+        getOrderBy(order: "near-expiry")
+    }
+    
     private func updateSelectedFilter(_ selectedButton: UIButton) {
         // 모든 버튼의 타이틀을 일반으로 설정
         ingredientsView.recentFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
@@ -249,15 +268,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         DispatchQueue.main.async {
             self.present(alertController, animated: true) // must be used from main thread only
         }
-    }
-    
-    
-    @objc private func didTapAllCategoryButton() {
-        print("전체 카테고리 버튼 클릭됨")
-        
-//        filterIngredients(by: nil) // 전체 카테고리 선택 시 모든 데이터 표시
-//        selectedCategory = nil
-//        ingredientsView.ingredientCategoryCollectionView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -331,6 +341,18 @@ extension IngredientsViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             cell.configure(model: categoryData[indexPath.row])
+            
+            // 선택된 셀의 색상 설정
+            if indexPath == selectedCategoryIndex {
+                cell.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+                cell.icon.tintColor = .white
+                cell.categoryName.textColor = .white
+            } else {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = .black
+                cell.categoryName.textColor = .black
+            }
+            
             return cell
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
@@ -352,11 +374,16 @@ extension IngredientsViewController: UICollectionViewDelegate {
     /// 대분류에 따른 소분류 조회 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == ingredientsView.ingredientCategoryCollectionView {
+            selectedCategoryIndex = indexPath
+            ingredientsView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+            ingredientsView.allButton.tintColor = .black
+            collectionView.reloadData()
+            
             let selectedCategory = categoryData[indexPath.item].categoryName // 선택한 카테고리명 가져오기
             print("사용자가 선택한 카테고리: \(selectedCategory)") // 디버깅 출력
             
             // 테고리 선택 시 API 요청 실행
-//            fetchIngredientCategories(for: selectedCategory)
+            //            fetchIngredientCategories(for: selectedCategory)
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
             let selectedIngredient = ingredients[indexPath.item]
             showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출

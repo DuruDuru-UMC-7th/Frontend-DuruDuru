@@ -68,7 +68,8 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     // MARK: - Configuration
     
     public func configure(model: IngredientCategoryModel) {
-        self.icon.image = model.icon
+        self.icon.image = model.icon.withRenderingMode(.alwaysTemplate)
+        self.icon.tintColor = .black
         self.categoryName.text = model.categoryName
     }
 }

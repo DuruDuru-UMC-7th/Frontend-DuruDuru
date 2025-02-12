@@ -30,6 +30,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         self.view = ingredientsView
         setupDelegate()
         setupButtonActions()
+        getOrderBy(order: "near-expiry")
 //        filterIngredients(by: nil)
         
         /// 키보드 동작을 위한 제스쳐
@@ -38,12 +39,12 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         view.addGestureRecognizer(tapGesture)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // API 요청
-        getOrderBy(order: "near-expiry")
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        
+//        // API 요청
+//        getOrderBy(order: "near-expiry")
+//    }
     
     private func setupDelegate() {
         ingredientsView.ingredientCategoryCollectionView.dataSource = self
@@ -113,20 +114,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         let deleteAction = UIAlertAction(title: "네, 삭제할게요", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
-//            // 전체 데이터에서 해당 아이템 삭제
-//            for (index, categoryData) in allIngredientData.enumerated() {
-//                if let ingredientIndex = categoryData.ingredients.firstIndex(where: { $0.name == ingredient.name }) {
-//                    allIngredientData[index].ingredients.remove(at: ingredientIndex)
-//                    break
-//                }
-//            }
-//            
-//            // 현재 필터링된 데이터에서도 삭제
-//            filteredIngredients.remove(at: indexPath.row)
-//            
-//            // 화면 갱신 (현재 선택된 카테고리를 유지하면서 필터링)
-//            self.filterIngredients(by: self.selectedCategory)
-            
             let ingredientDetailVC = IngredientDetailViewController()
             ingredientDetailVC.ingredient = ingredient
             ingredientDetailVC.hidesBottomBarWhenPushed = true
@@ -167,23 +154,23 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     // 최신 등록순 클릭시
     @objc private func didTapRecent() {
-        updateSelectedFilter(ingredientsView.recentFilter)
+        updateSelectedOrder(ingredientsView.recentFilter)
         getOrderBy(order: "all/recent")
     }
     
     // 소비기한 임박순 클릭시
     @objc private func didTapNearExpiryDate() {
-        updateSelectedFilter(ingredientsView.nearExpiryDateFilter)
+        updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
         getOrderBy(order: "near-expiry")
     }
     
     // 소비기한 여유순 클릭시
     @objc private func didTapFarExpiryDate() {
-        updateSelectedFilter(ingredientsView.farExpiryFilter)
+        updateSelectedOrder(ingredientsView.farExpiryFilter)
         getOrderBy(order: "far-expiry")
     }
     
-    // 모두 조회 버튼 클릭시
+    // 모두 조회 버튼 클릭시 -> 카테고리 색 원래대로, 버튼 색 표시, 검색창 text 없애기, 모두 조회 API 호출
     @objc private func didTapAllButton() {
         selectedCategoryIndex = nil
         for index in 0..<categoryData.count {
@@ -193,14 +180,18 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
                 cell.categoryName.textColor = .black
             }
         }
+        
         ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
         ingredientsView.allButton.tintColor = .white
         
-        updateSelectedFilter(ingredientsView.nearExpiryDateFilter)
+        ingredientsView.searchBar.text = ""
+        ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = true
+        
+        updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
         getOrderBy(order: "near-expiry")
     }
     
-    private func updateSelectedFilter(_ selectedButton: UIButton) {
+    private func updateSelectedOrder(_ selectedButton: UIButton) {
         // 모든 버튼의 타이틀을 일반으로 설정
         ingredientsView.recentFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
         ingredientsView.nearExpiryDateFilter.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
@@ -270,28 +261,38 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         }
     }
     
+    // 검색어가 있을때 -> 모두조회 버튼 클릭해제, 카테고리 선택 비활성화, 검색어로 식재료 검색
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // 텍스트가 변경될 때 호출
-//        guard !searchText.isEmpty else {
-//            filterIngredients(by: selectedCategory) // 검색어가 없으면 기존 필터 유지
-//            return
-//        }
+        // 검색어 가져오기
+        guard let searchText = searchBar.text, !searchText.isEmpty else {
+            // 검색어가 없는 경우
+            ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+            ingredientsView.allButton.tintColor = .white
+            
+            updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
+            getOrderBy(order: "near-expiry")
+            ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = true
+            return
+        }
         
-        // 현재 필터링된 데이터에서 검색어가 포함된 항목만 필터링
-//        filteredIngredients = allIngredientData.flatMap { $0.ingredients }
-//            .map { IngredientsModel(name: $0.name, daysRemaining: "D-0") }
-//            .filter { $0.name.contains(searchText) }
+        ingredientsView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        ingredientsView.allButton.tintColor = .black
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         /// 키보드 숨기기
         ingredientsView.searchBar.resignFirstResponder()
         
-        /// 검색 동작
+        // 검색어 가져오기
+        let searchText = searchBar.text
+        
+        // 검색 동작
+        getByIngredientName(ingredientName: searchText!)
         ingredientsView.ingredientsCircleCollectionView.reloadData()
+        ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = false
     }
     
-    /// 키보드 숨기기
+    // 키보드 숨기기
     @objc private func dismissKeyboard() {
         // 키보드가 나타나 있을 때만 숨기기
         if ingredientsView.searchBar.isFirstResponder {
@@ -301,7 +302,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     // MARK: - API 관련
     
-    // 식재료 조회 필터링
+    // 식재료 조회 정렬
     func getOrderBy(order: String) {
         let url = "http://3.35.252.162:8080/fridge/2/\(order)"
         
@@ -310,6 +311,32 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
             switch result {
             case .success(let response):
                 print("!!식재료 조회 정렬 성공!!")
+                self.ingredients = response.result.ingredients
+                self.ingredientsView.ingredientsCircleCollectionView.reloadData()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
+    
+    // 식재료 이름으로 검색 조회
+    func getByIngredientName(ingredientName: String) {
+        let url = "http://3.35.252.162:8080/ingredient/search/name"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, // 임시로 넣은 memberId
+            "search": ingredientName,
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // API 요청
+        APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 이름으로 검색 조회 성공!!")
                 self.ingredients = response.result.ingredients
                 self.ingredientsView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):

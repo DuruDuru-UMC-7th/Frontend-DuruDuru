@@ -10,15 +10,7 @@ import UIKit
 class IngredientsView: UIView {
     
     // MARK: - Components
-    
-    
-    /// 검색창 라벨
-    let searchBarLabel = UILabel().then {
-        $0.text = "필요한 식재료를 검색하세요"
-        $0.font = UIFont.systemFont(ofSize: 14)
-        $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
-    }
-    
+   
     let searchBarContainer = UIView().then {
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true

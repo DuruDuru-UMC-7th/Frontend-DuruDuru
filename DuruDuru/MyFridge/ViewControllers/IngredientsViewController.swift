@@ -31,7 +31,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         setupDelegate()
         setupButtonActions()
         getOrderBy(order: "near-expiry")
-//        filterIngredients(by: nil)
         
         /// 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -39,12 +38,27 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         view.addGestureRecognizer(tapGesture)
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        
-//        // API 요청
-//        getOrderBy(order: "near-expiry")
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        selectedCategoryIndex = nil
+        for index in 0..<categoryData.count {
+            if let cell = ingredientsView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = UIColor.black
+                cell.categoryName.textColor = .black
+            }
+        }
+        
+        ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        ingredientsView.allButton.tintColor = .white
+        
+        ingredientsView.searchBar.text = ""
+        ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = true
+        
+        updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
+        getOrderBy(order: "near-expiry")
+    }
     
     private func setupDelegate() {
         ingredientsView.ingredientCategoryCollectionView.dataSource = self
@@ -118,7 +132,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
             ingredientDetailVC.ingredient = ingredient
             ingredientDetailVC.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(ingredientDetailVC, animated: true)
-            
         }
         
         alertController.addAction(cancelAction)

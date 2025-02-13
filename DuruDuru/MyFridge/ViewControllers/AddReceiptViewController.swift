@@ -33,7 +33,7 @@ class AddReceiptViewController: UIViewController {
     private func startScanning() {
         addReceiptView.animateScanningBar()
         addReceiptView.indicator.startAnimating()
-        self.OCRScan(memberId: 2, image: self.image ?? UIImage()) /// 임시로 memberId 5로 지정
+        self.OCRScan(image: self.image ?? UIImage()) 
         
         /// 3초 후 스캔 완료
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -67,7 +67,7 @@ class AddReceiptViewController: UIViewController {
     // MARK: - API 관련
     
     /// OCR로 영수증 인식 API 연결
-    private func OCRScan(memberId: Int, image: UIImage) {
+    private func OCRScan(image: UIImage) {
         let url = "http://3.35.252.162:8080/OCR/receipt"
         
         // 이미지 데이터로 변환
@@ -77,7 +77,7 @@ class AddReceiptViewController: UIViewController {
         }
         
         // multipart/form-data 요청
-        APIClient.shared.upload(url: url, memberId: memberId, imageData: imageData, name: "file") { (result: Result<ReceiptResponse, Error>) in
+        APIClient.shared.upload(url: url, imageData: imageData, name: "file") { (result: Result<ReceiptResponse, Error>) in
             switch result {
             case .success(let response):
                 print("영수증 등록 성공")

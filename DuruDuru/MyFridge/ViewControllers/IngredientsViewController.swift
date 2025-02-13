@@ -294,14 +294,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     func getOrderBy(order: String) {
         let url = "http://3.35.252.162:8080/fridge/\(order)"
         
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, // 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
         // API 요청
         APIClient.shared.request(url, method: .get) { (result: Result<IngredientResponse, Error>) in
             switch result {

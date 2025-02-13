@@ -177,7 +177,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
         }
         
         // multipart/form-data 요청
-        APIClient.shared.upload(url: url, memberId: 2, imageData: imageData, name: "image") { (result: Result<SetIngredientImageResponse, Error>) in
+        APIClient.shared.upload(url: url, imageData: imageData, name: "image") { (result: Result<SetIngredientImageResponse, Error>) in
             switch result {
             case .success(let response):
                 print("식재료 이미지 등록 성공")

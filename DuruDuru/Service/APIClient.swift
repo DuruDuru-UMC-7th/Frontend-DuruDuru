@@ -46,10 +46,9 @@ final class APIClient {
                 }
         }
     
-    /// OCR을 위한 multipart/form-data 전송
+    // multipart/form-data 전송
     public func upload<T: Codable>(
         url: String,
-        memberId: Int,
         imageData: Data,
         name: String,
         completion: @escaping (Result<T, Error>) -> Void) {
@@ -60,8 +59,6 @@ final class APIClient {
             ]
             
             session.upload(multipartFormData: { multipartFormData in
-                multipartFormData.append(Data(String(memberId).utf8),
-                                         withName: "memberId")
                 multipartFormData.append(imageData, withName: name, fileName: "image.png", mimeType: "image/png")
             }, to: url, method: .post, headers: headers)
             .validate()

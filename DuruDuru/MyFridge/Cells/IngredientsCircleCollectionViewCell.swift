@@ -16,7 +16,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     private let circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .clear
         view.layer.cornerRadius = 59 // 원의 반지름
         view.clipsToBounds = true
         return view
@@ -24,15 +24,9 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     var imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = .thumbnail
+        $0.image = UIImage(named: "imageNotFound")
+        $0.clipsToBounds = true
     }
-    
-//    /// 남은 소비기한 라벨 (원 내부)
-//    private let expiryLabel = UILabel().then {
-//        $0.font = .boldSystemFont(ofSize: 14)
-//        $0.textColor = .black
-//        $0.textAlignment = .center
-//    }
     
     /// 식재료 이름 라벨 (원 아래)
     private let ingredientNameLabel = UILabel().then {
@@ -107,8 +101,12 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     // MARK: - Configure Cell
     
     func configure(with model: MyIngredient) {
-        ingredientNameLabel.text = model.ingredientName // e.g., "콩나물"
-//        imageView.image = UIImage(named: model.image) // e.g., "콩나물"
+        ingredientNameLabel.text = model.ingredientName
+        if let imageURL = URL(string: model.ingredientImageUrl!) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound") 
+        }
         count.text = String(model.count)
     }
     

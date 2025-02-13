@@ -25,7 +25,7 @@ class IngredientDetailView: UIView {
     // MARK: - Components
     
     let imageView = UIImageView().then {
-        $0.image = UIImage(named: "삼겹살")
+        $0.image = UIImage(named: "imageNotFound")
         $0.contentMode = .scaleAspectFit
         $0.layer.cornerRadius = 50
         $0.clipsToBounds = true
@@ -316,8 +316,10 @@ class IngredientDetailView: UIView {
     }
     
     public func config(ingredient: MyIngredient) {
-        if let imageURL = URL(string: ingredient.ingredientImageUrl) {
-            imageView.kf.setImage(with: imageURL)
+        if let imageURL = URL(string: ingredient.ingredientImageUrl!) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound")
         }
         majorCategory.text = "\(ingredient.majorCategory) ·"
         minorCategory.text = ingredient.minorCategory

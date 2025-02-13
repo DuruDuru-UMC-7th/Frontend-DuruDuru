@@ -31,7 +31,7 @@ struct MyIngredient: Codable {
     let storageType: String
     let majorCategory: String
     let minorCategory: String
-    let ingredientImageUrl: String
+    let ingredientImageUrl: String?
     let createdAt: String
     let updatedAt: String
 }

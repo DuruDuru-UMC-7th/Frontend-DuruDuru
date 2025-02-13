@@ -13,8 +13,8 @@ final class APIClient {
     private let session: Session
     
     private init() {
-        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "")
-        session = Session()
+        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNzM5NDM4OTU4LCJleHAiOjE3Mzk0NDI1NTh9.KfbsHqyrO0UYtacaEEWajDuSlo_nNAd_Fw-yOg0C4LE")
+        session = Session(interceptor: interceptor)
     }
     
     public func request<T: Codable>(

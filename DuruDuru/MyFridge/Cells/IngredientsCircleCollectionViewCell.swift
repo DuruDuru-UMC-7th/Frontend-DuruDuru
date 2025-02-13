@@ -24,6 +24,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     var imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
+        $0.image = .thumbnail
     }
     
 //    /// 남은 소비기한 라벨 (원 내부)

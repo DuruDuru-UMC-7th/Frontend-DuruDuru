@@ -16,7 +16,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     private let circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .clear
         view.layer.cornerRadius = 59 // 원의 반지름
         view.clipsToBounds = true
         return view
@@ -24,13 +24,8 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     var imageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-    }
-    
-    /// 남은 소비기한 라벨 (원 내부)
-    private let expiryLabel = UILabel().then {
-        $0.font = .boldSystemFont(ofSize: 14)
-        $0.textColor = .black
-        $0.textAlignment = .center
+        $0.image = UIImage(named: "imageNotFound")
+        $0.clipsToBounds = true
     }
     
     /// 식재료 이름 라벨 (원 아래)
@@ -38,6 +33,17 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .black
         $0.textAlignment = .center
+    }
+    
+    private let count = UILabel().then {
+        $0.backgroundColor = UIColor(hex: 0x4BD9B3, alpha: 1.0)
+        $0.font = .boldSystemFont(ofSize: 11)
+        $0.textColor = .white
+        $0.textAlignment = .center
+        $0.layer.cornerRadius = 15
+        $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.white.cgColor
+        $0.layer.borderWidth = 2
     }
     
     override init(frame: CGRect) {
@@ -59,8 +65,8 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     private func addComponents() {
         addSubview(circleView)
-        circleView.addSubview(expiryLabel)
         circleView.addSubview(imageView)
+        addSubview(count)
         addSubview(ingredientNameLabel)
     }
     
@@ -79,29 +85,32 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
             $0.edges.equalToSuperview()
         }
         
-        // 원 내부 텍스트 (소비기한)
-        expiryLabel.snp.makeConstraints {
-            $0.center.equalTo(circleView) // 원의 중심
-        }
-        
         // 원 아래 텍스트 (식재료 이름)
         ingredientNameLabel.snp.makeConstraints {
             $0.top.equalTo(circleView.snp.bottom).offset(8) // 이름이 보일 공간 확보
             $0.centerX.equalToSuperview()
             $0.bottom.lessThanOrEqualToSuperview().offset(-5)
         }
+        
+        count.snp.makeConstraints {
+            $0.top.trailing.equalToSuperview()
+            $0.width.height.equalTo(30)
+        }
     }
     
     // MARK: - Configure Cell
     
     func configure(with model: MyIngredient) {
-        expiryLabel.text = "D-3" // e.g., "D-3"
-        ingredientNameLabel.text = model.ingredientName // e.g., "콩나물"
-//        imageView.image = UIImage(named: model.image) // e.g., "콩나물"
+        ingredientNameLabel.text = model.ingredientName
+        if let imageURL = URL(string: model.ingredientImageUrl!) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound") 
+        }
+        count.text = String(model.count)
     }
     
     func configureSimple(with minorCategory: String) {
-        expiryLabel.text = "" // 단순 모델에서는 소비기한 표시 안 함
         ingredientNameLabel.text = minorCategory // e.g., "우유"
     }
 }

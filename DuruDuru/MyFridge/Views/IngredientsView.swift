@@ -10,15 +10,7 @@ import UIKit
 class IngredientsView: UIView {
     
     // MARK: - Components
-    
-    
-    /// 검색창 라벨
-    let searchBarLabel = UILabel().then {
-        $0.text = "필요한 식재료를 검색하세요"
-        $0.font = UIFont.systemFont(ofSize: 14)
-        $0.textColor = UIColor(red: 60/255, green: 60/255, blue: 67/255, alpha: 0.6)
-    }
-    
+   
     let searchBarContainer = UIView().then {
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true
@@ -39,9 +31,10 @@ class IngredientsView: UIView {
     }
     
     let allButton = UIButton().then {
-        $0.setImage(.allCategory, for: .normal)
+        $0.setImage(UIImage(systemName: "line.horizontal.3")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
-        $0.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        $0.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        $0.tintColor = .white
         $0.layer.cornerRadius = 4
     }
     
@@ -64,7 +57,7 @@ class IngredientsView: UIView {
         $0.configuration?.imagePlacement = .trailing // 화살표를 텍스트 오른쪽에 배치
         $0.configuration?.imagePadding = 8 // 텍스트와 이미지 간격
         $0.configuration?.baseForegroundColor = .gray
-        $0.configuration?.attributedTitle = AttributedString("최신 등록순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+        $0.configuration?.attributedTitle = AttributedString("소비기한 임박순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
     }
     
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
@@ -135,13 +128,13 @@ class IngredientsView: UIView {
     
     let recentFilter = UIButton().then {
         $0.setTitle("최신 등록순", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
         $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     }
     
     let nearExpiryDateFilter = UIButton().then {
         $0.setTitle("소비기한 임박순", for: .normal)
-        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     }
     

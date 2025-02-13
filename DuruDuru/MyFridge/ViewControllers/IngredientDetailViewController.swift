@@ -10,9 +10,8 @@ import UIKit
 class IngredientDetailViewController: UIViewController {
     
     // MARK: - Properties
-    
     private var ingredientDetailView: IngredientDetailView!
-    var ingredient: MyIngredient?
+    var ingredient: MyIngredient!
     var recipes = IngredientModel.dummy()[0].recipes
 
     // MARK: - Lifecycle
@@ -22,10 +21,11 @@ class IngredientDetailViewController: UIViewController {
 
         ingredientDetailView = IngredientDetailView(frame: self.view.bounds)
         self.view = ingredientDetailView
-        ingredientDetailView.ingredientName.text = ingredient?.ingredientName
+        ingredientDetailView.config(ingredient: self.ingredient)
         
         setUpUIBar()
         setupDelegate()
+        setUpActions()
     }
     
     // MARK: - Funtions
@@ -46,10 +46,43 @@ class IngredientDetailViewController: UIViewController {
         
     }
     
+    func setUpActions() {
+        ingredientDetailView.deleteIngredient.addTarget(self, action: #selector(ingredientDeleteButtonTapped), for: .touchUpInside)
+    }
+    
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
     }
-
+    
+    @objc func ingredientDeleteButtonTapped() {
+        deleteIngredient(deletedIngredientId: ingredient.ingredientId)
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    // MARK: - API 관련
+    
+    // 식재료 삭제 API
+    func deleteIngredient(deletedIngredientId: Int) {
+        let url = "http://3.35.252.162:8080/ingredient/\(deletedIngredientId)"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "memberId": 2, // 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // API 요청
+        APIClient.shared.request(urlWithQuery, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 삭제 성공!!")
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
 }
 
 extension IngredientDetailViewController: UITableViewDataSource, UITableViewDelegate {

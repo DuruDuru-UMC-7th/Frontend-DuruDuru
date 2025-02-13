@@ -25,7 +25,7 @@ class IngredientDetailView: UIView {
     // MARK: - Components
     
     let imageView = UIImageView().then {
-        $0.image = UIImage(named: "삼겹살")
+        $0.image = UIImage(named: "imageNotFound")
         $0.contentMode = .scaleAspectFit
         $0.layer.cornerRadius = 50
         $0.clipsToBounds = true
@@ -313,5 +313,34 @@ class IngredientDetailView: UIView {
             $0.height.equalTo(42)
             $0.width.equalTo((UIScreen.main.bounds.width - 42) / 2)
         }
+    }
+    
+    public func config(ingredient: MyIngredient) {
+        if let imageURL = URL(string: ingredient.ingredientImageUrl!) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound")
+        }
+        majorCategory.text = "\(ingredient.majorCategory) ·"
+        minorCategory.text = ingredient.minorCategory
+        ingredientName.text = ingredient.ingredientName
+        quantityValue.text = "\(ingredient.count)"
+        storageTypeValue.text = ingredient.storageType
+        expireDateValue.text = "\(formatDate(ingredient.expiryDate)) 까지"
+        purchaseDateValue.text = formatDate(ingredient.purchaseDate)
+    }
+    
+    // 날짜 형식 변환
+    private func formatDate(_ date: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = dateFormatter.date(from: date) {
+            dateFormatter.dateFormat = "yyyy. M. d."
+            let formattedDate = dateFormatter.string(from: date)
+            
+            return formattedDate
+        }
+        return "형식 변환 오류"
     }
 }

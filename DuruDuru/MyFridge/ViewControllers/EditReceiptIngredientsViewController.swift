@@ -164,8 +164,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         
         /// 쿼리 파라미터
         let queryParameters: [String: Any] = [
-            "receiptId": receiptIngredient.receiptId,
-            "memberId": 2, /// 임시로 넣은 memberId
+            "receiptId": receiptIngredient.receiptId
         ]
         
         let queryString = APIClient.shared.createQueryString(from: queryParameters)
@@ -198,14 +197,6 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
     
         // 날짜 변환
         let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
-
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
         
         // requestBody
         let requestBody = PatchReceiptPurchaseDate(purchaseDate: formattedPurchaseDate)
@@ -216,7 +207,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
             let jsonData = try encoder.encode(requestBody)
             let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
+            APIClient.shared.request(url, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
                 switch result {
                 case .success(let response):
                     print("!!성공!!")
@@ -229,19 +220,12 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         }
     }
     
+    // 식재료 삭제 API
     func deleteIngredient(deletedIngredientId: Int) {
         let url = "http://3.35.252.162:8080/ingredient/\(deletedIngredientId)"
-        
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, // 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
+       
         // API 요청
-        APIClient.shared.request(urlWithQuery, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
+        APIClient.shared.request(url, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
             switch result {
             case .success(let response):
                 print("!!식재료 삭제 성공!!")
@@ -252,7 +236,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
     }
 
     
-    // 날짜 변환
+    // 날짜 형식 변환
     func convertPurchaseDate(purchaseDate: String) -> String? {
         let inputFormatter = DateFormatter()
         inputFormatter.locale = Locale(identifier: "ko_KR")

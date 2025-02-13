@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
                window?.windowScene = windowScene
-        window?.rootViewController = OnBoardingViewController() // 원하는 뷰 컨트롤러 파일의 이름을 작성하면 됩니다.
+        window?.rootViewController = MainTabBarController() // 원하는 뷰 컨트롤러 파일의 이름을 작성하면 됩니다.
                window?.makeKeyAndVisible()
     }
 

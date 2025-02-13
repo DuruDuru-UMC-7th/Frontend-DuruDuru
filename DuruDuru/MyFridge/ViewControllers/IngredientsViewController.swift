@@ -15,6 +15,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     private var selectedCategoryIndex: IndexPath?
     var ingredients: [MyIngredient] = []
     var selectedFilter: String = "all"
+    var searchText: String?
     
     // MARK: - Lifecycle
     
@@ -132,6 +133,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         updateSelectedOrder(ingredientsView.recentFilter)
         if selectedFilter == "all" {
             getOrderBy(order: "recent")
+        } else if selectedFilter == "search" {
+            getByIngredientName(ingredientName: searchText ?? "", orderBy: "recent")
         } else {
             getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "recent")
         }
@@ -142,6 +145,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
         if selectedFilter == "all" {
             getOrderBy(order: "near-expiry")
+        } else if selectedFilter == "search" {
+            getByIngredientName(ingredientName: searchText ?? "", orderBy: "near-expiry")
         } else {
             getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "near-expiry")
         }
@@ -152,6 +157,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         updateSelectedOrder(ingredientsView.farExpiryFilter)
         if selectedFilter == "all" {
             getOrderBy(order: "far-expiry")
+        } else if selectedFilter == "search" {
+            getByIngredientName(ingredientName: searchText ?? "", orderBy: "far-expiry")
         } else {
             getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "far-expiry")
         }
@@ -172,7 +179,6 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView.allButton.tintColor = .white
         
         ingredientsView.searchBar.text = ""
-        ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = true
         
         updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
         getOrderBy(order: "near-expiry")
@@ -251,18 +257,14 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     
     // 검색어가 있을때 -> 모두조회 버튼 클릭해제, 카테고리 선택 비활성화, 검색어로 식재료 검색
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // 검색어 가져오기
-        guard let searchText = searchBar.text, !searchText.isEmpty else {
-            // 검색어가 없는 경우
-            ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
-            ingredientsView.allButton.tintColor = .white
-            
-            updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
-            getOrderBy(order: "near-expiry")
-            ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = true
-            return
+        selectedCategoryIndex = nil
+        for index in 0..<categoryData.count {
+            if let cell = ingredientsView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = UIColor.black
+                cell.categoryName.textColor = .black
+            }
         }
-        
         ingredientsView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
         ingredientsView.allButton.tintColor = .black
     }
@@ -272,12 +274,12 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         ingredientsView.searchBar.resignFirstResponder()
         
         // 검색어 가져오기
-        let searchText = searchBar.text
+        searchText = searchBar.text
+        selectedFilter = "search"
         
         // 검색 동작
-        getByIngredientName(ingredientName: searchText!)
+        getByIngredientName(ingredientName: searchText!, orderBy: "near-expiry")
         ingredientsView.ingredientsCircleCollectionView.reloadData()
-        ingredientsView.ingredientCategoryCollectionView.isUserInteractionEnabled = false
     }
     
     // 키보드 숨기기
@@ -308,8 +310,8 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     }
     
     // 식재료 이름으로 검색 조회
-    func getByIngredientName(ingredientName: String) {
-        let url = "http://3.35.252.162:8080/ingredient/search/name"
+    func getByIngredientName(ingredientName: String, orderBy: String) {
+        let url = "http://3.35.252.162:8080/fridge/name/\(orderBy)"
         
         // 쿼리 파라미터
         let queryParameters: [String: Any] = [
@@ -323,7 +325,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<IngredientResponse, Error>) in
             switch result {
             case .success(let response):
-                print("!!식재료 이름으로 검색 조회 성공!!")
+                print("!!식재료 이름: \(ingredientName) , 정렬 방식: \(orderBy) 조회 성공!!")
                 self.ingredients = response.result.ingredients
                 self.ingredientsView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
@@ -418,10 +420,10 @@ extension IngredientsViewController: UICollectionViewDelegate {
             ingredientsView.allButton.tintColor = .black
             collectionView.reloadData()
             
-            let selectedCategory = categoryData[indexPath.item].categoryName
-            selectedFilter = selectedCategory
+            ingredientsView.searchBar.text = ""
+            selectedFilter = categoryData[indexPath.item].categoryName
             updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
-            getByIngredientNameOrderBy(majorCategory: selectedCategory, order: "near-expiry")
+            getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "near-expiry")
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
             let selectedIngredient = ingredients[indexPath.item]
             showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출

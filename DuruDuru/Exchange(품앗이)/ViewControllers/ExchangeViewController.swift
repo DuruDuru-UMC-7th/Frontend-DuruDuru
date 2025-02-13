@@ -14,8 +14,9 @@ class ExchangeViewController: UIViewController {
     private var exchangeView: ExchangeView!
     private var isFloatingExpanded = false
     var isTownRegistered = false // 동네 등록 여부 변수
+    private var tradeItems: [MyTradeModel] = []
     
-    private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
+    //private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
     private var otherTradeItems: [OtherTradeModel] = OtherTradeModel.dummy()
     // MARK: - Lifecycle
     
@@ -35,6 +36,7 @@ class ExchangeViewController: UIViewController {
         
         // API 요청
         getTown()
+        getActiveTradeList()
     }
     
     // MARK: - Functions
@@ -96,6 +98,9 @@ class ExchangeViewController: UIViewController {
     }
 }
 
+
+
+
 // MARK: - UICollectionView
 
 extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -109,6 +114,8 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == exchangeView.myExchangeCollectionView {
+            guard indexPath.item < tradeItems.count else { return UICollectionViewCell() }
+            
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: MyExchangeCollectionViewCell.identifier,
                 for: indexPath
@@ -117,17 +124,23 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             }
             
             let tradeItem = tradeItems[indexPath.item]
-            cell.name.text = tradeItem.name // 이름 설정
-            if let imageURL = URL(string: tradeItem.image) {
-                cell.titleImage.kf.setImage(with: imageURL)
-            }
+            cell.name.text = tradeItem.title
             cell.isChange.text = tradeItem.tradeType
             
-            return cell
+            // 이미지가 nil이면 기본 이미지 사용
+            if let imageUrlString = tradeItem.image, let imageURL = URL(string: imageUrlString) {
+                cell.titleImage.kf.setImage(with: imageURL) // Kingfisher로 로드
+            } else {
+                cell.titleImage.image = UIImage(named: "defaultImage") // 기본 이미지 설정
+            }
             
+            return cell
         }
         return UICollectionViewCell()
     }
+
+    
+    
     
     // MARK: - API 관련
     
@@ -156,6 +169,41 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             }
         }
     }
+    
+    func getActiveTradeList() {
+        let url = "http://3.35.252.162:8080/trade/my/active"
+        
+        let queryParameters: [String: Any] = [
+            "memberId": 1 // 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        APIClient.shared.request(urlWithQuery, method: .get) { [weak self] (result: Result<ActiveTradeResponse, Error>) in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("API 응답 데이터: \(response)")
+                
+                let trades = response.result?.tradeList ?? []
+                if trades.isEmpty {
+                    print("품앗이 게시글이 없습니다.")
+                }
+                
+                self.tradeItems = trades.map { MyTradeModel(from: $0) }
+                
+                DispatchQueue.main.async {
+                    self.exchangeView.myExchangeCollectionView.reloadData()
+                }
+                
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
+
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -171,7 +219,6 @@ extension ExchangeViewController: UITableViewDataSource, UITableViewDelegate {
         }
         let tradeItem = otherTradeItems[indexPath.row]
         cell.name.text = tradeItem.name // 이름 설정
-        // 이미지 설정: 이미지 이름을 사용하여 UIImage를 생성
         cell.titleImage.image = UIImage(named: tradeItem.image)
         return cell
     }

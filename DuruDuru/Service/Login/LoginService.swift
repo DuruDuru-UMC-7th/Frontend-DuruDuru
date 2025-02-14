@@ -20,10 +20,10 @@ class LoginService {
                 let accessToken = try await KakaoLoginManager.shared.fetchAccessToken()
 
                 // 쿼리스트링으로 Access Token 전달
-                let parameters: [String: String] = ["code": accessToken]
+                let parameters: [String: String] = ["accessToken": accessToken]
                 
                 // GET 요청
-                AF.request(baseURL, method: .get, parameters: parameters, encoding: URLEncoding.default)
+                AF.request(baseURL, method: .post, parameters: parameters, encoding: JSONEncoding.default)
                     .validate(statusCode: 200..<300)
                     .responseData { response in
                         switch response.result {

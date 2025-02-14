@@ -14,11 +14,13 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "IngredientsCircleCollectionViewCell"
     
-    private let circleView: UIView = {
+    let circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
         view.layer.cornerRadius = 59 // 원의 반지름
         view.clipsToBounds = true
+        view.layer.borderWidth = 0
+        view.layer.borderColor = UIColor.clear.cgColor
         return view
     }()
     

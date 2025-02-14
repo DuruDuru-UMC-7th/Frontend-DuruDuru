@@ -95,8 +95,60 @@ class IngredientTypeView: UIView {
         return button
     }()
     
+    // 팝업 컨테이너 뷰
+    let popupView = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0xFAFAFA, alpha: 1.0)
+        $0.layer.cornerRadius = 20
+        $0.clipsToBounds = true
+        $0.tag = 999 // 중복 방지를 위한 태그 설정
+        $0.isHidden = true
+    }
+
+    // 팝업 제목
+    let titleLabel = UILabel().then {
+        $0.text = "이렇게 보관할 거예요!"
+        $0.textColor = .black
+        $0.font = UIFont.boldSystemFont(ofSize: 16)
+        $0.textAlignment = .center
+    }
+
+    // 팝업 메시지
+    let messageLabel = UILabel().then {
+        $0.text = "보관 방식에 따라 적용되는 소비기한이 달라져요"
+        $0.font = UIFont.systemFont(ofSize: 13)
+        $0.textAlignment = .center
+        $0.textColor = UIColor(hex: 0x4F4F4F, alpha: 1.0)
+    }
     
+    let storageTyp1 = UIButton().then {
+        $0.setTitle("실온", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        $0.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        $0.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        $0.layer.cornerRadius = 8
+    }
     
+    let storageTyp2 = UIButton().then {
+        $0.setTitle("냉장", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        $0.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        $0.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        $0.layer.cornerRadius = 8
+    }
+    
+    let storageTyp3 = UIButton().then {
+        $0.setTitle("냉동", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        $0.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        $0.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        $0.layer.cornerRadius = 8
+    }
+    
+    let stackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 10
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -122,6 +174,13 @@ class IngredientTypeView: UIView {
         addSubview(ingredientCategoryCollectionView)
         addSubview(ingredientsCircleCollectionView)
         addSubview(dateButton)
+        addSubview(popupView)
+        popupView.addSubview(titleLabel)
+        popupView.addSubview(messageLabel)
+        popupView.addSubview(stackView)
+        stackView.addArrangedSubview(storageTyp1)
+        stackView.addArrangedSubview(storageTyp2)
+        stackView.addArrangedSubview(storageTyp3)
     }
     
     private func setupConstraints() {
@@ -185,7 +244,44 @@ class IngredientTypeView: UIView {
             $0.height.equalTo(50)
             $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16) // Safe Area 기준 하단 배치
         }
+        
+        popupView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(136)
+            $0.bottom.equalTo(dateButton.snp.top).offset(-28)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(23)
+            $0.top.equalToSuperview().offset(20)
+        }
+        
+        messageLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(16)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(5)
+        }
+        
+        storageTyp1.snp.makeConstraints {
+            $0.height.equalTo(42)
+            $0.width.equalTo((UIScreen.main.bounds.width - 92)/3)
+        }
+        
+        storageTyp2.snp.makeConstraints {
+            $0.height.equalTo(42)
+            $0.width.equalTo((UIScreen.main.bounds.width - 92)/3)
+        }
+        
+        storageTyp3.snp.makeConstraints {
+            $0.height.equalTo(42)
+            $0.width.equalTo((UIScreen.main.bounds.width - 92)/3)
+        }
+        
+        stackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(42)
+            $0.top.equalTo(messageLabel.snp.bottom).offset(15)
+        }
     }
-
-
 }

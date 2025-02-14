@@ -35,10 +35,6 @@ class IngredientTypeViewController: UIViewController {
         setupDelegates()
         setUpUI()
         getAllMinorCategory()
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -80,7 +76,6 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.ingredientCategoryCollectionView.dataSource = self
         ingredientTypeView.ingredientsCircleCollectionView.delegate = self
         ingredientTypeView.ingredientsCircleCollectionView.dataSource = self
-        ingredientTypeView.searchBar.delegate = self
     }
     
     // MARK: - Actions
@@ -100,6 +95,7 @@ class IngredientTypeViewController: UIViewController {
         setIngredientType() // 종류 설정 API
         setIngredientStorageType() // 보관 방식 설정 API
         let dateSelectionVC = DateSelectionViewController()
+        dateSelectionVC.ingredientId = self.ingredientId
         navigationController?.pushViewController(dateSelectionVC, animated: true)
     }
     
@@ -116,7 +112,6 @@ class IngredientTypeViewController: UIViewController {
         
         ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
         ingredientTypeView.allButton.tintColor = .white
-        ingredientTypeView.searchBar.text = ""
         getAllMinorCategory()
     }
     
@@ -168,14 +163,6 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.storageTyp2.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
         ingredientTypeView.storageTyp3.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
         ingredientTypeView.storageTyp3.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
-    }
-    
-    /// 키보드 숨기기
-    @objc private func dismissKeyboard() {
-        // 키보드가 나타나 있을 때만 숨기기
-        if ingredientTypeView.searchBar.isFirstResponder {
-            ingredientTypeView.searchBar.resignFirstResponder()
-        }
     }
     
     // MARK: - API 관련
@@ -371,9 +358,6 @@ extension IngredientTypeViewController: UICollectionViewDelegate {
         // 모두 조회 버튼 초기화
         ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
         ingredientTypeView.allButton.tintColor = .black
-        
-        // 검색창 초기화
-        ingredientTypeView.searchBar.text = ""
     }
     
     func selectMinorCategory() {
@@ -404,14 +388,4 @@ extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: 66, height: 26)
     }
     
-}
-
-extension IngredientTypeViewController: UISearchBarDelegate{
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        /// 키보드 숨기기
-        ingredientTypeView.searchBar.resignFirstResponder()
-        
-        /// 검색 동작
-    }
 }

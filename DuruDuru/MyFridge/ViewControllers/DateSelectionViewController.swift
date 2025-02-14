@@ -13,6 +13,8 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     private let dateSelectionView = DateSelectionView()
     private var selectedDate = Date()
     
+    var ingredientId: Int!
+    
     // MARK: - Lifecycle
     override func loadView() {
         view = dateSelectionView
@@ -25,10 +27,6 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         setUpUI()
         
         dateSelectionView.dateTextField.delegate = self
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        dateSelectionView.dateTextField.becomeFirstResponder()
     }
     
     // MARK: - Setup Methods
@@ -158,13 +156,5 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         
         dateSelectionView.dateLabel.text = newDateLabelText
         dateSelectionView.descriptionLabel.text = newDescriptionText
-    }
-    
-    // 키보드 delegate
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if(textField.isEqual(dateSelectionView.dateTextField)){
-            dateSelectionView.dateTextField.resignFirstResponder()
-        }
-        return true
     }
 }

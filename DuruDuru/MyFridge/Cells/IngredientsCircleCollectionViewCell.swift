@@ -14,11 +14,13 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "IngredientsCircleCollectionViewCell"
     
-    private let circleView: UIView = {
+    let circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
         view.layer.cornerRadius = 59 // 원의 반지름
         view.clipsToBounds = true
+        view.layer.borderWidth = 0
+        view.layer.borderColor = UIColor.clear.cgColor
         return view
     }()
     
@@ -35,7 +37,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         $0.textAlignment = .center
     }
     
-    private let count = UILabel().then {
+    let count = UILabel().then {
         $0.backgroundColor = UIColor(hex: 0x4BD9B3, alpha: 1.0)
         $0.font = .boldSystemFont(ofSize: 11)
         $0.textColor = .white
@@ -110,7 +112,12 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         count.text = String(model.count)
     }
     
-    func configureSimple(with minorCategory: String) {
-        ingredientNameLabel.text = minorCategory // e.g., "우유"
+    func configureSimple(with minorCategory: MinorCategoryResult) {
+        ingredientNameLabel.text = minorCategory.minorCategory // e.g., "우유"
+        if let imageURL = URL(string: minorCategory.categoryImageUrl) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound")
+        }
     }
 }

@@ -13,10 +13,17 @@ class IngredientTypeViewController: UIViewController {
     private var ingredientTypeView: IngredientTypeView!
     
     // 카테고리 데이터
-    private let categories = IngredientCategoryModel.dummy()
-    private var filteredIngredients: [String] = [] // 현재 선택된 카테고리의 식재료
+    private let categoryData = IngredientCategoryModel.dummy()
+    private var minorCategoryList: [MinorCategoryResult] = []
+    private var selectedCategoryIndex: IndexPath?
+    private var selectedCircleCellIndex: IndexPath?
+    private var selectedCategory: String = "all"
+    private var selectedMinorCategory: String!
+    private var selectedStorageType: String!
+    var ingredientId: Int!
     
     // MARK: - Lifecycle
+    
     override func loadView() {
         ingredientTypeView = IngredientTypeView()
         self.view = ingredientTypeView
@@ -27,12 +34,12 @@ class IngredientTypeViewController: UIViewController {
         setupActions()
         setupDelegates()
         setUpUI()
-        
         getAllMinorCategory()
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getAllMinorCategory()
     }
 
     // MARK: - Setup
@@ -55,6 +62,13 @@ class IngredientTypeViewController: UIViewController {
     private func setupActions() {
         ingredientTypeView.dateButton.addTarget(self, action: #selector(didTapDateButton), for: .touchUpInside)
         ingredientTypeView.allButton.addTarget(self, action: #selector(didTapAllButton), for: .touchUpInside)
+        ingredientTypeView.storageTyp1.tag = 1 // 실온
+        ingredientTypeView.storageTyp2.tag = 2 // 냉장
+        ingredientTypeView.storageTyp3.tag = 3 // 냉동
+        
+        ingredientTypeView.storageTyp1.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
+        ingredientTypeView.storageTyp2.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
+        ingredientTypeView.storageTyp3.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
     }
     
     private func setupDelegates() {
@@ -62,112 +76,7 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.ingredientCategoryCollectionView.dataSource = self
         ingredientTypeView.ingredientsCircleCollectionView.delegate = self
         ingredientTypeView.ingredientsCircleCollectionView.dataSource = self
-        ingredientTypeView.searchBar.delegate = self
     }
-
-    private func showBottomPopup() {
-        // 팝업 컨테이너 뷰
-        let popupView = UIView()
-        popupView.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
-        popupView.layer.cornerRadius = 16
-        popupView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        popupView.clipsToBounds = true
-        popupView.tag = 999 // 중복 방지를 위한 태그 설정
-
-        // 팝업 높이 설정
-        let popupHeight: CGFloat = 150
-
-        // 팝업 제목
-        let titleLabel = UILabel()
-        titleLabel.text = "이렇게 보관할 거예요!"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        titleLabel.textAlignment = .center
-
-        // 팝업 메시지
-        let messageLabel = UILabel()
-        messageLabel.text = "보관 방식에 따라 적용되는 소비기한이 달라져요"
-        messageLabel.font = UIFont.systemFont(ofSize: 16)
-        messageLabel.textAlignment = .center
-        messageLabel.textColor = .darkGray
-
-        // 버튼들 (실온, 냉장, 냉동)
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 16
-
-
-        let roomTempButton = UIButton(type: .system)
-        configureButton(roomTempButton, title: "실온")
-        roomTempButton.addTarget(self, action: #selector(didSelectRoomTemp), for: .touchUpInside)
-
-        let fridgeButton = UIButton(type: .system)
-        configureButton(fridgeButton, title: "냉장")
-        fridgeButton.addTarget(self, action: #selector(didSelectFridge), for: .touchUpInside)
-
-        let freezerButton = UIButton(type: .system)
-        configureButton(freezerButton, title: "냉동")
-        freezerButton.addTarget(self, action: #selector(didSelectFreezer), for: .touchUpInside)
-
-
-        stackView.addArrangedSubview(roomTempButton)
-        stackView.addArrangedSubview(fridgeButton)
-        stackView.addArrangedSubview(freezerButton)
-
-        // 팝업 레이아웃 설정
-        popupView.addSubview(titleLabel)
-        popupView.addSubview(messageLabel)
-        popupView.addSubview(stackView)
-
-        view.addSubview(popupView)
-
-        popupView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            popupView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            popupView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            popupView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
-            popupView.heightAnchor.constraint(equalToConstant: popupHeight),
-
-            titleLabel.topAnchor.constraint(equalTo: popupView.topAnchor, constant: 16),
-            titleLabel.centerXAnchor.constraint(equalTo: popupView.centerXAnchor),
-
-            messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            messageLabel.centerXAnchor.constraint(equalTo: popupView.centerXAnchor),
-
-            stackView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 16),
-            stackView.leadingAnchor.constraint(equalTo: popupView.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: popupView.trailingAnchor, constant: -16),
-            stackView.heightAnchor.constraint(equalToConstant: 50)
-        ])
-
-        // "날짜 설정하러 가기" 버튼 숨기기
-        ingredientTypeView.dateButton.isHidden = true
-
-        // "다음 단계" 버튼 추가
-        let nextButton = UIButton(type: .system)
-        nextButton.setTitle("다음 단계", for: .normal)
-        nextButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        nextButton.setTitleColor(.white, for: .normal)
-        nextButton.backgroundColor = .systemGreen
-        nextButton.layer.cornerRadius = 8
-        nextButton.tag = 998 // 중복 방지를 위한 태그 설정
-        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
-
-        view.addSubview(nextButton)
-
-        nextButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            nextButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
-    }
-
     
     // MARK: - Actions
     @objc private func didTapBackButton() {
@@ -183,78 +92,77 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapDateButton() {
+        setIngredientType() // 종류 설정 API
+        setIngredientStorageType() // 보관 방식 설정 API
         let dateSelectionVC = DateSelectionViewController()
+        dateSelectionVC.ingredientId = self.ingredientId
         navigationController?.pushViewController(dateSelectionVC, animated: true)
     }
     
-    private func configureButton(_ button: UIButton, title: String) {
-        button.setTitle(title, for: .normal)
-        button.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
-        button.setTitleColor(.gray, for: .normal) 
-        button.layer.cornerRadius = 8
-    }
-    
-    @objc private func didSelectRoomTemp(_ sender: UIButton) {
-        resetButtonStates()
-        updateButtonState(sender, isSelected: true)
-    }
-
-    @objc private func didSelectFridge(_ sender: UIButton) {
-        resetButtonStates()
-        updateButtonState(sender, isSelected: true)
-    }
-
-    @objc private func didSelectFreezer(_ sender: UIButton) {
-        resetButtonStates()
-        updateButtonState(sender, isSelected: true)
-    }
-    
     @objc private func didTapAllButton(_ sender: UIButton) {
+        selectedCategoryIndex = nil
+        selectMajorCategory()
+        for index in 0..<categoryData.count {
+            if let cell = ingredientTypeView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = UIColor.black
+                cell.categoryName.textColor = .black
+            }
+        }
+        
+        ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        ingredientTypeView.allButton.tintColor = .white
         getAllMinorCategory()
     }
-
-    private func resetButtonStates() {
-        for subview in view.subviews {
-            if let stackView = subview.subviews.first(where: { $0 is UIStackView }) as? UIStackView {
-                for button in stackView.arrangedSubviews where button is UIButton {
-                    updateButtonState(button as! UIButton, isSelected: false)
-                }
+    
+    // 보관 방법 설정
+    @objc private func didTapStorageTypeButton(_ sender: UIButton) {
+        // 선택된 저장 유형을 설정
+        switch sender.tag {
+        case 1:
+            selectedStorageType = "실온"
+        case 2:
+            selectedStorageType = "냉장"
+        case 3:
+            selectedStorageType = "냉동"
+        default:
+            return
+        }
+        
+        // 버튼의 외관 업데이트
+        updateStorageTypeButtonAppearance()
+        
+        // 날짜 버튼 활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0x00C269)
+        ingredientTypeView.dateButton.setTitleColor(.white, for: .normal)
+        ingredientTypeView.dateButton.isEnabled = true
+    }
+    
+    // 선택된 버튼 색 변경
+    private func updateStorageTypeButtonAppearance() {
+        let buttons = [ingredientTypeView.storageTyp1, ingredientTypeView.storageTyp2, ingredientTypeView.storageTyp3]
+        let storageTypes = ["실온", "냉장", "냉동"]
+        let selectedIndex = storageTypes.firstIndex(of: selectedStorageType ?? "") ?? -1
+        
+        for (index, button) in buttons.enumerated() {
+            if index == selectedIndex {
+                button.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
+                button.setTitleColor(.white, for: .normal)
+            } else {
+                button.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+                button.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
             }
         }
     }
-
-    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
-        if isSelected {
-            button.backgroundColor = .systemGreen // 선택 시 초록색
-            button.setTitleColor(.white, for: .normal) // 글씨 흰색
-        } else {
-            button.backgroundColor = .lightGray // 기본 회색
-            button.setTitleColor(.darkGray, for: .normal) // 글씨 진한 회색
-        }
-    }
     
-    @objc private func didTapNextButton() {
-        print("다음 단계 버튼 클릭")
-        dismissBottomPopup()
-    }
-    
-    private func dismissBottomPopup() {
-        if let popupView = view.subviews.first(where: { $0.tag == 999 }) {
-            popupView.removeFromSuperview()
-        }
-        if let nextButton = view.subviews.first(where: { $0.tag == 998 }) {
-            nextButton.removeFromSuperview()
-        }
-        // "날짜 설정하러 가기" 버튼 다시 보이기
-        ingredientTypeView.dateButton.isHidden = false
-    }
-    
-    /// 키보드 숨기기
-    @objc private func dismissKeyboard() {
-        // 키보드가 나타나 있을 때만 숨기기
-        if ingredientTypeView.searchBar.isFirstResponder {
-            ingredientTypeView.searchBar.resignFirstResponder()
-        }
+    // 보관 방법 버튼 초기상태로
+    private func resetStorageTypeButton() {
+        ingredientTypeView.storageTyp1.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp1.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        ingredientTypeView.storageTyp2.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp2.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        ingredientTypeView.storageTyp3.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp3.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
     }
     
     // MARK: - API 관련
@@ -275,11 +183,11 @@ class IngredientTypeViewController: UIViewController {
         APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<CategoryResponse, Error>) in
             switch result {
             case .success(let response):
-                print(response)
-                self.filteredIngredients = response.result.minorCategoryList
+                print("\(response.result.majorCategory)로 소분류 카테고리 조회 성공")
+                self.minorCategoryList = response.result.minorCategoryList
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
-                print("네트워킹 오류: \(error)")
+                print("대분류 카테고리로 소분류 카테고리 조회 네트워킹 오류: \(error)")
             }
         }
     }
@@ -287,29 +195,73 @@ class IngredientTypeViewController: UIViewController {
     // 소분류 카테고리 모두 조회 API
     func getAllMinorCategory() {
         let url = "http://3.35.252.162:8080/ingredient/minorCategory"
-                
+        
         // API 요청
         APIClient.shared.request(url, method: .get) { (result: Result<MinorCategoryResponse, Error>) in
             switch result {
             case .success(let response):
                 print("!!소분류 카테고리 모두 조회 성공!!")
-                self.filteredIngredients = response.result
+                self.minorCategoryList = response.result
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
-                print("네트워킹 오류: \(error)")
+                print("소분류 카테고리 모두 조회 네트워킹 오류: \(error)")
             }
         }
     }
-
+    
+    // 식재료 종류 설정 API
+    func setIngredientType() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/category"
+        
+        let requestBody = SetIngredientTypeRequest(majorCategory: self.selectedCategory, minorCategory: self.selectedMinorCategory)
+        
+        // API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientTypeResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!식재료 종류 등록 성공!! 식재료 아이디: \(response.result.ingredientId), 식재료 이름: \(response.result.ingredientName) 대분류: \(response.result.majorCategory), 소분류: \(response.result.minorCategory)")
+                case .failure(let error):
+                    print("식재료 종류 네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+    // 보관 방식 설정
+    func setIngredientStorageType() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/storage-type"
+        
+        // 쿼리 파라미터
+        let requestBody: [String: Any] = [
+            "storageType": self.selectedStorageType!
+        ]
+        
+        // API 요청
+        APIClient.shared.request(url, method: .post, parameters: requestBody) { (result: Result<SetIngredientStorageTypeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 보관 방식 등록 성공!! 보관 방식: \(response.result.storageType)")
+            case .failure(let error):
+                print("식재료 보관 방식 네트워킹 오류: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension IngredientTypeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            return categories.count // 카테고리 개수
+            return categoryData.count // 카테고리 개수
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            return filteredIngredients.count
+            return minorCategoryList.count
         }
         return 0
     }
@@ -322,8 +274,18 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             ) as? IngredientCategoryCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let category = categories[indexPath.item]
-            cell.configure(model: category)
+            cell.configure(model: categoryData[indexPath.item])
+            // 선택된 셀의 색상 설정
+            if indexPath == selectedCategoryIndex {
+                cell.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+                cell.icon.tintColor = .white
+                cell.categoryName.textColor = .white
+            } else {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = .black
+                cell.categoryName.textColor = .black
+            }
+            
             return cell
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
@@ -332,8 +294,18 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = filteredIngredients[indexPath.item]
-            cell.configureSimple(with: ingredient) // 심플 모델 기반 셀 구성
+            let category = minorCategoryList[indexPath.item]
+            cell.count.isHidden = true
+            cell.configureSimple(with: category) // 심플 모델 기반 셀 구성
+            
+            // 선택된 셀의 색상 설정
+            if indexPath == selectedCircleCellIndex {
+                cell.circleView.layer.borderWidth = 3 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(hex: 0x4BD9B3, alpha: 1.0).cgColor
+            } else {
+                cell.circleView.layer.borderWidth = 0 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(.clear).cgColor
+            }
             return cell
         }
         return UICollectionViewCell()
@@ -341,42 +313,77 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
+
 extension IngredientTypeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            let selectedCategory = categories[indexPath.item]
-            getMinorCategory(majorCategory: selectedCategory.categoryName)
+            selectedCategoryIndex = indexPath
+            selectMajorCategory()
+            collectionView.reloadData()
+            selectedCategory = categoryData[indexPath.item].categoryName
+            getMinorCategory(majorCategory: selectedCategory)
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-//            let selectedIngredient = filteredIngredients.minorCategoryList[indexPath.item]
-            
-            // 팝업 띄우기
-            showBottomPopup()
+            if selectedCircleCellIndex == indexPath {
+                // 팝업 뷰를 숨김
+                selectMajorCategory()
+                collectionView.reloadData() // 셀의 테두리 업데이트
+            } else {
+                // 다른 셀을 클릭한 경우
+                selectedCircleCellIndex = indexPath
+                selectedMinorCategory = minorCategoryList[indexPath.item].minorCategory
+                selectMinorCategory()
+                collectionView.reloadData() // 셀의 테두리 업데이트
+            }
         }
     }
-
+    
+    func selectMajorCategory() {
+        // circleView 초기화
+        selectedCircleCellIndex = nil
+        ingredientTypeView.ingredientsCircleCollectionView.reloadData()
+        selectedMinorCategory = nil
+        
+        // 보관방법 popUpView 초기화
+        ingredientTypeView.popupView.isHidden = true
+        resetStorageTypeButton()
+        selectedStorageType = nil
+        
+        // 날짜 설정 버튼 비활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0xF4F4F5)
+        ingredientTypeView.dateButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientTypeView.dateButton.isEnabled = false
+        
+        // 모두 조회 버튼 초기화
+        ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        ingredientTypeView.allButton.tintColor = .black
+    }
+    
+    func selectMinorCategory() {
+        // 보관방법 popUpView 초기화
+        resetStorageTypeButton()
+        selectedStorageType = nil
+        ingredientTypeView.popupView.isHidden = false
+        
+        // 날짜 설정 버튼 비활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0xF4F4F5)
+        ingredientTypeView.dateButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientTypeView.dateButton.isEnabled = false
+    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+
 extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            return CGSize(width: 66, height: 26)
-        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            let spacing: CGFloat = 8
-            let totalSpacing = spacing * 4
-            let cellWidth = (collectionView.frame.width - totalSpacing) / 3
-            return CGSize(width: cellWidth, height: cellWidth + 30)
-        }
-        return CGSize.zero
-    }
-}
+        if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            let screenWidth = UIScreen.main.bounds.width
+            let cellSpacing: CGFloat = 5
+            let totalSpacing = cellSpacing * 4
+            let cellWidth = (screenWidth - totalSpacing - 32) / 3 // 3열 유지
 
-extension IngredientTypeViewController: UISearchBarDelegate{
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        /// 키보드 숨기기
-        ingredientTypeView.searchBar.resignFirstResponder()
-        
-        /// 검색 동작
+            return CGSize(width: cellWidth, height: cellWidth + 30) // 기존보다 더 키움
+        }
+        return CGSize(width: 66, height: 26)
     }
+    
 }

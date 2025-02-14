@@ -44,7 +44,7 @@ class RecipeView: UIView {
     }
     
     /// 순서 필터  메뉴
-    private let orderFilterButton = UIButton().then {
+    let orderFilterButton = UIButton().then {
         let configuration = UIButton.Configuration.plain()
         $0.configuration = configuration
         $0.configuration?.image = UIImage(named: "Arrow")
@@ -65,6 +65,46 @@ class RecipeView: UIView {
         $0.showsVerticalScrollIndicator = false
     }
     
+    
+    /// 옵션뷰
+    
+    let darkBackgroundView = UIView().then {
+        $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        $0.isHidden = true // 처음에는 숨김
+    }
+    
+    // 메뉴 뷰
+    let optionsView = UIView().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 30
+        $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        $0.isHidden = true
+    }
+    
+    let filterLabel = UILabel().then {
+        $0.text = "정렬"
+        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.textColor = .black
+    }
+    
+    let moreFilter = UIButton().then {
+        $0.setTitle("찜 많은 순", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+    }
+    
+    let recentFilter = UIButton().then {
+        $0.setTitle("최신 등록순", for: .normal)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+    }
+    
+    let menuCloseButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+        $0.tintColor = .black
+    }
+    
+    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
@@ -73,6 +113,13 @@ class RecipeView: UIView {
         searchBarContainer.addSubview(searchBar)
         addSubview(orderFilterButton)
         addSubview(recipeTableView)
+        
+        addSubview(darkBackgroundView)
+        addSubview(optionsView)
+        optionsView.addSubview(filterLabel)
+        optionsView.addSubview(moreFilter)
+        optionsView.addSubview(recentFilter)
+        optionsView.addSubview(menuCloseButton)
     }
     
     /// 오토레이아웃 설정
@@ -97,6 +144,38 @@ class RecipeView: UIView {
             $0.top.equalTo(orderFilterButton.snp.bottom).offset(10)
             $0.left.right.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
+        }
+        
+        darkBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview() // 전체 화면을 채움
+        }
+        
+        optionsView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(148)
+        }
+        
+        filterLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(22)
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        moreFilter.snp.makeConstraints {
+            $0.top.equalTo(filterLabel.snp.bottom).offset(21)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(17)
+        }
+        
+        recentFilter.snp.makeConstraints {
+            $0.top.equalTo(moreFilter.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(17)
+        }
+        
+        menuCloseButton.snp.makeConstraints {
+            $0.centerY.equalTo(filterLabel)
+            $0.trailing.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(24)
         }
     }
 }

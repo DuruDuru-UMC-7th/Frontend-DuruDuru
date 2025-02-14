@@ -23,7 +23,7 @@ class KakaoLoginManager {
                         print(error)
                     } else if let oauthToken = oauthToken {
                         continuation.resume(returning: oauthToken.accessToken)
-                        print(oauthToken)
+                        print("토큰 : \(oauthToken.accessToken)")
                     }
                 }
             } else {
@@ -32,7 +32,7 @@ class KakaoLoginManager {
                         continuation.resume(throwing: error)
                     } else if let oauthToken = oauthToken {
                         continuation.resume(returning: oauthToken.accessToken)
-                        print(oauthToken)
+                        print("토큰 : \(oauthToken.accessToken)")
                     }
                 }
             }

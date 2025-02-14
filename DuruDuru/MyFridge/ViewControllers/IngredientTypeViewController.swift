@@ -183,11 +183,11 @@ class IngredientTypeViewController: UIViewController {
         APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<CategoryResponse, Error>) in
             switch result {
             case .success(let response):
-                print(response)
+                print("\(response.result.majorCategory)로 소분류 카테고리 조회 성공")
                 self.minorCategoryList = response.result.minorCategoryList
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
-                print("네트워킹 오류: \(error)")
+                print("대분류 카테고리로 소분류 카테고리 조회 네트워킹 오류: \(error)")
             }
         }
     }
@@ -204,7 +204,7 @@ class IngredientTypeViewController: UIViewController {
                 self.minorCategoryList = response.result
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
-                print("네트워킹 오류: \(error)")
+                print("소분류 카테고리 모두 조회 네트워킹 오류: \(error)")
             }
         }
     }
@@ -224,10 +224,9 @@ class IngredientTypeViewController: UIViewController {
             APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientTypeResponse, Error>) in
                 switch result {
                 case .success(let response):
-                    print("!!식재료 종류 등록 성공!!")
-                    print(response)
+                    print("!!식재료 종류 등록 성공!! 식재료 아이디: \(response.result.ingredientId), 식재료 이름: \(response.result.ingredientName) 대분류: \(response.result.majorCategory), 소분류: \(response.result.minorCategory)")
                 case .failure(let error):
-                    print("네트워킹 오류: \(error)")
+                    print("식재료 종류 네트워킹 오류: \(error)")
                 }
             }
         } catch {
@@ -248,10 +247,9 @@ class IngredientTypeViewController: UIViewController {
         APIClient.shared.request(url, method: .post, parameters: requestBody) { (result: Result<SetIngredientStorageTypeResponse, Error>) in
             switch result {
             case .success(let response):
-                print("!!식재료 보관 방식 등록 성공!!")
-                print(response)
+                print("!!식재료 보관 방식 등록 성공!! 보관 방식: \(response.result.storageType)")
             case .failure(let error):
-                print("네트워킹 오류: \(error)")
+                print("식재료 보관 방식 네트워킹 오류: \(error)")
             }
         }
     }

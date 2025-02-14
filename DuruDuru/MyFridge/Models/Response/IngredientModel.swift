@@ -73,3 +73,36 @@ struct SetIngredientStorageTypeResult: Codable {
     var ingredientName: String
     let storageType: String
 }
+
+struct SetIngredientPurchaseDateResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: SetIngredientPurchaseDateResult
+}
+
+struct SetIngredientPurchaseDateResult: Codable {
+    let memberId: Int
+    let fridgeId: Int
+    let ingredientId: Int
+    var ingredientName: String
+    let purchaseDate: String
+}
+
+struct SetIngredientExpiryDateResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: SetIngredientExpiryDateResult
+}
+
+struct SetIngredientExpiryDateResult: Codable {
+    let memberId: Int
+    let fridgeId: Int
+    let ingredientId: Int
+    var ingredientName: String
+    let purchaseDate: String
+    let expiryDate: String
+}
+
+

@@ -14,6 +14,9 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     private var selectedDate = Date()
     
     var ingredientId: Int!
+    var purchaseDate: String!
+    var expiryDate: String!
+    private var isPurchaseDateSelected: Bool = true
     
     // MARK: - Lifecycle
     override func loadView() {
@@ -73,13 +76,14 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     }
     
     // MARK: - Actions
+    
     @objc private func didTapConfirmButton() {
-        print("식재료 추가 완료")
-
+        setPurchaseDate()
+        setExpiryDate()
         let myFridgeVC = MyFridgeViewController()
-        navigationController?.setViewControllers([myFridgeVC], animated: true)
+        self.navigationController?.setViewControllers([myFridgeVC], animated: true)
     }
-
+    
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
@@ -97,6 +101,8 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     
     // 구매한 날짜 버튼 클릭
     @objc private func didTapPurchaseDate() {
+        isPurchaseDateSelected = true
+        self.dateSelectionView.dateTextField.text = self.purchaseDate
         updateUIForSelection(
             selectedButton: dateSelectionView.purchaseDateButton,
             deselectedButton: dateSelectionView.expirationDateButton,
@@ -104,9 +110,11 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
             newDescriptionText: "선택한 날짜를 기준으로 두루두루가 적정 소비기한을 계산해요."
         )
     }
-
+    
     // 소비기한 버튼 클릭
     @objc private func didTapExpirationDate() {
+        isPurchaseDateSelected = false
+        self.dateSelectionView.dateTextField.text = self.expiryDate
         updateUIForSelection(
             selectedButton: dateSelectionView.expirationDateButton,
             deselectedButton: dateSelectionView.purchaseDateButton,
@@ -114,24 +122,30 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
             newDescriptionText: "포장지에 적혀있는 식재료의 소비기한을 알려주세요."
         )
     }
-
+    
     @objc private func textFieldDidChange(_ textField: UITextField) {
         let isNotEmpty = !(textField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
         updateConfirmButtonState(isEnabled: isNotEmpty)
     }
-
+    
     private func updateConfirmButtonState(isEnabled: Bool) {
         dateSelectionView.confirmButton.isEnabled = isEnabled
         dateSelectionView.confirmButton.backgroundColor = isEnabled ? .systemGreen : .systemGray4
     }
-
+    
     @objc private func dateFieldTapped() {
         let calendarVC = UIHostingController(
             rootView: CalendarView(initialDate: selectedDate) { selected in
                 self.selectedDate = selected
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy / MM / dd"
-                self.dateSelectionView.dateTextField.text = formatter.string(from: selected)
+                if self.isPurchaseDateSelected {
+                    self.purchaseDate = formatter.string(from: selected)
+                    self.dateSelectionView.dateTextField.text = self.purchaseDate
+                } else {
+                    self.expiryDate = formatter.string(from: selected)
+                    self.dateSelectionView.dateTextField.text = self.expiryDate
+                }
                 
                 // 날짜 선택 시 버튼 활성화
                 self.updateConfirmButtonState(isEnabled: true)
@@ -139,7 +153,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         )
         present(calendarVC, animated: true)
     }
-
+    
     
     // 버튼 & 라벨 업데이트
     private func updateUIForSelection(
@@ -150,11 +164,67 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     ) {
         selectedButton.backgroundColor = .systemGreen
         selectedButton.setTitleColor(.white, for: .normal)
-
+        
         deselectedButton.backgroundColor = UIColor(white: 0.9, alpha: 1.0)
         deselectedButton.setTitleColor(.gray, for: .normal)
         
         dateSelectionView.dateLabel.text = newDateLabelText
         dateSelectionView.descriptionLabel.text = newDescriptionText
+    }
+    
+    // 날짜 형식 변환
+    private func formatDate(_ date: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy / MM / dd"
+        
+        if let date = dateFormatter.date(from: date) {
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let formattedDate = dateFormatter.string(from: date)
+            
+            return formattedDate
+        }
+        return "형식 변환 오류"
+    }
+    
+    // MARK: - API 관련
+    
+    // 구매 날짜 설정 API
+    func setPurchaseDate() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/purchase-date"
+        
+        // 쿼리 파라미터
+        let requestBody: [String: Any] = [
+            "purchaseDate": formatDate(self.purchaseDate!)
+        ]
+        
+        // API 요청
+        APIClient.shared.request(url, method: .post, parameters: requestBody) { (result: Result<SetIngredientPurchaseDateResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 구매날짜 등록 성공!!, 구매날짜: \(response.result.purchaseDate)")
+            case .failure(let error):
+                print("구매날짜 등록 네트워킹 오류: \(error)")
+            }
+        }
+    }
+    
+    // 소비기한 날짜 설정 API
+    func setExpiryDate() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/expiry-date"
+        
+        // 쿼리 파라미터
+        let requestBody: [String: Any] = [
+            "expiryDate": formatDate(self.expiryDate!)
+        ]
+        
+        // API 요청
+        APIClient.shared.request(url, method: .post, parameters: requestBody) { (result: Result<SetIngredientExpiryDateResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 소비기한 등록 성공!!, 소비기한: \(response.result.expiryDate)")
+            case .failure(let error):
+                print("소비기한 등록 네트워킹 오류: \(error)")
+            }
+        }
     }
 }

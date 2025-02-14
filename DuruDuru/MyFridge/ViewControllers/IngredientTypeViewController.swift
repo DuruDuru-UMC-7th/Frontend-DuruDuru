@@ -13,10 +13,15 @@ class IngredientTypeViewController: UIViewController {
     private var ingredientTypeView: IngredientTypeView!
     
     // 카테고리 데이터
-    private let categories = IngredientCategoryModel.dummy()
-    private var filteredIngredients: [String] = [] // 현재 선택된 카테고리의 식재료
+    private let categoryData = IngredientCategoryModel.dummy()
+    private var minorCategoryList: [MinorCategoryResult] = []
+    private var selectedCategoryIndex: IndexPath?
+    private var selectedCategory: String = "all"
+    var ingredientId: Int!
+    var setIngredientType: SetIngredientTypeRequest!
     
     // MARK: - Lifecycle
+    
     override func loadView() {
         ingredientTypeView = IngredientTypeView()
         self.view = ingredientTypeView
@@ -27,12 +32,16 @@ class IngredientTypeViewController: UIViewController {
         setupActions()
         setupDelegates()
         setUpUI()
-        
         getAllMinorCategory()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getAllMinorCategory()
     }
 
     // MARK: - Setup
@@ -183,6 +192,8 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapDateButton() {
+        setIngredientType(ingredientId: self.ingredientId)
+        setIngredientStorageType(ingredientId: self.ingredientId, storageType: <#T##String#>)
         let dateSelectionVC = DateSelectionViewController()
         navigationController?.pushViewController(dateSelectionVC, animated: true)
     }
@@ -210,6 +221,18 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapAllButton(_ sender: UIButton) {
+        selectedCategoryIndex = nil
+        for index in 0..<categoryData.count {
+            if let cell = ingredientTypeView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = UIColor.black
+                cell.categoryName.textColor = .black
+            }
+        }
+        
+        ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        ingredientTypeView.allButton.tintColor = .white
+        ingredientTypeView.searchBar.text = ""
         getAllMinorCategory()
     }
 
@@ -276,7 +299,7 @@ class IngredientTypeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print(response)
-                self.filteredIngredients = response.result.minorCategoryList
+                self.minorCategoryList = response.result.minorCategoryList
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
@@ -287,29 +310,75 @@ class IngredientTypeViewController: UIViewController {
     // 소분류 카테고리 모두 조회 API
     func getAllMinorCategory() {
         let url = "http://3.35.252.162:8080/ingredient/minorCategory"
-                
+        
         // API 요청
         APIClient.shared.request(url, method: .get) { (result: Result<MinorCategoryResponse, Error>) in
             switch result {
             case .success(let response):
                 print("!!소분류 카테고리 모두 조회 성공!!")
-                self.filteredIngredients = response.result
+                self.minorCategoryList = response.result
                 self.ingredientTypeView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
             }
         }
     }
-
+    
+    // 식재료 종류 설정 API
+    func setIngredientType(ingredientId: Int) {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId)/category"
+        
+        let requestBody = SetIngredientTypeRequest(majorCategory: "채소", minorCategory: "뿌리채소")
+        
+        // API 요청
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(requestBody)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientTypeResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("!!식재료 종류 등록 성공!!")
+                    print(response)
+                case .failure(let error):
+                    print("네트워킹 오류: \(error)")
+                }
+            }
+        } catch {
+            print("인코딩 오류: \(error)")
+        }
+    }
+    
+    // 보관 방식 설정
+    func setIngredientStorageType(ingredientId: Int, storageType: String) {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId)/storage-type"
+        
+        // 쿼리 파라미터
+        let requestBody: [String: Any] = [
+            "storageType": storageType
+        ]
+        
+        // API 요청
+        APIClient.shared.request(url, method: .post, parameters: requestBody) { (result: Result<SetIngredientStorageTypeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!식재료 보관 방식 등록 성공!!")
+                print(response)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension IngredientTypeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            return categories.count // 카테고리 개수
+            return categoryData.count // 카테고리 개수
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            return filteredIngredients.count
+            return minorCategoryList.count
         }
         return 0
     }
@@ -322,8 +391,18 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             ) as? IngredientCategoryCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let category = categories[indexPath.item]
-            cell.configure(model: category)
+            cell.configure(model: categoryData[indexPath.item])
+            // 선택된 셀의 색상 설정
+            if indexPath == selectedCategoryIndex {
+                cell.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+                cell.icon.tintColor = .white
+                cell.categoryName.textColor = .white
+            } else {
+                cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+                cell.icon.tintColor = .black
+                cell.categoryName.textColor = .black
+            }
+            
             return cell
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
@@ -332,8 +411,9 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             ) as? IngredientsCircleCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let ingredient = filteredIngredients[indexPath.item]
-            cell.configureSimple(with: ingredient) // 심플 모델 기반 셀 구성
+            let category = minorCategoryList[indexPath.item]
+            cell.count.isHidden = true
+            cell.configureSimple(with: category) // 심플 모델 기반 셀 구성
             return cell
         }
         return UICollectionViewCell()
@@ -341,34 +421,42 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
+
 extension IngredientTypeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            let selectedCategory = categories[indexPath.item]
-            getMinorCategory(majorCategory: selectedCategory.categoryName)
+            selectedCategoryIndex = indexPath
+            ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+            ingredientTypeView.allButton.tintColor = .black
+            collectionView.reloadData()
+            ingredientTypeView.searchBar.text = ""
+            
+            selectedCategory = categoryData[indexPath.item].categoryName
+            getMinorCategory(majorCategory: selectedCategory)
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-//            let selectedIngredient = filteredIngredients.minorCategoryList[indexPath.item]
+            let selectedMinorCategory = minorCategoryList[indexPath.item]
             
             // 팝업 띄우기
             showBottomPopup()
         }
     }
-
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
+
 extension IngredientTypeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
-            return CGSize(width: 66, height: 26)
-        } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            let spacing: CGFloat = 8
-            let totalSpacing = spacing * 4
-            let cellWidth = (collectionView.frame.width - totalSpacing) / 3
-            return CGSize(width: cellWidth, height: cellWidth + 30)
+        if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
+            let screenWidth = UIScreen.main.bounds.width
+            let cellSpacing: CGFloat = 5
+            let totalSpacing = cellSpacing * 4
+            let cellWidth = (screenWidth - totalSpacing - 32) / 3 // 3열 유지
+
+            return CGSize(width: cellWidth, height: cellWidth + 30) // 기존보다 더 키움
         }
-        return CGSize.zero
+        return CGSize(width: 66, height: 26)
     }
+    
 }
 
 extension IngredientTypeViewController: UISearchBarDelegate{

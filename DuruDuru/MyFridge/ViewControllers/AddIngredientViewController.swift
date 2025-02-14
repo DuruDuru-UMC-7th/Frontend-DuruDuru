@@ -13,6 +13,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
     private var quantity: Int = 0
     private var image: UIImage?
     private var ingredientId: Int?
+    private var ingredientName: String?
     
     // MARK: - Lifecycle
     
@@ -91,19 +92,26 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
             if let image = self?.image, let ingredientId = self?.ingredientId {
                 self?.setIngredeintImage(image: image, ingredientId: ingredientId)
             }
+
+            // ingredientId가 할당된 후 다음 뷰 컨트롤러로 이동
+            DispatchQueue.main.async {
+                let nextVC = IngredientTypeViewController() // 종류 설정 화면
+                nextVC.ingredientId = self?.ingredientId // ingredientId 전달
+                
+                self?.navigationController?.pushViewController(nextVC, animated: true)
+            }
         }
-        
-        let nextVC = IngredientTypeViewController() // 종류 설정 화면
-        navigationController?.pushViewController(nextVC, animated: true)
     }
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
         let isNotEmpty = !(textField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
-        addIngredientView.updateNextButtonState(isEnabled: isNotEmpty)
+        let hasImage = self.image != nil
+        addIngredientView.updateNextButtonState(isEnabled: isNotEmpty && hasImage)
     }
     
     // textField return 누를때 동작
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        ingredientName = addIngredientView.nameTextField.text!
         addIngredientView.nameTextField.resignFirstResponder()
         return true
     }
@@ -117,30 +125,24 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let selectedImage = info[.originalImage] as? UIImage {
-                addIngredientView.imageView.image = selectedImage
-                self.image = selectedImage
-            }
-            picker.dismiss(animated: true, completion: nil)
+        if let selectedImage = info[.originalImage] as? UIImage {
+            addIngredientView.imageView.image = selectedImage
+            self.image = selectedImage
         }
-
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            picker.dismiss(animated: true, completion: nil)
-        }
+        let isNotEmpty = ingredientName != nil
+        addIngredientView.updateNextButtonState(isEnabled: isNotEmpty)
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
     
     // MARK: - API 관련
     
     // 식재료 등록 API
     func setIngredeint(setIngredientRequest: SetIngredientRequest, completion: @escaping () -> Void) {
         let url = "http://3.35.252.162:8080/ingredient/"
-        
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, /// 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
         let requestBody = setIngredientRequest
         
         // API 요청
@@ -149,13 +151,13 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
             let jsonData = try encoder.encode(requestBody)
             let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            APIClient.shared.request(urlWithQuery, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientResponse, Error>) in
+            APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<SetIngredientResponse, Error>) in
                 switch result {
                 case .success(let response):
                     print("!!식재료 이름 등록 성공!!")
                     print(response)
                     self.ingredientId = response.result?.ingredientId // 옵셔널 처리
-                    print("ingredientId: ", self.ingredientId)
+                    print("ingredientId: ", self.ingredientId!)
                     completion() // 클로저 호출
                 case .failure(let error):
                     print("네트워킹 오류: \(error)")
@@ -179,7 +181,7 @@ class AddIngredientViewController: UIViewController, UITextFieldDelegate, UIImag
         // multipart/form-data 요청
         APIClient.shared.upload(url: url, imageData: imageData, name: "image") { (result: Result<SetIngredientImageResponse, Error>) in
             switch result {
-            case .success(let response):
+            case .success(_):
                 print("식재료 이미지 등록 성공")
             case .failure(let error):
                 print("식재료 이미지 등록 네트워킹 오류: \(error)")

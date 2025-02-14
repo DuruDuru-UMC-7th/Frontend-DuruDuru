@@ -16,13 +16,17 @@ struct CategoryResponse: Codable {
 
 struct CategoryResult: Codable {
     let majorCategory: String
-    var minorCategoryList: [String]
+    var minorCategoryList: [MinorCategoryResult]
 }
 
 struct MinorCategoryResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: [String]
+    let result: [MinorCategoryResult]
 }
 
+struct MinorCategoryResult: Codable {
+    let minorCategory: String
+    var categoryImageUrl: String
+}

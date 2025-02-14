@@ -57,9 +57,10 @@ class IngredientTypeView: UIView {
     }
     
     let allButton = UIButton().then {
-        $0.setImage(.allCategory, for: .normal)
+        $0.setImage(UIImage(systemName: "line.horizontal.3")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
-        $0.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        $0.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        $0.tintColor = .white
         $0.layer.cornerRadius = 4
     }
     
@@ -77,8 +78,7 @@ class IngredientTypeView: UIView {
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
         $0.minimumInteritemSpacing = 8 // 좌우 간격
-        $0.minimumLineSpacing = 7 // 상하 간격
-        $0.estimatedItemSize = .init(width: 118, height: 145)// 셀 크기
+        $0.minimumLineSpacing = 12 // 상하 간격
     }).then {
         $0.backgroundColor = .clear
         $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)

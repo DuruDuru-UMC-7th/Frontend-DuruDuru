@@ -35,7 +35,7 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         $0.textAlignment = .center
     }
     
-    private let count = UILabel().then {
+    let count = UILabel().then {
         $0.backgroundColor = UIColor(hex: 0x4BD9B3, alpha: 1.0)
         $0.font = .boldSystemFont(ofSize: 11)
         $0.textColor = .white
@@ -110,7 +110,12 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
         count.text = String(model.count)
     }
     
-    func configureSimple(with minorCategory: String) {
-        ingredientNameLabel.text = minorCategory // e.g., "우유"
+    func configureSimple(with minorCategory: MinorCategoryResult) {
+        ingredientNameLabel.text = minorCategory.minorCategory // e.g., "우유"
+        if let imageURL = URL(string: minorCategory.categoryImageUrl) {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            imageView.image = UIImage(named: "imageNotFound")
+        }
     }
 }

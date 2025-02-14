@@ -41,3 +41,35 @@ struct DeleteIngredientResponse: Codable {
     let code: String
     let message: String
 }
+
+struct SetIngredientTypeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: SetIngredientTypeResult
+}
+
+struct SetIngredientTypeResult: Codable {
+    let memberId: Int
+    let fridgeId: Int
+    let ingredientId: Int
+    var ingredientName: String
+    let majorCategory: String
+    let minorCategory: String
+}
+
+
+struct SetIngredientStorageTypeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: SetIngredientStorageTypeResult
+}
+
+struct SetIngredientStorageTypeResult: Codable {
+    let memberId: Int
+    let fridgeId: Int
+    let ingredientId: Int
+    var ingredientName: String
+    let storageType: String
+}

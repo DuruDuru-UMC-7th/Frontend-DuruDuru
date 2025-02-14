@@ -47,6 +47,8 @@ class LoginService {
                                     print("에러 응답 데이터를 JSON으로 변환할 수 없음")
                                 }
                             }
+                            
+                            print("카카오 오류: \(response)")
                             print("카카오 에러: \(error.localizedDescription)")
                             completion(false)
                         }

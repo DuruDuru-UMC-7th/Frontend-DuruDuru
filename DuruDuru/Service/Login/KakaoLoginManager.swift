@@ -20,6 +20,7 @@ class KakaoLoginManager {
                 UserApi.shared.loginWithKakaoTalk { oauthToken, error in
                     if let error = error {
                         continuation.resume(throwing: error)
+                        print(error)
                     } else if let oauthToken = oauthToken {
                         continuation.resume(returning: oauthToken.accessToken)
                         print("토큰 : \(oauthToken.accessToken)")

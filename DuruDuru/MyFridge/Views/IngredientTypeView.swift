@@ -89,8 +89,8 @@ class IngredientTypeView: UIView {
         let button = UIButton(type: .system)
         button.setTitle("날짜 설정하러 가기", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemGreen
+        button.setTitleColor(UIColor(hex: 0x37383C, alpha: 1.0), for: .normal)
+        button.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
         button.layer.cornerRadius = 8
         return button
     }()

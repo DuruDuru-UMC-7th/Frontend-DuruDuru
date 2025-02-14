@@ -16,10 +16,11 @@ class IngredientTypeViewController: UIViewController {
     private let categoryData = IngredientCategoryModel.dummy()
     private var minorCategoryList: [MinorCategoryResult] = []
     private var selectedCategoryIndex: IndexPath?
-    private var selectedCategory: String = "all"
-    var ingredientId: Int!
-    var setIngredientType: SetIngredientTypeRequest!
     private var selectedCircleCellIndex: IndexPath?
+    private var selectedCategory: String = "all"
+    private var selectedMinorCategory: String!
+    private var selectedStorageType: String!
+    var ingredientId: Int!
     
     // MARK: - Lifecycle
     
@@ -65,6 +66,13 @@ class IngredientTypeViewController: UIViewController {
     private func setupActions() {
         ingredientTypeView.dateButton.addTarget(self, action: #selector(didTapDateButton), for: .touchUpInside)
         ingredientTypeView.allButton.addTarget(self, action: #selector(didTapAllButton), for: .touchUpInside)
+        ingredientTypeView.storageTyp1.tag = 1 // 실온
+        ingredientTypeView.storageTyp2.tag = 2 // 냉장
+        ingredientTypeView.storageTyp3.tag = 3 // 냉동
+        
+        ingredientTypeView.storageTyp1.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
+        ingredientTypeView.storageTyp2.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
+        ingredientTypeView.storageTyp3.addTarget(self, action: #selector(didTapStorageTypeButton(_:)), for: .touchUpInside)
     }
     
     private func setupDelegates() {
@@ -89,14 +97,15 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapDateButton() {
-        setIngredientType(ingredientId: self.ingredientId)
-        setIngredientStorageType(ingredientId: self.ingredientId, storageType: "냉장")
+        setIngredientType() // 종류 설정 API
+        setIngredientStorageType() // 보관 방식 설정 API
         let dateSelectionVC = DateSelectionViewController()
         navigationController?.pushViewController(dateSelectionVC, animated: true)
     }
     
     @objc private func didTapAllButton(_ sender: UIButton) {
         selectedCategoryIndex = nil
+        selectMajorCategory()
         for index in 0..<categoryData.count {
             if let cell = ingredientTypeView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
                 cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
@@ -109,6 +118,56 @@ class IngredientTypeViewController: UIViewController {
         ingredientTypeView.allButton.tintColor = .white
         ingredientTypeView.searchBar.text = ""
         getAllMinorCategory()
+    }
+    
+    // 보관 방법 설정
+    @objc private func didTapStorageTypeButton(_ sender: UIButton) {
+        // 선택된 저장 유형을 설정
+        switch sender.tag {
+        case 1:
+            selectedStorageType = "실온"
+        case 2:
+            selectedStorageType = "냉장"
+        case 3:
+            selectedStorageType = "냉동"
+        default:
+            return
+        }
+        
+        // 버튼의 외관 업데이트
+        updateStorageTypeButtonAppearance()
+        
+        // 날짜 버튼 활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0x00C269)
+        ingredientTypeView.dateButton.setTitleColor(.white, for: .normal)
+        ingredientTypeView.dateButton.isEnabled = true
+    }
+    
+    // 선택된 버튼 색 변경
+    private func updateStorageTypeButtonAppearance() {
+        let buttons = [ingredientTypeView.storageTyp1, ingredientTypeView.storageTyp2, ingredientTypeView.storageTyp3]
+        let storageTypes = ["실온", "냉장", "냉동"]
+        let selectedIndex = storageTypes.firstIndex(of: selectedStorageType ?? "") ?? -1
+        
+        for (index, button) in buttons.enumerated() {
+            if index == selectedIndex {
+                button.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
+                button.setTitleColor(.white, for: .normal)
+            } else {
+                button.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+                button.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+            }
+        }
+    }
+    
+    // 보관 방법 버튼 초기상태로
+    private func resetStorageTypeButton() {
+        ingredientTypeView.storageTyp1.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp1.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        ingredientTypeView.storageTyp2.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp2.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
+        ingredientTypeView.storageTyp3.backgroundColor = UIColor(hex: 0xEFEFEF, alpha: 1.0)
+        ingredientTypeView.storageTyp3.setTitleColor(UIColor(hex: 0x9F9F9F, alpha: 1.0), for: .normal)
     }
     
     /// 키보드 숨기기
@@ -164,10 +223,10 @@ class IngredientTypeViewController: UIViewController {
     }
     
     // 식재료 종류 설정 API
-    func setIngredientType(ingredientId: Int) {
-        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId)/category"
+    func setIngredientType() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/category"
         
-        let requestBody = SetIngredientTypeRequest(majorCategory: "채소", minorCategory: "뿌리채소")
+        let requestBody = SetIngredientTypeRequest(majorCategory: self.selectedCategory, minorCategory: self.selectedMinorCategory)
         
         // API 요청
         do {
@@ -190,12 +249,12 @@ class IngredientTypeViewController: UIViewController {
     }
     
     // 보관 방식 설정
-    func setIngredientStorageType(ingredientId: Int, storageType: String) {
-        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId)/storage-type"
+    func setIngredientStorageType() {
+        let url = "http://3.35.252.162:8080/ingredient/\(ingredientId!)/storage-type"
         
         // 쿼리 파라미터
         let requestBody: [String: Any] = [
-            "storageType": storageType
+            "storageType": self.selectedStorageType!
         ]
         
         // API 요청
@@ -253,6 +312,15 @@ extension IngredientTypeViewController: UICollectionViewDataSource {
             let category = minorCategoryList[indexPath.item]
             cell.count.isHidden = true
             cell.configureSimple(with: category) // 심플 모델 기반 셀 구성
+            
+            // 선택된 셀의 색상 설정
+            if indexPath == selectedCircleCellIndex {
+                cell.circleView.layer.borderWidth = 3 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(hex: 0x4BD9B3, alpha: 1.0).cgColor
+            } else {
+                cell.circleView.layer.borderWidth = 0 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(.clear).cgColor
+            }
             return cell
         }
         return UICollectionViewCell()
@@ -265,36 +333,59 @@ extension IngredientTypeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == ingredientTypeView.ingredientCategoryCollectionView {
             selectedCategoryIndex = indexPath
-            ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
-            ingredientTypeView.allButton.tintColor = .black
+            selectMajorCategory()
             collectionView.reloadData()
-            ingredientTypeView.searchBar.text = ""
-            
             selectedCategory = categoryData[indexPath.item].categoryName
             getMinorCategory(majorCategory: selectedCategory)
         } else if collectionView == ingredientTypeView.ingredientsCircleCollectionView {
-            // 기존 선택된 셀에 대한 테두리 초기화
-            if let previousIndex = selectedCircleCellIndex {
-                if let previousCell = collectionView.cellForItem(at: previousIndex) as? IngredientsCircleCollectionViewCell {
-                    previousCell.circleView.layer.borderWidth = 0
-                }
-            }
-            
-            // 이미 선택된 셀을 다시 클릭
             if selectedCircleCellIndex == indexPath {
-                ingredientTypeView.popupView.isHidden = true
-                selectedCircleCellIndex = nil // 선택 해제
-            } else { // 다른 셀을 클릭하면 팝업 뷰를 보여줌
-                ingredientTypeView.popupView.isHidden = false
-                selectedCircleCellIndex = indexPath // 새로 선택된 셀 저장
-                
-                // 선택된 셀에 테두리 설정
-                if let selectedCell = collectionView.cellForItem(at: indexPath) as? IngredientsCircleCollectionViewCell {
-                    selectedCell.circleView.layer.borderWidth = 3 // 테두리 두께 설정
-                    selectedCell.circleView.layer.borderColor = UIColor(hex: 0x4BD9B3, alpha: 1.0).cgColor
-                }
+                // 팝업 뷰를 숨김
+                selectMajorCategory()
+                collectionView.reloadData() // 셀의 테두리 업데이트
+            } else {
+                // 다른 셀을 클릭한 경우
+                selectedCircleCellIndex = indexPath
+                selectedMinorCategory = minorCategoryList[indexPath.item].minorCategory
+                selectMinorCategory()
+                collectionView.reloadData() // 셀의 테두리 업데이트
             }
         }
+    }
+    
+    func selectMajorCategory() {
+        // circleView 초기화
+        selectedCircleCellIndex = nil
+        ingredientTypeView.ingredientsCircleCollectionView.reloadData()
+        selectedMinorCategory = nil
+        
+        // 보관방법 popUpView 초기화
+        ingredientTypeView.popupView.isHidden = true
+        resetStorageTypeButton()
+        selectedStorageType = nil
+        
+        // 날짜 설정 버튼 비활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0xF4F4F5)
+        ingredientTypeView.dateButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientTypeView.dateButton.isEnabled = false
+        
+        // 모두 조회 버튼 초기화
+        ingredientTypeView.allButton.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        ingredientTypeView.allButton.tintColor = .black
+        
+        // 검색창 초기화
+        ingredientTypeView.searchBar.text = ""
+    }
+    
+    func selectMinorCategory() {
+        // 보관방법 popUpView 초기화
+        resetStorageTypeButton()
+        selectedStorageType = nil
+        ingredientTypeView.popupView.isHidden = false
+        
+        // 날짜 설정 버튼 비활성화
+        ingredientTypeView.dateButton.backgroundColor = UIColor(hex: 0xF4F4F5)
+        ingredientTypeView.dateButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        ingredientTypeView.dateButton.isEnabled = false
     }
 }
 

@@ -39,6 +39,7 @@ class ExchangeViewController: UIViewController {
         // API 요청
         getTown()
         getActiveTradeList()
+        getNearbyTradeList(tradeType: "SHARE")
     }
     
     // MARK: - Functions
@@ -104,12 +105,15 @@ class ExchangeViewController: UIViewController {
     @objc private func didTapShareButton() {
         isShowingShareTrades = true
         updateTradeList()
+        getNearbyTradeList(tradeType: "SHARE")
     }
 
     @objc private func didTapExchangeButton() {
         isShowingShareTrades = false
         updateTradeList()
+        getNearbyTradeList(tradeType: "EXCHANGE")
     }
+
     
     /// 나눔/교환 버튼 클릭 시 데이터 업데이트
     private func updateTradeList() {
@@ -122,7 +126,6 @@ class ExchangeViewController: UIViewController {
             exchangeView.exchangeButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
             exchangeView.exchangeButton.layer.borderColor = UIColor(hex: 0x37383C, alpha: 0.16).cgColor
 
-            // 나눔 데이터 가져오기
             otherTradeItems = OtherTradeModel.getDummyData(for: "나눔")
         } else {
             exchangeView.exchangeButton.backgroundColor = UIColor(hex: 0x00C269)
@@ -133,11 +136,11 @@ class ExchangeViewController: UIViewController {
             exchangeView.shareButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
             exchangeView.shareButton.layer.borderColor = UIColor(hex: 0x37383C, alpha: 0.16).cgColor
 
-            // 교환 데이터 가져오기
             otherTradeItems = OtherTradeModel.getDummyData(for: "교환")
         }
         exchangeView.exchangeTableView.reloadData()
     }
+
 }
 
 
@@ -245,6 +248,106 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             }
         }
     }
+    
+    private func getNearbyTradeList(tradeType: String) {
+        let url = "http://3.35.252.162:8080/trade/near/\(tradeType)"
+
+        let queryParameters: [String: Any] = [
+            "type": tradeType
+        ]
+
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+
+        APIClient.shared.request(urlWithQuery, method: .get) { [weak self] (result: Result<NearbyTradeResponse, Error>) in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let response):
+                print("API 응답 데이터: \(response)")
+
+                let trades = response.result?.trades ?? []
+                
+                if trades.isEmpty {
+                    print("품앗이 게시글이 없습니다. → 더미 데이터 사용")
+                    
+                    // 더미 데이터를 변환
+                    let dummyTradeItems = OtherTradeModel.getDummyData(for: tradeType == "SHARE" ? "나눔" : "교환").map {
+                        NearbyTradeItem(
+                            tradeId: Int.random(in: 1000...9999),
+                            memberId: Int.random(in: 1...100),
+                            ingredientId: Int.random(in: 1...50),
+                            expiryDate: nil,
+                            title: $0.name,
+                            eupmyeondong: "공릉동",
+                            status: "ACTIVE",
+                            tradeType: tradeType,
+                            likeCount: Int.random(in: 0...10),
+                            createdAt: "2025-02-15T15:00:00",
+                            updatedAt: "2025-02-15T15:00:00",
+                            thumbnailImgURl: $0.image
+                        )
+                    }
+                    
+                    let dummyResponse = NearbyTradeResponse(
+                        isSuccess: true,
+                        code: "TRADE_3005",
+                        message: "품앗이 게시글 리스트를 성공적으로 조회하였습니다.",
+                        result: NearbyTradeResult(trades: dummyTradeItems)
+                    )
+
+                    self.otherTradeItems = dummyTradeItems.map { OtherTradeModel(from: $0) }
+                    
+                    print(" 더미 데이터를 API 응답 형식으로 변환 완료: \(dummyResponse)")
+
+                } else {
+                    self.otherTradeItems = trades.map { OtherTradeModel(from: $0) }
+                }
+
+                DispatchQueue.main.async {
+                    self.exchangeView.exchangeTableView.reloadData()
+                }
+
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+                //print("네트워크 오류 발생 → 더미 데이터 사용")
+
+                let dummyTradeItems = OtherTradeModel.getDummyData(for: tradeType == "SHARE" ? "나눔" : "교환").map {
+                    NearbyTradeItem(
+                        tradeId: Int.random(in: 1000...9999),
+                        memberId: Int.random(in: 1...100),
+                        ingredientId: Int.random(in: 1...50),
+                        expiryDate: nil,
+                        title: $0.name,
+                        eupmyeondong: "공릉동",
+                        status: "ACTIVE",
+                        tradeType: tradeType,
+                        likeCount: Int.random(in: 0...10),
+                        createdAt: "2025-02-15T15:00:00",
+                        updatedAt: "2025-02-15T15:00:00",
+                        thumbnailImgURl: $0.image
+                    )
+                }
+                
+                let dummyResponse = NearbyTradeResponse(
+                    isSuccess: true,
+                    code: "TRADE_3005",
+                    message: "품앗이 게시글 리스트를 성공적으로 조회하였습니다.",
+                    result: NearbyTradeResult(trades: dummyTradeItems)
+                )
+
+                self.otherTradeItems = dummyTradeItems.map { OtherTradeModel(from: $0) }
+
+                //print("네트워크 오류 발생 → 더미 데이터를 API 응답 형식으로 변환 완료: \(dummyResponse)")
+
+                DispatchQueue.main.async {
+                    self.exchangeView.exchangeTableView.reloadData()
+                }
+            }
+        }
+    }
+
+
 
 }
 

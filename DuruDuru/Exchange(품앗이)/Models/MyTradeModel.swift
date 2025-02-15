@@ -41,6 +41,20 @@ struct OtherTradeModel {
     let image: String
     let name: String
     let tradeType: String
+    
+    /// 기존 더미 데이터를 위한 생성자
+    init(image: String, name: String, tradeType: String) {
+        self.image = image
+        self.name = name
+        self.tradeType = tradeType
+    }
+    
+    /// 서버에서 받은 `NearbyTradeItem`을 변환하는 생성자
+    init(from tradeItem: NearbyTradeItem) {
+        self.name = tradeItem.title
+        self.tradeType = tradeItem.tradeType
+        self.image = tradeItem.thumbnailImgURl ?? "defaultImage"
+    }
 }
 
 extension OtherTradeModel {
@@ -58,7 +72,8 @@ extension OtherTradeModel {
 
     /// 나눔, 교환 필터링
     static func getDummyData(for tradeType: String) -> [OtherTradeModel] {
-        return dummy().filter { $0.tradeType == tradeType }
+        return dummy().filter { $0.tradeType.uppercased() == tradeType.uppercased() }
     }
+    
 }
 

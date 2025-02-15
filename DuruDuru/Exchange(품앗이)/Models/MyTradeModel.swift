@@ -41,16 +41,39 @@ struct OtherTradeModel {
     let image: String
     let name: String
     let tradeType: String
+    
+    /// 기존 더미 데이터를 위한 생성자
+    init(image: String, name: String, tradeType: String) {
+        self.image = image
+        self.name = name
+        self.tradeType = tradeType
+    }
+    
+    /// 서버에서 받은 `NearbyTradeItem`을 변환하는 생성자
+    init(from tradeItem: NearbyTradeItem) {
+        self.name = tradeItem.title
+        self.tradeType = tradeItem.tradeType
+        self.image = tradeItem.thumbnailImgURl ?? "defaultImage"
+    }
 }
 
 extension OtherTradeModel {
+    /// 모든 데이터를 반환
     static func dummy() -> [OtherTradeModel] {
         return [
             OtherTradeModel(image: "자른미역", name: "마른 미역", tradeType: "나눔"),
             OtherTradeModel(image: "품앗이-계란", name: "계란", tradeType: "나눔"),
-            OtherTradeModel(image: "중력분", name: "중력분", tradeType: "나눔"),
-            OtherTradeModel(image: "두부", name: "두부", tradeType: "나눔"),
-            OtherTradeModel(image: "땅콩", name: "땅콩", tradeType: "나눔")
+            OtherTradeModel(image: "중력분", name: "중력분", tradeType: "나눔"),
+            OtherTradeModel(image: "두부", name: "두부", tradeType: "교환"),
+            OtherTradeModel(image: "땅콩", name: "땅콩", tradeType: "교환"),
+            OtherTradeModel(image: "고구마", name: "고구마", tradeType: "교환")
         ]
     }
+
+    /// 나눔, 교환 필터링
+    static func getDummyData(for tradeType: String) -> [OtherTradeModel] {
+        return dummy().filter { $0.tradeType.uppercased() == tradeType.uppercased() }
+    }
+    
 }
+

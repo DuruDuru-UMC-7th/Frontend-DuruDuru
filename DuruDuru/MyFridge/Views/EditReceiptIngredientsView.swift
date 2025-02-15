@@ -307,7 +307,7 @@ class EditReceiptIngredientsView: UIView {
         
         // 기본 날짜 설정
         let defaultDate = "2020-01-01"
-        let purchaseDateString = receiptResult.purchaseDate ?? defaultDate
+        let purchaseDateString = receiptResult.ingredients[0].purchaseDate ?? defaultDate
         
         // 날짜 변환
         if let date = dateFormatter.date(from: purchaseDateString) {

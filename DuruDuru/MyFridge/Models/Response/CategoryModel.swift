@@ -30,3 +30,4 @@ struct MinorCategoryResult: Codable {
     let minorCategory: String
     var categoryImageUrl: String
 }
+

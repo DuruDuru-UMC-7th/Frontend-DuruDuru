@@ -27,6 +27,7 @@ struct MinorCategoryResponse: Codable {
 }
 
 struct MinorCategoryResult: Codable {
+    let majorCategory: String
     let minorCategory: String
     var categoryImageUrl: String
 }

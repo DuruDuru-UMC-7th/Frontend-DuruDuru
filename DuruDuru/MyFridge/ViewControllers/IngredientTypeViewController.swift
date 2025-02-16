@@ -17,7 +17,8 @@ class IngredientTypeViewController: UIViewController {
     private var minorCategoryList: [MinorCategoryResult] = []
     private var selectedCategoryIndex: IndexPath?
     private var selectedCircleCellIndex: IndexPath?
-    private var selectedCategory: String = "all"
+    private var isSelectedAll: Bool = true
+    private var selectedCategory: String = ""
     private var selectedMinorCategory: String!
     private var selectedStorageType: String!
     var ingredientId: Int!
@@ -34,7 +35,6 @@ class IngredientTypeViewController: UIViewController {
         setupActions()
         setupDelegates()
         setUpUI()
-        getAllMinorCategory()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -100,6 +100,7 @@ class IngredientTypeViewController: UIViewController {
     }
     
     @objc private func didTapAllButton(_ sender: UIButton) {
+        isSelectedAll = true
         selectedCategoryIndex = nil
         selectMajorCategory()
         for index in 0..<categoryData.count {
@@ -328,12 +329,16 @@ extension IngredientTypeViewController: UICollectionViewDelegate {
                 selectMajorCategory()
                 collectionView.reloadData() // 셀의 테두리 업데이트
             } else {
+                if isSelectedAll {
+                    selectedCategory = minorCategoryList[indexPath.item].majorCategory
+                }
                 // 다른 셀을 클릭한 경우
                 selectedCircleCellIndex = indexPath
                 selectedMinorCategory = minorCategoryList[indexPath.item].minorCategory
                 selectMinorCategory()
                 collectionView.reloadData() // 셀의 테두리 업데이트
             }
+            print("대분류 카테고리: \(selectedCategory), 소분류 카테고라: \(selectedMinorCategory)")
         }
     }
     

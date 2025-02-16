@@ -86,7 +86,7 @@ struct SetIngredientPurchaseDateResult: Codable {
     let fridgeId: Int
     let ingredientId: Int
     var ingredientName: String
-    let purchaseDate: String
+    let purchaseDate: String?
 }
 
 struct SetIngredientExpiryDateResponse: Codable {
@@ -101,8 +101,8 @@ struct SetIngredientExpiryDateResult: Codable {
     let fridgeId: Int
     let ingredientId: Int
     var ingredientName: String
-    let purchaseDate: String
-    let expiryDate: String
+    let purchaseDate: String?
+    let expiryDate: String?
 }
 
 

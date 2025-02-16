@@ -15,6 +15,7 @@ class ExchangeDetailViewController: UIViewController {
     private var pageControl: UIPageControl!
     private var images: [UIImage] = [UIImage(named: "자른미역") ?? UIImage(), .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
     var tradeId: Int!
+    var otherTradeList: [OtherTrade] = []
     
     // MARK: - Lifecycle
     
@@ -25,11 +26,17 @@ class ExchangeDetailViewController: UIViewController {
         
         setUpUIBar()
         setUpdelegate()
-        exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: 10) /// 다른 품앗이보기 height 설정
         exchangeDetailView.pageControl.numberOfPages = images.count /// 이미지 pageControl
         
         // API 요청
         getTrade(tradeId: tradeId)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // API 요청
+        getOtherTrade(tradeId: self.tradeId)
     }
     
     // MARK: - Functions
@@ -97,6 +104,29 @@ class ExchangeDetailViewController: UIViewController {
             }
         }
     }
+    
+    private func getOtherTrade(tradeId: Int) {
+        let url = "http://3.35.252.162:8080/trade/other-trade"
+        
+        let queryParameters: [String: Any] = [
+            "tradeId": tradeId // 임시로 넣은 memberId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<OtherTradeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("다른 품앗이 둘러보기 조회 성공: \(response.result.totalCount)")
+                self.otherTradeList = response.result.tradeList
+                self.exchangeDetailView.updateOtherExchangeViewHeight(dataCnt: self.otherTradeList.count)
+                self.exchangeDetailView.otherExchangeCollectionView.reloadData()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
 }
     
     // MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -116,7 +146,7 @@ class ExchangeDetailViewController: UIViewController {
             if collectionView == exchangeDetailView.imageCollectionView {
                 return images.count
             } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-                return 10
+                return otherTradeList.count
             }
             return 0
         }
@@ -142,7 +172,6 @@ class ExchangeDetailViewController: UIViewController {
                     withReuseIdentifier: OtherExchangeCollectionViewCell.identifier,
                     for: indexPath
                 ) as? OtherExchangeCollectionViewCell else {
-                    print("cell")
                     return UICollectionViewCell()
                 }
                 return cell
@@ -153,9 +182,10 @@ class ExchangeDetailViewController: UIViewController {
         func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             if collectionView == exchangeDetailView.imageCollectionView {
                 return exchangeDetailView.imageCollectionView.bounds.size
-            } else if collectionView == exchangeDetailView.otherExchangeCollectionView {
-                return CGSize(width: 173, height: 130)
             }
+//            else if collectionView == exchangeDetailView.otherExchangeCollectionView {
+//                return CGSize(width: 173, height: 130)
+//            }
             return CGSize(width: 100, height: 100)
         }
         

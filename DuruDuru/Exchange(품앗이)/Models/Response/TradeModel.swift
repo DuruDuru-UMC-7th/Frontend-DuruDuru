@@ -59,3 +59,23 @@ struct OtherTrade: Codable {
     let updatedAt: String
     let tradeImgs: String
 }
+
+struct LikeTradeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: LikeTradeResult
+}
+
+struct LikeTradeResult: Codable {
+    let memberId: Int
+    let tradeId: Int
+    let likeCount: Int
+}
+
+struct DeleteLikeTradeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+}
+

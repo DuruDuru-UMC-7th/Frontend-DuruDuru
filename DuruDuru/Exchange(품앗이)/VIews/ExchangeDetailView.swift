@@ -365,8 +365,23 @@ class ExchangeDetailView: UIView {
     }
     
     public func configure(trade: TradeResult) {
+        profileName.text = trade.nickName
+        profileLocation.text = trade.eupmyeondong
+        // createdAt을 Date로 변환
+        if let createdDate = createdAtDateFormatter.date(from: trade.createdAt) {
+            time.text = timeAgoSinceDate(createdDate)
+        } else {
+            time.text = "날짜 형식 오류"
+        }
+        
+        // expiryDate
+        if let expiryDate = expiryDateFormatter.date(from: trade.expiryDate) {
+            remainDate.text = dDay(from: expiryDate)
+        } else {
+            remainDate.text = "만료일 형식 오류"
+        }
+        
         count.text = String(trade.ingredientCount) + "개"
-        remainDate.text = trade.expiryDate ?? "10일"
         title.text = trade.title
         content.text = trade.body
         if trade.tradeType == "SHARE"{
@@ -374,5 +389,56 @@ class ExchangeDetailView: UIView {
         } else {
             share.text = "교환"
         }
+        likeCount.text = "\(trade.likeCount)"
     }
+    
+    
+    func timeAgoSinceDate(_ date: Date) -> String {
+        let now = Date()
+        let secondsAgo = Int(now.timeIntervalSince(date))
+
+        switch secondsAgo {
+        case 0..<60:
+            return "\(secondsAgo)초 전"
+        case 60..<3600:
+            let minutes = secondsAgo / 60
+            return "\(minutes)분 전"
+        case 3600..<86400:
+            let hours = secondsAgo / 3600
+            return "\(hours)시간 전"
+        case 86400...:
+            let days = secondsAgo / 86400
+            return "\(days)일 전"
+        default:
+            return "오래 전"
+        }
+    }
+    
+    func dDay(from date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+
+        if let daysDifference = calendar.dateComponents([.day], from: now, to: date).day {
+            if daysDifference > 0 {
+                return "\(daysDifference)일"
+            } else if daysDifference == 0 {
+                return "0일"
+            } else {
+                return "지났습니다"
+            }
+        }
+        return "계산 오류"
+    }
+    
+    let createdAtDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter
+    }()
+    
+    let expiryDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 }

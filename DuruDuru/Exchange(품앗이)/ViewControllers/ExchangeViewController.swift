@@ -18,6 +18,7 @@ class ExchangeViewController: UIViewController {
     
     //private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
     private var otherTradeItems: [OtherTradeModel] = OtherTradeModel.dummy()
+    private var nearByTrades: [NearbyTradeItem] = []
     private var isShowingShareTrades = true
     
     // MARK: - Lifecycle
@@ -30,7 +31,6 @@ class ExchangeViewController: UIViewController {
         setUpUIBar()
         setupDelegate()
         setupActions()
-        exchangeView.updateTableViewHeight(dataCnt: OtherTradeModel.dummy().count)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -106,12 +106,16 @@ class ExchangeViewController: UIViewController {
         isShowingShareTrades = true
         updateTradeList()
         getNearbyTradeList(tradeType: "SHARE")
+        exchangeView.updateTableViewHeight(dataCnt: nearByTrades.count)
+        self.exchangeView.exchangeTableView.reloadData()
     }
 
     @objc private func didTapExchangeButton() {
         isShowingShareTrades = false
         updateTradeList()
         getNearbyTradeList(tradeType: "EXCHANGE")
+        exchangeView.updateTableViewHeight(dataCnt: nearByTrades.count)
+        self.exchangeView.exchangeTableView.reloadData()
     }
 
     
@@ -170,7 +174,11 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             
             let tradeItem = tradeItems[indexPath.item]
             cell.name.text = tradeItem.title
-            cell.isChange.text = tradeItem.tradeType
+            if tradeItem.tradeType == "SHARE" {
+                cell.isChange.text = "나눔"
+            } else {
+                cell.isChange.text = "교환"
+            }
             
             // 이미지가 nil이면 기본 이미지 사용
             if let imageUrlString = tradeItem.image, let imageURL = URL(string: imageUrlString) {
@@ -197,8 +205,7 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
         APIClient.shared.request(url, method: .get) { [self] (result: Result<TownResponse, Error>) in
             switch result {
             case .success(let response):
-                print("!!동네 조회 성공!!")
-                print(response)
+                print("동네 조회 성공: \(response.result!.eupmyeondong) ")
                 isTownRegistered = true
                 exchangeView.locationButton.setTitle(response.result!.eupmyeondong, for: .normal)
             case .failure(let error):
@@ -250,96 +257,20 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
 
         let queryString = APIClient.shared.createQueryString(from: queryParameters)
         let urlWithQuery = "\(url)?\(queryString)"
-
-        APIClient.shared.request(urlWithQuery, method: .get) { [weak self] (result: Result<NearbyTradeResponse, Error>) in
-            guard let self = self else { return }
-
+        
+        /// API 요청
+        APIClient.shared.request(urlWithQuery, method: .get) { [self] (result: Result<NearbyTradeResponse, Error>) in
             switch result {
             case .success(let response):
-                print("API 응답 데이터: \(response)")
-
-                let trades = response.result?.trades ?? []
-                
-                if trades.isEmpty {
-                    print("품앗이 게시글이 없습니다. → 더미 데이터 사용")
-                    
-                    // 더미 데이터를 변환
-                    let dummyTradeItems = OtherTradeModel.getDummyData(for: tradeType == "SHARE" ? "나눔" : "교환").map {
-                        NearbyTradeItem(
-                            tradeId: Int.random(in: 1000...9999),
-                            memberId: Int.random(in: 1...100),
-                            ingredientId: Int.random(in: 1...50),
-                            expiryDate: nil,
-                            title: $0.name,
-                            eupmyeondong: "공릉동",
-                            status: "ACTIVE",
-                            tradeType: tradeType,
-                            likeCount: Int.random(in: 0...10),
-                            createdAt: "2025-02-15T15:00:00",
-                            updatedAt: "2025-02-15T15:00:00",
-                            thumbnailImgURl: $0.image
-                        )
-                    }
-                    
-                    let dummyResponse = NearbyTradeResponse(
-                        isSuccess: true,
-                        code: "TRADE_3005",
-                        message: "품앗이 게시글 리스트를 성공적으로 조회하였습니다.",
-                        result: NearbyTradeResult(trades: dummyTradeItems)
-                    )
-
-                    self.otherTradeItems = dummyTradeItems.map { OtherTradeModel(from: $0) }
-                    
-                    print(" 더미 데이터를 API 응답 형식으로 변환 완료: \(dummyResponse)")
-
-                } else {
-                    self.otherTradeItems = trades.map { OtherTradeModel(from: $0) }
-                }
-
-                DispatchQueue.main.async {
-                    self.exchangeView.exchangeTableView.reloadData()
-                }
-
+                print("나와 가까운 품앗이 조회 성공: \(response.result.totalCount) ")
+                nearByTrades = response.result.tradeList
+                exchangeView.updateTableViewHeight(dataCnt: nearByTrades.count)
+                self.exchangeView.exchangeTableView.reloadData()
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
-                //print("네트워크 오류 발생 → 더미 데이터 사용")
-
-                let dummyTradeItems = OtherTradeModel.getDummyData(for: tradeType == "SHARE" ? "나눔" : "교환").map {
-                    NearbyTradeItem(
-                        tradeId: Int.random(in: 1000...9999),
-                        memberId: Int.random(in: 1...100),
-                        ingredientId: Int.random(in: 1...50),
-                        expiryDate: nil,
-                        title: $0.name,
-                        eupmyeondong: "공릉동",
-                        status: "ACTIVE",
-                        tradeType: tradeType,
-                        likeCount: Int.random(in: 0...10),
-                        createdAt: "2025-02-15T15:00:00",
-                        updatedAt: "2025-02-15T15:00:00",
-                        thumbnailImgURl: $0.image
-                    )
-                }
-                
-                let dummyResponse = NearbyTradeResponse(
-                    isSuccess: true,
-                    code: "TRADE_3005",
-                    message: "품앗이 게시글 리스트를 성공적으로 조회하였습니다.",
-                    result: NearbyTradeResult(trades: dummyTradeItems)
-                )
-
-                self.otherTradeItems = dummyTradeItems.map { OtherTradeModel(from: $0) }
-
-                //print("네트워크 오류 발생 → 더미 데이터를 API 응답 형식으로 변환 완료: \(dummyResponse)")
-
-                DispatchQueue.main.async {
-                    self.exchangeView.exchangeTableView.reloadData()
-                }
             }
         }
     }
-
-
 
 }
 
@@ -347,23 +278,22 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
 
 extension ExchangeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return otherTradeItems.count
+        return nearByTrades.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ExchangeTableViewCell.identifier, for: indexPath) as? ExchangeTableViewCell else {
             return UITableViewCell()
         }
-        let tradeItem = otherTradeItems[indexPath.row]
-        cell.name.text = tradeItem.name // 이름 설정
-        cell.titleImage.image = UIImage(named: tradeItem.image)
+        let tradeItem = nearByTrades[indexPath.row]
+        cell.configure(nearbyTradeItem: tradeItem)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let exchangeDetailVc = ExchangeDetailViewController()
-        exchangeDetailVc.tradeId = 2 /// 임시로 2로 지정
+        exchangeDetailVc.tradeId = nearByTrades[indexPath.row].tradeId
         exchangeDetailVc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(exchangeDetailVc, animated: true)
     }

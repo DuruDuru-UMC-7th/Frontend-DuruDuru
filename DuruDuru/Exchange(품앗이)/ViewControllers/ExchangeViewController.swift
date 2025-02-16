@@ -289,7 +289,7 @@ extension ExchangeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let exchangeDetailVc = ExchangeDetailViewController()
-        exchangeDetailVc.tradeId = 2 /// 임시로 2로 지정
+        exchangeDetailVc.tradeId = nearByTrades[indexPath.row].tradeId
         exchangeDetailVc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(exchangeDetailVc, animated: true)
     }

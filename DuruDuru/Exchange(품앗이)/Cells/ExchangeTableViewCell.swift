@@ -239,7 +239,7 @@ class ExchangeTableViewCell: UITableViewCell {
 //            titleImage.image = UIImage(named: "imageNotFound")
 //        }
         
-        name.text = "이름"
+        name.text = nearbyTradeItem.title
         location.text = nearbyTradeItem.eupmyeondong
         
         // createdAt을 Date로 변환
@@ -266,14 +266,22 @@ class ExchangeTableViewCell: UITableViewCell {
     }
     
     func timeAgoSinceDate(_ date: Date) -> String {
-        let calendar = Calendar.current
         let now = Date()
-        
-        if calendar.isDateInToday(date) {
-            return "오늘"
-        } else if let daysAgo = calendar.dateComponents([.day], from: date, to: now).day {
-            return "\(daysAgo)일 전"
-        } else {
+        let secondsAgo = Int(now.timeIntervalSince(date))
+
+        switch secondsAgo {
+        case 0..<60:
+            return "\(secondsAgo)초 전"
+        case 60..<3600:
+            let minutes = secondsAgo / 60
+            return "\(minutes)분 전"
+        case 3600..<86400:
+            let hours = secondsAgo / 3600
+            return "\(hours)시간 전"
+        case 86400...:
+            let days = secondsAgo / 86400
+            return "\(days)일 전"
+        default:
             return "오래 전"
         }
     }
@@ -282,11 +290,11 @@ class ExchangeTableViewCell: UITableViewCell {
         let calendar = Calendar.current
         let now = Date()
 
-        if let daysUntilExpiry = calendar.dateComponents([.day], from: now, to: date).day {
-            if daysUntilExpiry > 0 {
-                return "D-\(daysUntilExpiry)"
-            } else if daysUntilExpiry == 0 {
-                return "D-Day"
+        if let daysDifference = calendar.dateComponents([.day], from: now, to: date).day {
+            if daysDifference > 0 {
+                return "\(daysDifference)일"
+            } else if daysDifference == 0 {
+                return "0일"
             } else {
                 return "지났습니다"
             }
@@ -297,13 +305,13 @@ class ExchangeTableViewCell: UITableViewCell {
     // DateFormatter 설정
     let createdAtDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ" // createdAt의 날짜 형식에 맞게 설정
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter
     }()
     
     let expiryDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd" // expiryDate의 날짜 형식에 맞게 설정
+        formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
 }

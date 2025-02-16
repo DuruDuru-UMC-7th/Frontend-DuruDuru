@@ -17,13 +17,17 @@ struct TradeResponse: Codable {
 struct TradeResult: Codable {
     let tradeId: Int
     let memberId: Int
+    let nickName: String
     let ingredientId: Int
     let ingredientCount: Int
-    let expiryDate: String?
+    let expiryDate: String
     let title: String
     let body: String
+    let eupmyeondong: String
     let status: String
     let tradeType: String
+    let likeCount: Int
     let createdAt: String
     let updatedAt: String
+    let tradeImgs: [String]?
 }

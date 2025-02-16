@@ -174,7 +174,11 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
             
             let tradeItem = tradeItems[indexPath.item]
             cell.name.text = tradeItem.title
-            cell.isChange.text = tradeItem.tradeType
+            if tradeItem.tradeType == "SHARE" {
+                cell.isChange.text = "나눔"
+            } else {
+                cell.isChange.text = "교환"
+            }
             
             // 이미지가 nil이면 기본 이미지 사용
             if let imageUrlString = tradeItem.image, let imageURL = URL(string: imageUrlString) {

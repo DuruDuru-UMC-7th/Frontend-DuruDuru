@@ -75,7 +75,7 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
     
     @objc private func saveDateButtonTapped() {
         if let updatedDate = editReceiptIngredientsView.buyDateValue.text {
-            receiptResult.purchaseDate = updatedDate
+            receiptResult.ingredients[0].purchaseDate = updatedDate
         }
         editReceiptIngredientsView.editDateButton.isHidden = false
         editReceiptIngredientsView.saveDateButton.isHidden = true
@@ -196,27 +196,20 @@ class EditReceiptIngredientsViewController: UIViewController, UITextFieldDelegat
         let url = "http://3.35.252.162:8080/OCR/\(receiptResult.ingredients[0].receiptId)/purchase-date"
     
         // 날짜 변환
-        let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.purchaseDate!) ?? ""
+        let formattedPurchaseDate = convertPurchaseDate(purchaseDate: receiptResult.ingredients[0].purchaseDate) ?? ""
         
-        // requestBody
-        let requestBody = PatchReceiptPurchaseDate(purchaseDate: formattedPurchaseDate)
-
+        let requestBody: [String: Any] = [
+            "purchaseDate": formattedPurchaseDate
+        ]
+        
         // API 요청
-        do {
-            let encoder = JSONEncoder()
-            let jsonData = try encoder.encode(requestBody)
-            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
-            
-            APIClient.shared.request(url, method: .patch, parameters: jsonParameters) { (result: Result<PatchReceiptDateResponse, Error>) in
-                switch result {
-                case .success(let response):
-                    print("!!성공!!")
-                case .failure(let error):
-                    print("네트워킹 오류: \(error)")
-                }
+        APIClient.shared.request(url, method: .patch, parameters: requestBody) { (result: Result<ReceiptResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!영수증 날짜 수정 성공!! 날짜: \(String(describing: response.result?.ingredients[0].purchaseDate))")
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
             }
-        } catch {
-            print("인코딩 오류: \(error)")
         }
     }
     

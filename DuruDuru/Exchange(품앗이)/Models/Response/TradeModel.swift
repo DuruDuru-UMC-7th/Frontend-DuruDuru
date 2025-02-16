@@ -79,3 +79,15 @@ struct DeleteLikeTradeResponse: Codable {
     let message: String
 }
 
+struct TradeLikeCountResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: TradeLikeCountResult
+}
+
+struct TradeLikeCountResult: Codable {
+    let tradeId: Int
+    let likeCount: Int
+}
+

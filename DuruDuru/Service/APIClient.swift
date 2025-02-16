@@ -13,7 +13,7 @@ final class APIClient {
     private let session: Session
     
     private init() {
-        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNzM5NzI3MDgyLCJleHAiOjE3Mzk3MzA2ODJ9.FtfIu7VzrcLxgbhwiTmI4dSTwN_fvzNbwlntkJUz2ds")
+        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNzM5NzMwNzQ3LCJleHAiOjE3Mzk3MzQzNDd9.vGFGnq6NBvfvNn0oHhFZSLGIR3wB4cGWWRr17SC7hlA")
         session = Session(interceptor: interceptor)
     }
     

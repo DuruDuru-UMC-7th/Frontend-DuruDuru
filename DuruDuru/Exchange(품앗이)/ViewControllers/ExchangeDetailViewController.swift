@@ -153,6 +153,7 @@ class ExchangeDetailViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("품앗이 좋아요 성공 memberId: \(response.result.memberId), tradeId: \(response.result.tradeId)")
+                self.getLikeCount(tradeId: self.tradeId)
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
             }
@@ -167,6 +168,22 @@ class ExchangeDetailViewController: UIViewController {
             switch result {
             case .success(let response):
                 print(response.message)
+                self.getLikeCount(tradeId: self.tradeId)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
+    }
+    
+    // 품앗이 찜 개수 조회
+    private func getLikeCount(tradeId: Int) {
+        let url = "http://3.35.252.162:8080/trade/like/\(tradeId)/count"
+        
+        APIClient.shared.request(url, method: .get) { (result: Result<TradeLikeCountResponse, Error>) in
+            switch result {
+            case .success(let response):
+                self.exchangeDetailView.likeCount.text = "\(response.result.likeCount)"
+                print("찜 개수 조회 성공 tradeId: \(response.result.tradeId), likeCount: \(response.result.likeCount)")
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
             }

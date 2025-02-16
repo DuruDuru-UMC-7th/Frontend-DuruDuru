@@ -65,16 +65,8 @@ class IngredientDetailViewController: UIViewController {
     func deleteIngredient(deletedIngredientId: Int) {
         let url = "http://3.35.252.162:8080/ingredient/\(deletedIngredientId)"
         
-        // 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, // 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
         // API 요청
-        APIClient.shared.request(urlWithQuery, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
+        APIClient.shared.request(url, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
             switch result {
             case .success(let response):
                 print("!!식재료 삭제 성공!!")

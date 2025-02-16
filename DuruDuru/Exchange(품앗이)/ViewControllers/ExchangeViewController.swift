@@ -193,16 +193,8 @@ extension ExchangeViewController: UICollectionViewDelegate, UICollectionViewData
     func getTown() {
         let url = "http://3.35.252.162:8080/town/"
         
-        /// 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, // 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
         /// API 요청
-        APIClient.shared.request(urlWithQuery, method: .get) { [self] (result: Result<TownResponse, Error>) in
+        APIClient.shared.request(url, method: .get) { [self] (result: Result<TownResponse, Error>) in
             switch result {
             case .success(let response):
                 print("!!동네 조회 성공!!")

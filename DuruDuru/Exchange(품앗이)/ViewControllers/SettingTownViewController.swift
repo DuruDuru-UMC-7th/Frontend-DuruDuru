@@ -153,14 +153,6 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     func setTown(setTownRequest: SetTownRequest) {
         let url = "http://3.35.252.162:8080/town/"
         
-        /// 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, /// 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
         /// requestBody
         let requestBody = setTownRequest
         
@@ -170,7 +162,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
             let jsonData = try encoder.encode(requestBody)
             let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            APIClient.shared.request(urlWithQuery, method: .post, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
+            APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
                 switch result {
                 case .success(let response):
                     print("!!동네 등록 성공!!")
@@ -188,14 +180,6 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     func updateTown(setTownRequest: SetTownRequest) {
         let url = "http://3.35.252.162:8080/town/"
         
-        /// 쿼리 파라미터
-        let queryParameters: [String: Any] = [
-            "memberId": 2, /// 임시로 넣은 memberId
-        ]
-        
-        let queryString = APIClient.shared.createQueryString(from: queryParameters)
-        let urlWithQuery = "\(url)?\(queryString)"
-        
         /// requestBody
         let requestBody = setTownRequest
         
@@ -205,7 +189,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
             let jsonData = try encoder.encode(requestBody)
             let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
             
-            APIClient.shared.request(urlWithQuery, method: .patch, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
+            APIClient.shared.request(url, method: .patch, parameters: jsonParameters) { (result: Result<TownResponse, Error>) in
                 switch result {
                 case .success(let response):
                     print("!!동네 수정 성공!!")

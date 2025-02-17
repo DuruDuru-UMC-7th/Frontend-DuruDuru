@@ -79,7 +79,6 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     
     @objc private func didTapConfirmButton() {
         setPurchaseDate()
-        setExpiryDate()
         let myFridgeVC = MyFridgeViewController()
         self.navigationController?.setViewControllers([myFridgeVC], animated: true)
     }
@@ -202,6 +201,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
             switch result {
             case .success(let response):
                 print("!!식재료 구매날짜 등록 성공!!, 구매날짜: \(response.result.purchaseDate)")
+                self.setExpiryDate()
             case .failure(let error):
                 print("구매날짜 등록 네트워킹 오류: \(error)")
             }

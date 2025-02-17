@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ExchangeRegisterDetailViewController: UIViewController {
+class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate {
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
@@ -15,12 +15,18 @@ class ExchangeRegisterDetailViewController: UIViewController {
     private var quantity: Int = 0
     private var selectedMethod: String? = nil
     
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
         setupActions() // 버튼 동작 설정
+        setUpUI()
+        
+        detailView.descriptionTextView.delegate = self
+        // 키보드 동작을 위한 제스쳐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     override func loadView() {
@@ -38,9 +44,23 @@ class ExchangeRegisterDetailViewController: UIViewController {
     }
     
     // MARK: - Actions
+    
+    private func setUpUI() {
+        // 상단바
+        let backImage = UIImage(systemName: "chevron.left")
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(didTapBackButton))
+        self.navigationItem.leftBarButtonItem = backButton
+        backButton.tintColor = .black
+        
+        let closeImage = UIImage(systemName: "xmark")
+        let closeButton = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(didTapCloseButton))
+        self.navigationItem.rightBarButtonItem = closeButton
+        closeButton.tintColor = .black
+        
+        self.title = "품앗이 등록하기"
+    }
+    
     private func setupActions() {
-        detailView.backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
-        detailView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         detailView.minusButton.addTarget(self, action: #selector(didTapMinusButton), for: .touchUpInside)
         detailView.plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
         detailView.unitButton.addTarget(self, action: #selector(didTapUnitButton), for: .touchUpInside)
@@ -49,19 +69,17 @@ class ExchangeRegisterDetailViewController: UIViewController {
         detailView.nextButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
     }
     
-    
     @objc private func didTapBackButton() {
-        if let navigationController = self.navigationController {
-            navigationController.popViewController(animated: true) // 네비게이션 스택에서 이전 화면으로 이동
-        }
+        navigationController?.popViewController(animated: true)
     }
 
-    
     @objc private func didTapCloseButton() {
-        // 네비게이션 스택을 초기화하고 첫 화면으로 이동
-        navigationController?.popToRootViewController(animated: true)
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        }
     }
-    
     
     @objc private func didTapMinusButton() {
         if quantity > 0 { // 0 이하로 내려가지 않음
@@ -162,4 +180,24 @@ class ExchangeRegisterDetailViewController: UIViewController {
         }
     }
 
+    // MARK: - UITextViewDelegate
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        // 키보드가 나타날 때 추가 동작이 필요하면 여기에 작성
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        // 키보드가 사라질 때 추가 동작이 필요하면 여기에 작성
+    }
+
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" { // Return 키가 눌렸을 때
+            textView.resignFirstResponder() // 키보드 숨기기
+            return false // 기본 동작 방지
+        }
+        return true
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true) // 키보드 숨기기
+    }
 }

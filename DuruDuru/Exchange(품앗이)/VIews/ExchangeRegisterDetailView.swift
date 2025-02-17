@@ -12,43 +12,20 @@ class ExchangeRegisterDetailView: UIView {
     
     // MARK: - UI 컴포넌트
     
-    /// 뒤로 가기 버튼
-    let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
+    let topSeparator = UIView().then {
+        $0.backgroundColor = UIColor.systemGreen
+    }
     
-    /// 닫기 버튼
-    let closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .black
-        return button
-    }()
-    
-    /// 제목 레이블
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "품앗이 등록하기"
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    /// 상단 구분선
-    let topSeparator: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.systemGreen
-        return view
-    }()
+    let topSeparator2 = UIView().then {
+        $0.backgroundColor = UIColor(hex: 0x37383C
+                                     , alpha: 0.16)
+    }
     
     /// 식재료 이미지
     let ingredientImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = UIColor.systemGray5 // 임시 배경색
-        imageView.layer.cornerRadius = 8
+        imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -56,15 +33,25 @@ class ExchangeRegisterDetailView: UIView {
     /// 식재료 이름 레이블
     let ingredientNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textAlignment = .center
         return label
     }()
     
     /// 소비기한 레이블
     let expiryLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .black
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let expiryValueLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .black
+        label.textAlignment = .center
         return label
     }()
     
@@ -73,6 +60,7 @@ class ExchangeRegisterDetailView: UIView {
         let label = UILabel()
         label.text = "수량"
         label.font = UIFont.systemFont(ofSize: 14)
+        label.textAlignment = .center
         return label
     }()
     
@@ -109,39 +97,26 @@ class ExchangeRegisterDetailView: UIView {
     }()
     
     /// 단위 버튼 (UILabel + UIImageView 조합)
-    let unitButton: UIButton = {
-        let button = UIButton()
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 8
-        
-        let titleLabel = UILabel()
-        titleLabel.text = "단위"
-        titleLabel.font = UIFont.systemFont(ofSize: 14)
-        titleLabel.textColor = .systemGray
-        
-        let arrowImageView = UIImageView(image: UIImage(systemName: "chevron.down"))
-        arrowImageView.tintColor = .gray
-        arrowImageView.contentMode = .scaleAspectFit
-        
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, arrowImageView])
-        stackView.axis = .horizontal
-        stackView.spacing = 25 
-        stackView.alignment = .center
-        
-        button.addSubview(stackView)
-        stackView.snp.makeConstraints { $0.center.equalToSuperview() }
-
-        return button
-    }()
-
-
+    let unitButton = UIButton().then {
+        let configuration = UIButton.Configuration.plain()
+        $0.configuration = configuration
+        $0.configuration?.image = UIImage(named: "Arrow")
+        $0.configuration?.imagePlacement = .trailing // 화살표를 텍스트 오른쪽에 배치
+        $0.configuration?.imagePadding = 37 // 텍스트와 이미지 간격
+        $0.configuration?.baseForegroundColor = .gray
+        $0.configuration?.attributedTitle = AttributedString("단위", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14)]))
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor(hex: 0x70737C85).cgColor
+        $0.layer.cornerRadius = 10
+        $0.layer.masksToBounds = true
+    }
 
     /// 설명 라벨
     let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "설명"
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textAlignment = .center
         return label
     }()
     
@@ -163,7 +138,8 @@ class ExchangeRegisterDetailView: UIView {
     let methodLabel: UILabel = {
         let label = UILabel()
         label.text = "방식"
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textAlignment = .center
         return label
     }()
     
@@ -172,10 +148,10 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("나눔", for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 6
         return button
     }()
     
@@ -184,10 +160,10 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton()
         button.setTitle("교환", for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 6
         return button
     }()
 
@@ -198,7 +174,7 @@ class ExchangeRegisterDetailView: UIView {
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemGreen
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 10
         return button
     }()
     
@@ -218,13 +194,12 @@ class ExchangeRegisterDetailView: UIView {
     
     private func setupUI() {
         backgroundColor = .white
-        addSubview(backButton)
-        addSubview(closeButton)
-        addSubview(titleLabel)
         addSubview(topSeparator)
+        addSubview(topSeparator2)
         addSubview(ingredientImageView)
         addSubview(ingredientNameLabel)
         addSubview(expiryLabel)
+        addSubview(expiryValueLabel)
         addSubview(quantityLabel)
         addSubview(minusButton)
         addSubview(quantityValueLabel)
@@ -241,27 +216,18 @@ class ExchangeRegisterDetailView: UIView {
     // MARK: - 오토레이아웃 설정
     
     private func setupConstraints() {
-        backButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-            $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(44)
-        }
-
-        closeButton.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-30)
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(44)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerY.equalTo(backButton)
-            $0.centerX.equalToSuperview()
-        }
-        
         topSeparator.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.top.equalToSuperview().offset(98)
+            $0.leading.equalToSuperview()
+            $0.height.equalTo(2)
+            $0.width.equalTo(UIScreen.main.bounds.width * (3 / 4))
+        }
+        
+        topSeparator2.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(98)
+            $0.leading.equalTo(topSeparator.snp.trailing)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
         }
         
         ingredientImageView.snp.makeConstraints {
@@ -273,17 +239,26 @@ class ExchangeRegisterDetailView: UIView {
         ingredientNameLabel.snp.makeConstraints {
             $0.top.equalTo(topSeparator.snp.bottom).offset(38.5)
             $0.leading.equalTo(ingredientImageView.snp.trailing).offset(15)
+            $0.height.equalTo(22)
         }
         
         expiryLabel.snp.makeConstraints {
             $0.top.equalTo(ingredientNameLabel.snp.bottom).offset(18.5)
-            $0.leading.equalTo(ingredientImageView.snp.trailing).offset(16)
+            $0.leading.equalTo(ingredientImageView.snp.trailing).offset(15)
+            $0.height.equalTo(22)
+        }
+        
+        expiryValueLabel.snp.makeConstraints {
+            $0.top.equalTo(ingredientNameLabel.snp.bottom).offset(18.5)
+            $0.leading.equalTo(expiryLabel.snp.trailing).offset(10)
             $0.trailing.equalToSuperview().offset(-16)
+            $0.height.equalTo(22)
         }
         
         quantityLabel.snp.makeConstraints {
             $0.top.equalTo(ingredientImageView.snp.bottom).offset(30)
             $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(22)
         }
         
         minusButton.snp.makeConstraints {
@@ -294,14 +269,14 @@ class ExchangeRegisterDetailView: UIView {
         
         quantityValueLabel.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(minusButton.snp.trailing).offset(6)
-            $0.width.equalTo(50)
-            $0.height.equalTo(40)
+            $0.leading.equalTo(minusButton.snp.trailing).offset(17)
+            $0.width.equalTo(22)
+            $0.height.equalTo(22)
         }
         
         plusButton.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(6)
+            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(17)
             $0.width.height.equalTo(26)
         }
         
@@ -315,6 +290,7 @@ class ExchangeRegisterDetailView: UIView {
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(quantityLabel.snp.bottom).offset(67)
             $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(22)
         }
         
         descriptionTextView.snp.makeConstraints {
@@ -327,6 +303,7 @@ class ExchangeRegisterDetailView: UIView {
         methodLabel.snp.makeConstraints {
             $0.top.equalTo(descriptionTextView.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(22)
         }
         
         shareButton.snp.makeConstraints {
@@ -345,8 +322,8 @@ class ExchangeRegisterDetailView: UIView {
         
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16)
+            $0.height.equalTo(47)
+            $0.bottom.equalToSuperview().offset(-40)
         }
     }
     // MARK: - 버튼 스타일 업데이트

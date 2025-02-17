@@ -112,35 +112,6 @@ class ExchangeView: UIView {
         $0.layer.shadowRadius = 7
     }
     
-    /// 품앗이 등록 버튼
-    let registerPoomButton = UIButton().then {
-        let configuration = UIButton.Configuration.plain()
-        $0.configuration = configuration
-        $0.configuration?.image = UIImage(named: "AddPoom")
-        $0.configuration?.imagePlacement = .leading
-        $0.configuration?.imagePadding = 5
-        $0.configuration?.attributedTitle = AttributedString("품앗이 등록하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
-        $0.backgroundColor = UIColor(hex: 0x00C269)
-        $0.layer.cornerRadius = 8
-        $0.layer.masksToBounds = true
-        $0.isHidden = true
-    }
-    
-    /// 함께 먹자 등록 버튼
-    let registerTogetherButton = UIButton().then {
-        let configuration = UIButton.Configuration.plain()
-        $0.configuration = configuration
-        $0.configuration?.image = UIImage(named: "AddTogether")
-        $0.configuration?.imagePlacement = .leading
-        $0.configuration?.imagePadding = 5
-        $0.configuration?.attributedTitle = AttributedString("함께 먹자 등록하기", attributes: AttributeContainer([.font: UIFont.boldSystemFont(ofSize: 14.5), .foregroundColor: UIColor.white]))
-        $0.backgroundColor = UIColor(hex: 0x00C269)
-        $0.layer.cornerRadius = 8
-        $0.layer.masksToBounds = true
-        $0.isHidden = true
-    }
-    
-    
     // MARK: - Constaints & Add Function
     
     /// 컴포넌트 생성
@@ -160,9 +131,6 @@ class ExchangeView: UIView {
             contentView.addSubview($0)
         }
         addSubview(floatingButton)
-        addSubview(registerPoomButton)
-        addSubview(registerTogetherButton)
-        
     }
     
     /// 오토레이아웃 설정
@@ -226,35 +194,11 @@ class ExchangeView: UIView {
             $0.trailing.equalToSuperview().offset(-5)
             $0.bottom.equalToSuperview().offset(-10)
         }
-        
-        registerTogetherButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalTo(floatingButton.snp.top).offset(-10)
-            $0.width.equalTo(156)
-            $0.height.equalTo(40)
-        }
-        
-        registerPoomButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.bottom.equalTo(registerTogetherButton.snp.top).offset(-10)
-            $0.width.equalTo(139)
-            $0.height.equalTo(40)
-        }
-        
-        
     }
     
     func updateTableViewHeight(dataCnt: Int) {
         exchangeTableView.snp.updateConstraints {
             $0.height.equalTo(160 * dataCnt)
         }
-    }
-    
-    func updateFloatingButtons(isExpanded: Bool) {
-        registerPoomButton.isHidden = !isExpanded
-        registerTogetherButton.isHidden = !isExpanded
-        
-        let imageName = isExpanded ? "close" : "exchangeFloating"
-        floatingButton.setImage(UIImage(named: imageName), for: .normal)
     }
 }

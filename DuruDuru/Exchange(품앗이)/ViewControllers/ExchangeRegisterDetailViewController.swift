@@ -11,7 +11,7 @@ class ExchangeRegisterDetailViewController: UIViewController {
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
-    private var ingredient: IngredientsModel? // 선택된 식재료
+    private var ingredient: TradeItem?
     private var quantity: Int = 0
     private var selectedMethod: String? = nil
     
@@ -28,14 +28,17 @@ class ExchangeRegisterDetailViewController: UIViewController {
     }
     
     // MARK: - Configure
-    func configure(with ingredient: IngredientsModel) {
+    func configure(with ingredient: TradeItem) {
         self.ingredient = ingredient
         
-        // 전달받은 데이터를 뷰에 반영
-        detailView.ingredientNameLabel.text = ingredient.name
-        let daysRemaining = ingredient.daysRemaining.replacingOccurrences(of: "D-", with: "")
-        detailView.expiryLabel.text = "남은 소비기한 \(daysRemaining)일"
+        detailView.ingredientNameLabel.text = ingredient.title
+        detailView.expiryLabel.text = "소비기한: \(ingredient.expiryDate)"
+        
+        if let imageUrl = ingredient.thumbnailImgUrl, let url = URL(string: imageUrl) {
+            detailView.ingredientImageView.kf.setImage(with: url) 
+        }
     }
+
     
     // MARK: - Actions
     private func setupActions() {

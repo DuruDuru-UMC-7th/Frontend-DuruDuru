@@ -73,11 +73,24 @@ class ExchangeRegisterView: UIView {
     }
     
     /// 원형 식재료 리스트
+//    let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+//        $0.scrollDirection = .vertical
+//        $0.minimumInteritemSpacing = 8
+//        $0.minimumLineSpacing = 7
+//        $0.estimatedItemSize = .init(width: 118, height: 145)
+//    }).then {
+//        $0.backgroundColor = .clear
+//        $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)
+//        $0.showsVerticalScrollIndicator = false
+//    }
+    
     let ingredientsCircleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
         $0.minimumInteritemSpacing = 8
-        $0.minimumLineSpacing = 7
-        $0.estimatedItemSize = .init(width: 118, height: 145)
+        $0.minimumLineSpacing = 10
+
+        let itemWidth = (UIScreen.main.bounds.width - 48) / 3
+        $0.itemSize = CGSize(width: itemWidth, height: itemWidth + 40)
     }).then {
         $0.backgroundColor = .clear
         $0.register(IngredientsCircleCollectionViewCell.self, forCellWithReuseIdentifier: IngredientsCircleCollectionViewCell.identifier)

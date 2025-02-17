@@ -11,9 +11,11 @@ class ExchangeRegisterViewController: UIViewController {
     
     // MARK: - Properties
     private var exchangeRegisterView: ExchangeRegisterView!
-    private var ingredients: [IngredientsModel] = IngredientsModel.dummy()
-    private var selectedIngredient: IngredientsModel?
+    //private var ingredients: [IngredientsModel] = IngredientsModel.dummy()
+    private var ingredients: [TradeItem] = []  // 품앗이 데이터 저장
+    private var selectedIngredient: TradeItem?
 
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +26,8 @@ class ExchangeRegisterViewController: UIViewController {
         hidesBottomBarWhenPushed = true
         setupActions()
         setupCollectionView()
-
+        
+        fetchTradeHistory() // 품앗이 목록 가져오기
     }
     
     // MARK: - Actions
@@ -33,7 +36,7 @@ class ExchangeRegisterViewController: UIViewController {
         exchangeRegisterView.closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         exchangeRegisterView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
     }
-
+    
     private func setupCollectionView() {
         exchangeRegisterView.ingredientsCircleCollectionView.delegate = self
         exchangeRegisterView.ingredientsCircleCollectionView.dataSource = self
@@ -52,8 +55,8 @@ class ExchangeRegisterViewController: UIViewController {
         } else {
         }
     }
-
-
+    
+    
     
     @objc private func didTapNextButton() {
         guard let selectedIngredient = selectedIngredient else {
@@ -62,15 +65,38 @@ class ExchangeRegisterViewController: UIViewController {
             present(alert, animated: true)
             return
         }
+        
         let detailVC = ExchangeRegisterDetailViewController()
         detailVC.configure(with: selectedIngredient)
         navigationController?.pushViewController(detailVC, animated: true)
     }
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedIngredient = ingredients[indexPath.row]
+    
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //        selectedIngredient = ingredients[indexPath.row]
+    
+    // MARK: - API
+    private func fetchTradeHistory() {
+        let url = "http://3.35.252.162:8080/trade/my/history"
+
+        APIClient.shared.request(url, method: .get) { (result: Result<TradeHistoryResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("품앗이 목록 조회 성공: \(response)")
+                self.ingredients = response.result.tradeList
+                
+                DispatchQueue.main.async {
+                    self.exchangeRegisterView.ingredientsCircleCollectionView.reloadData()
+                }
+                
+            case .failure(let error):
+                print("품앗이 목록 조회 실패: \(error)")
+            }
+        }
     }
 }
+    
+
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ExchangeRegisterViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -85,12 +111,16 @@ extension ExchangeRegisterViewController: UICollectionViewDelegate, UICollection
         ) as? IngredientsCircleCollectionViewCell else {
             return UICollectionViewCell()
         }
+        
         let ingredient = ingredients[indexPath.row]
-//        cell.configure(with: ingredient)
+        cell.configure(with: ingredient)
+        
         return cell
     }
     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        selectedIngredient = ingredients[indexPath.row]
-//    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIngredient = ingredients[indexPath.row]
+        print("선택한 식재료: \(selectedIngredient?.title ?? "알 수 없음")")
+    }
+
 }

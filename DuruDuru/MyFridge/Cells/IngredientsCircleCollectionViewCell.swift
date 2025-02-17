@@ -120,4 +120,12 @@ class IngredientsCircleCollectionViewCell: UICollectionViewCell {
             imageView.image = UIImage(named: "imageNotFound")
         }
     }
+    
+    func configure(with model: TradeItem) {
+        ingredientNameLabel.text = model.title
+        count.text = "\(model.ingredientCount)개"
+        if let imageURL = URL(string: model.thumbnailImgUrl ?? "") {
+            imageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        }
+    }
 }

@@ -11,9 +11,13 @@ class IngredientDetailViewController: UIViewController {
     
     // MARK: - Properties
     private var ingredientDetailView: IngredientDetailView!
-    var ingredient: MyIngredient!
-    var recipes = IngredientModel.dummy()[0].recipes
-
+    var ingredient: MyIngredient! {
+        didSet {
+            recipes = [] 
+        }
+    }
+    var recipes: [RecipeModel] = []
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {

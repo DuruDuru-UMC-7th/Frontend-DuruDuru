@@ -130,19 +130,31 @@ class RecipeTableViewCell: UITableViewCell {
         }
     }
     
-    public func configure(recipe: RecipeModel) {
-//        if let imageURL = URL(string: recipe.titleImage) {
-//            titleImage.kf.setImage(with: imageURL)
+//    public func configure(recipe: RecipeModel) {
+////        if let imageURL = URL(string: recipe.titleImage) {
+////            titleImage.kf.setImage(with: imageURL)
+////        }
+//        titleImage.image = UIImage(named: recipe.titleImage ?? "")
+//        recipeName.text = recipe.recipeName
+//        tags = recipe.tags
+//        
+//        for tag in tags {
+//            let tagLabel = createTagLabel(text: tag)
+//            tagsStackView.addArrangedSubview(tagLabel)
 //        }
-        titleImage.image = UIImage(named: recipe.titleImage)
+//    }
+    
+    public func configure(recipe: RecipeModel) {
+        titleImage.image = UIImage(named: recipe.titleImage ?? "")
         recipeName.text = recipe.recipeName
-        tags = recipe.tags
-        
+        tags = []
+
         for tag in tags {
             let tagLabel = createTagLabel(text: tag)
             tagsStackView.addArrangedSubview(tagLabel)
         }
     }
+
     
     /// 태그 라벨
     private func createTagLabel(text: String) -> UIView {

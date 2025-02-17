@@ -13,7 +13,7 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     // MARK: - Properties
     
     private var myCookingView: MyCookingView!
-    let data = IngredientModel.dummy()
+    private var data: [IngredientModel] = []
     let ingredientCategoryList = IngredientCategoryModel.dummy()
     weak var delegate: MyCookingViewControllerDelegate?  ///delegate 변수
     
@@ -31,6 +31,8 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+        
+        fetchIngredientRecipes()
     }
     
     private func setupDelegate(){
@@ -47,6 +49,95 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
             myCookingView.searchBar.resignFirstResponder()
         }
     }
+    
+    // MARK: - API 관련
+
+    /// 식재료 목록을 최신 등록순으로 불러오는 함수
+    func getMyIngredients(completion: @escaping ([IngredientModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/fridge/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("내 냉장고 식재료 조회 성공: \(response)")
+
+                let ingredients = response.result.ingredients.map { IngredientModel(from: $0) }
+                completion(ingredients)
+
+            case .failure(let error):
+                print("내 냉장고 식재료 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
+
+    /// 내 냉장고 속 식재료 목록을 조회하고, 추천 레시피를 가져오는 함수
+    func fetchIngredientRecipes() {
+        getMyIngredients { [weak self] ingredients in
+            guard let self = self else { return }
+            var updatedIngredients = ingredients
+            let group = DispatchGroup()
+            
+            for i in 0..<updatedIngredients.count {
+                group.enter()
+                self.getRecommendedRecipes(for: updatedIngredients[i]) { recipes in
+                    updatedIngredients[i].recipes = recipes
+                    print("\(updatedIngredients[i].name)의 추천 레시피 개수: \(recipes.count)")
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                print("모든 추천 레시피 조회 완료!")
+                self.data = updatedIngredients
+                self.myCookingView.ingredientsTableView.reloadData()
+            }
+        }
+    }
+
+    /// 특정 식재료에 대한 추천 레시피 조회 API 호출
+    func getRecommendedRecipes(for ingredient: IngredientModel, completion: @escaping ([RecipeModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/recipes/recommend"
+        
+        let parameters: [String: Any] = ["ingredientName": ingredient.name] // 식재료 이름을 기반으로 요청
+
+        APIClient.shared.request(baseUrl, method: .get, parameters: parameters) { (result: Result<RecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("\(ingredient.name)의 추천 레시피 조회 성공: \(response)")
+
+                // API 응답을 변환하여 RecipeModel 배열로 저장
+                let recipes = response.result.recipes.map { RecipeModel(from: $0) }
+
+                completion(recipes)
+                
+            case .failure(let error):
+                print("\(ingredient.name)의 추천 레시피 조회 실패: \(error)")
+                completion([]) // 실패 시 빈 배열 반환
+            }
+        }
+    }
+
+    
+    /// 특정 카테고리 기준으로 필터링하여 식재료 가져오기
+    func fetchFilteredIngredients(by category: String) {
+        let baseUrl = "http://3.35.252.162:8080/fridge/majorCategory/recent"
+        let parameters: [String: Any] = ["majorCategory": category]
+
+        APIClient.shared.request(baseUrl, method: .get, parameters: parameters) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("선택한 카테고리 (\(category)) 식재료 조회 성공: \(response)")
+                let ingredients = response.result.ingredients.map { IngredientModel(from: $0) }
+                self.data = ingredients
+                self.myCookingView.ingredientsTableView.reloadData()
+
+            case .failure(let error):
+                print("카테고리 필터링 실패: \(error)")
+            }
+        }
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource
@@ -92,6 +183,16 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
         cell.indexPath = indexPath
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == myCookingView.ingredientCategoryCollectionView {
+            let selectedCategory = ingredientCategoryList[indexPath.row].categoryName
+            print("선택된 카테고리: \(selectedCategory)")
+            
+            //선택한 카테고리 기준으로 필터링하여 API 호출
+            fetchFilteredIngredients(by: selectedCategory)
+        }
     }
 }
 

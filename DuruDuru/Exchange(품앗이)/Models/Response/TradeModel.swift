@@ -11,7 +11,7 @@ struct TradeResponse: Codable {
     let isSuccess: Bool
     let code: String
     let message: String
-    let result: TradeResult?
+    let result: TradeResult
 }
 
 struct TradeResult: Codable {
@@ -26,6 +26,7 @@ struct TradeResult: Codable {
     let eupmyeondong: String
     let status: String
     let tradeType: String
+    let liked: Bool
     let likeCount: Int
     let createdAt: String
     let updatedAt: String

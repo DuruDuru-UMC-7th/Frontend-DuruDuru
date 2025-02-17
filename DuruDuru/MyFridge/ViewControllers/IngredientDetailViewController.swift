@@ -72,7 +72,7 @@ class IngredientDetailViewController: UIViewController {
         // API 요청
         APIClient.shared.request(url, method: .delete) { (result: Result<DeleteIngredientResponse, Error>) in
             switch result {
-            case .success(let response):
+            case .success(_):
                 print("!!식재료 삭제 성공!!")
             case .failure(let error):
                 print("네트워킹 오류: \(error)")

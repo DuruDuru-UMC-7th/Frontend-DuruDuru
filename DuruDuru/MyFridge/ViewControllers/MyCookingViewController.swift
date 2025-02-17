@@ -86,9 +86,7 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
                     group.leave()
                 }
             }
-            
             group.notify(queue: .main) {
-                print("모든 추천 레시피 조회 완료!")
                 self.data = updatedIngredients
                 self.myCookingView.ingredientsTableView.reloadData()
             }
@@ -98,27 +96,25 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate {
     /// 특정 식재료에 대한 추천 레시피 조회 API 호출
     func getRecommendedRecipes(for ingredient: IngredientModel, completion: @escaping ([RecipeModel]) -> Void) {
         let baseUrl = "http://3.35.252.162:8080/recipes/recommend"
-        
-        let parameters: [String: Any] = ["ingredientName": ingredient.name] // 식재료 이름을 기반으로 요청
 
-        APIClient.shared.request(baseUrl, method: .get, parameters: parameters) { (result: Result<RecipeResponse, Error>) in
+        let urlWithParams = "\(baseUrl)?ingredients=\(ingredient.ingredientId)&page=1&size=10"
+        
+        APIClient.shared.request(urlWithParams, method: .get) { (result: Result<RecipeResponse, Error>) in
             switch result {
             case .success(let response):
                 print("\(ingredient.name)의 추천 레시피 조회 성공: \(response)")
-
+                
                 // API 응답을 변환하여 RecipeModel 배열로 저장
                 let recipes = response.result.recipes.map { RecipeModel(from: $0) }
-
                 completion(recipes)
                 
             case .failure(let error):
                 print("\(ingredient.name)의 추천 레시피 조회 실패: \(error)")
-                completion([]) // 실패 시 빈 배열 반환
+                completion([])
             }
         }
     }
 
-    
     /// 특정 카테고리 기준으로 필터링하여 식재료 가져오기
     func fetchFilteredIngredients(by category: String) {
         let baseUrl = "http://3.35.252.162:8080/fridge/majorCategory/recent"
@@ -197,17 +193,21 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension MyCookingViewController: IngredientsTableViewCellDelegate {
-    /// 버튼 눌렀을 때 레시피 화면으로 데이터 전달
     func recipeViewButtonTapped(at indexPath: IndexPath) {
-        let selectedIngredientName = data[indexPath.row].name
-        
+        let selectedIngredient = data[indexPath.row]
+
         let recipeViewController = RecipeViewController()
         recipeViewController.hidesBottomBarWhenPushed = true
-        recipeViewController.ingredientName = selectedIngredientName
-        recipeViewController.recipes = data[indexPath.row].recipes
-        navigationController?.pushViewController(recipeViewController, animated: true)
+        recipeViewController.ingredient = selectedIngredient
+
+        // API 호출하여 추천 레시피 가져오기
+        getRecommendedRecipes(for: selectedIngredient) { recipes in
+            recipeViewController.recipes = recipes
+            self.navigationController?.pushViewController(recipeViewController, animated: true)
+        }
     }
 }
+
 
 extension MyCookingViewController: UISearchBarDelegate{
     

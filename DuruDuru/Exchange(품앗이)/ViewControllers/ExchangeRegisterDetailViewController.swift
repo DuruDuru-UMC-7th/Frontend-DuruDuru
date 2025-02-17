@@ -11,7 +11,7 @@ class ExchangeRegisterDetailViewController: UIViewController {
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
-    private var ingredient: TradeItem?
+    private var ingredient: MyIngredient?
     private var quantity: Int = 0
     private var selectedMethod: String? = nil
     
@@ -28,15 +28,11 @@ class ExchangeRegisterDetailViewController: UIViewController {
     }
     
     // MARK: - Configure
-    func configure(with ingredient: TradeItem) {
+    func configure(with ingredient: MyIngredient) {
         self.ingredient = ingredient
         
-        detailView.ingredientNameLabel.text = ingredient.title
-        detailView.expiryLabel.text = "소비기한: \(ingredient.expiryDate)"
-        
-        if let imageUrl = ingredient.thumbnailImgUrl, let url = URL(string: imageUrl) {
-            detailView.ingredientImageView.kf.setImage(with: url) 
-        }
+        detailView.ingredientNameLabel.text = ingredient.ingredientName
+        detailView.expiryLabel.text = "남은 소비기한 \(ingredient.expiryDate)일"
     }
 
     
@@ -154,14 +150,53 @@ class ExchangeRegisterDetailViewController: UIViewController {
         )
     }
     
-    // 품앗이 등록 완료
+//    // 품앗이 등록 완료
     @objc private func didTapCompleteButton() {
-        if let navigationController = self.navigationController {
-            navigationController.popToRootViewController(animated: true)
-        } else {
-            let mainVC = ExchangeViewController()
-            mainVC.modalPresentationStyle = .fullScreen
-            present(mainVC, animated: true, completion: nil)
+        guard let selectedIngredient = ingredient else {
+            print("❌ 선택된 식재료가 없습니다.")
+            return
+        }
+
+        let tradeRequest = TradeRequest(
+            ingredientId: selectedIngredient.ingredientId,
+            ingredientCount: quantity,
+            body: detailView.descriptionTextView.text,
+            tradeType: selectedMethod ?? "SHARE",
+            tradeImgUrl: ["https://example.com/sample.jpg"] // 테스트 이미지 URL
+        )
+
+
+        postTrade(tradeRequest: tradeRequest) {
+            DispatchQueue.main.async {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+        }
+    }
+
+
+    func postTrade(tradeRequest: TradeRequest, completion: @escaping () -> Void) {
+        let url = "http://3.35.252.162:8080/trade/"
+        
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(tradeRequest)
+            let jsonParameters = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            APIClient.shared.request(url, method: .post, parameters: jsonParameters) { (result: Result<TradeResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    print("품앗이 등록 성공: \(response.message)")
+                    
+                    DispatchQueue.main.async {
+                        completion()
+                    }
+                    
+                case .failure(let error):
+                    print("품앗이 등록 실패: \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            print("JSON 인코딩 오류: \(error)")
         }
     }
 

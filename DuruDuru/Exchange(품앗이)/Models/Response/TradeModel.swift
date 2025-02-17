@@ -26,10 +26,16 @@ struct TradeResult: Codable {
     let eupmyeondong: String
     let status: String
     let tradeType: String
+    let liked: Bool
     let likeCount: Int
     let createdAt: String
     let updatedAt: String
-    let tradeImgs: [String]?
+    let tradeImgs: [TradeImage]
+}
+
+struct TradeImage: Codable {
+    let tradeImgId: Int
+    let tradeImgUrl: String
 }
 
 struct OtherTradeResponse: Codable {

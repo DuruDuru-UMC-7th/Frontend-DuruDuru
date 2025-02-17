@@ -12,8 +12,8 @@ class ExchangeRegisterViewController: UIViewController {
     // MARK: - Properties
     private var exchangeRegisterView: ExchangeRegisterView!
     //private var ingredients: [IngredientsModel] = IngredientsModel.dummy()
-    private var ingredients: [TradeItem] = []  // 품앗이 데이터 저장
-    private var selectedIngredient: TradeItem?
+    private var ingredients: [MyIngredient] = []
+    private var selectedIngredient: MyIngredient?
 
     
     // MARK: - Lifecycle
@@ -27,7 +27,7 @@ class ExchangeRegisterViewController: UIViewController {
         setupActions()
         setupCollectionView()
         
-        fetchTradeHistory() // 품앗이 목록 가져오기
+        fetchMyIngredients()
     }
     
     // MARK: - Actions
@@ -72,25 +72,22 @@ class ExchangeRegisterViewController: UIViewController {
     }
 
     
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //        selectedIngredient = ingredients[indexPath.row]
-    
-    // MARK: - API
-    private func fetchTradeHistory() {
-        let url = "http://3.35.252.162:8080/trade/my/history"
+    // 내 식재료 목록 가져오기
+    private func fetchMyIngredients() {
+        let url = "http://3.35.252.162:8080/fridge/near-expiry"
 
-        APIClient.shared.request(url, method: .get) { (result: Result<TradeHistoryResponse, Error>) in
+        APIClient.shared.request(url, method: .get) { (result: Result<IngredientResponse, Error>) in
             switch result {
             case .success(let response):
-                print("품앗이 목록 조회 성공: \(response)")
-                self.ingredients = response.result.tradeList
+                print("내 식재료 목록 조회 성공: \(response)")
+                self.ingredients = response.result.ingredients
                 
                 DispatchQueue.main.async {
                     self.exchangeRegisterView.ingredientsCircleCollectionView.reloadData()
                 }
                 
             case .failure(let error):
-                print("품앗이 목록 조회 실패: \(error)")
+                print("내 식재료 목록 조회 실패: \(error)")
             }
         }
     }
@@ -120,7 +117,6 @@ extension ExchangeRegisterViewController: UICollectionViewDelegate, UICollection
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIngredient = ingredients[indexPath.row]
-        print("선택한 식재료: \(selectedIngredient?.title ?? "알 수 없음")")
+        print("선택한 식재료: \(selectedIngredient!.ingredientName)")
     }
-
 }

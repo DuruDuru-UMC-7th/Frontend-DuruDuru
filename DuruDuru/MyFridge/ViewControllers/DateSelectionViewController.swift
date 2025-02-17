@@ -12,10 +12,11 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     // MARK: - Properties
     private let dateSelectionView = DateSelectionView()
     private var selectedDate = Date()
+    private var date: String!
     
     var ingredientId: Int!
-    var purchaseDate: String!
-    var expiryDate: String!
+//    var purchaseDate: String!
+//    var expiryDate: String!
     private var isPurchaseDateSelected: Bool = true
     
     // MARK: - Lifecycle
@@ -78,7 +79,11 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     // MARK: - Actions
     
     @objc private func didTapConfirmButton() {
-        setPurchaseDate()
+        if isPurchaseDateSelected {
+            setPurchaseDate()
+        } else {
+            setExpiryDate()
+        }
         let myFridgeVC = MyFridgeViewController()
         self.navigationController?.setViewControllers([myFridgeVC], animated: true)
     }
@@ -101,7 +106,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     // 구매한 날짜 버튼 클릭
     @objc private func didTapPurchaseDate() {
         isPurchaseDateSelected = true
-        self.dateSelectionView.dateTextField.text = self.purchaseDate
+//        self.dateSelectionView.dateTextField.text = self.purchaseDate
         updateUIForSelection(
             selectedButton: dateSelectionView.purchaseDateButton,
             deselectedButton: dateSelectionView.expirationDateButton,
@@ -113,7 +118,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
     // 소비기한 버튼 클릭
     @objc private func didTapExpirationDate() {
         isPurchaseDateSelected = false
-        self.dateSelectionView.dateTextField.text = self.expiryDate
+//        self.dateSelectionView.dateTextField.text = self.selectedDate
         updateUIForSelection(
             selectedButton: dateSelectionView.expirationDateButton,
             deselectedButton: dateSelectionView.purchaseDateButton,
@@ -138,13 +143,15 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
                 self.selectedDate = selected
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy / MM / dd"
-                if self.isPurchaseDateSelected {
-                    self.purchaseDate = formatter.string(from: selected)
-                    self.dateSelectionView.dateTextField.text = self.purchaseDate
-                } else {
-                    self.expiryDate = formatter.string(from: selected)
-                    self.dateSelectionView.dateTextField.text = self.expiryDate
-                }
+                self.dateSelectionView.dateTextField.text = formatter.string(from: selected)
+                self.date = formatter.string(from: selected)
+//                if self.isPurchaseDateSelected {
+//                    self.purchaseDate = formatter.string(from: selected)
+//                    self.dateSelectionView.dateTextField.text = self.purchaseDate
+//                } else {
+//                    self.expiryDate = formatter.string(from: selected)
+//                    self.dateSelectionView.dateTextField.text = self.expiryDate
+//                }
                 
                 // 날짜 선택 시 버튼 활성화
                 self.updateConfirmButtonState(isEnabled: true)
@@ -193,7 +200,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         
         // 쿼리 파라미터
         let requestBody: [String: Any] = [
-            "purchaseDate": formatDate(self.purchaseDate!)
+            "purchaseDate": formatDate(self.date)
         ]
         
         // API 요청
@@ -201,7 +208,6 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
             switch result {
             case .success(let response):
                 print("!!식재료 구매날짜 등록 성공!!, 구매날짜: \(response.result.purchaseDate)")
-                self.setExpiryDate()
             case .failure(let error):
                 print("구매날짜 등록 네트워킹 오류: \(error)")
             }
@@ -214,7 +220,7 @@ class DateSelectionViewController: UIViewController, UITextFieldDelegate, UIText
         
         // 쿼리 파라미터
         let requestBody: [String: Any] = [
-            "expiryDate": formatDate(self.expiryDate!)
+            "expiryDate": formatDate(self.date)
         ]
         
         // API 요청

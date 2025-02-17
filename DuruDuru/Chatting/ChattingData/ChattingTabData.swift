@@ -9,6 +9,13 @@ import Foundation
 
 /// 채팅방 목록 응답 모델
 struct ChatRoomListResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: ChatRoomListResult
+}
+
+struct ChatRoomListResult: Codable {
     let count: Int
     let chatRooms: [ChatRoom]
 }

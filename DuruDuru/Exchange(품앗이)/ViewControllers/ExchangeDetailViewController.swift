@@ -111,10 +111,11 @@ class ExchangeDetailViewController: UIViewController {
         APIClient.shared.request(url, method: .get, parameters: nil) { (result: Result<TradeResponse, Error>) in
             switch result {
             case .success(let response):
-                if let trade = response.result {
-                    self.exchangeDetailView.configure(trade: trade)
-                } else {
-                    print("에러: trade 값이 nil입니다.")
+                self.exchangeDetailView.configure(trade: response.result)
+                self.isLiked = response.result.liked
+                if self.isLiked {
+                    self.exchangeDetailView.likeButton.setImage(UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate), for: .normal)
+                    self.exchangeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
                 }
             case .failure(let error):
                 print("네트워킹 오류: \(error)")

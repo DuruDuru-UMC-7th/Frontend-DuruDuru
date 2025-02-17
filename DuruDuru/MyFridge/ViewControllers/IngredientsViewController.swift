@@ -13,6 +13,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     private var ingredientsView: IngredientsView!
     let categoryData = IngredientCategoryModel.dummy()
     private var selectedCategoryIndex: IndexPath?
+    private var selectedCircleCellIndex: IndexPath?
     var ingredients: [MyIngredient] = []
     var selectedFilter: String = "all"
     var searchText: String?
@@ -37,6 +38,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         super.viewWillAppear(animated)
         
         selectedCategoryIndex = nil
+        selectedCircleCellIndex = nil
         for index in 0..<categoryData.count {
             if let cell = ingredientsView.ingredientCategoryCollectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? IngredientCategoryCollectionViewCell {
                 cell.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
@@ -87,7 +89,16 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
             preferredStyle: .alert
         )
         
-        let cancelAction = UIAlertAction(title: "아니요", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "아니요", style: .cancel) { [weak self] _ in
+            guard let self = self else { return }
+            
+            // "아니요"를 눌렀을 때 circleView의 테두리 제거
+            if let cell = self.ingredientsView.ingredientsCircleCollectionView.cellForItem(at: indexPath) as? IngredientsCircleCollectionViewCell {
+                cell.circleView.layer.borderWidth = 0
+            }
+            selectedCircleCellIndex = nil
+        }
+        
         let deleteAction = UIAlertAction(title: "네, 삭제할게요", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
@@ -287,6 +298,13 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         // 키보드가 나타나 있을 때만 숨기기
         if ingredientsView.searchBar.isFirstResponder {
             ingredientsView.searchBar.resignFirstResponder()
+            if ingredientsView.searchBar.text == "" {
+                ingredientsView.allButton.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+                ingredientsView.allButton.tintColor = .white
+                updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
+                getOrderBy(order: "near-expiry")
+                selectedFilter = "all"
+            }
         }
     }
     
@@ -404,6 +422,14 @@ extension IngredientsViewController: UICollectionViewDataSource {
             }
             let ingredient = ingredients[indexPath.item]
             cell.configure(with: ingredient) // 셀에 데이터 설정
+            
+            if indexPath == selectedCircleCellIndex {
+                cell.circleView.layer.borderWidth = 3 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(hex: 0x4BD9B3, alpha: 1.0).cgColor
+            } else {
+                cell.circleView.layer.borderWidth = 0 // 테두리 두께 설정
+                cell.circleView.layer.borderColor = UIColor(.clear).cgColor
+            }
             return cell
         }
         return UICollectionViewCell()
@@ -425,6 +451,8 @@ extension IngredientsViewController: UICollectionViewDelegate {
             updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
             getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "near-expiry")
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
+            selectedCircleCellIndex = indexPath
+            collectionView.reloadData()
             let selectedIngredient = ingredients[indexPath.item]
             showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출
         }

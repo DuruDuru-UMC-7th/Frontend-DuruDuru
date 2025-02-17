@@ -52,7 +52,7 @@ class MyCookingView: UIView {
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
         $0.estimatedItemSize = .init(width: 66, height: 26)
-        $0.minimumInteritemSpacing = 8
+        $0.minimumInteritemSpacing = 4
     }).then {
         $0.backgroundColor = .clear
         $0.isScrollEnabled = true

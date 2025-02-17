@@ -43,7 +43,7 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     let stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
-        $0.spacing = 6
+        $0.spacing = 3
     }
 
     // MARK: - Constraints & Add Function
@@ -56,12 +56,12 @@ class IngredientCategoryCollectionViewCell: UICollectionViewCell {
     
     private func setupConstraints() {
         stackView.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.centerY.equalToSuperview()
             $0.left.right.equalToSuperview().inset(8)
         }
 
         icon.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(12)
         }
     }
     

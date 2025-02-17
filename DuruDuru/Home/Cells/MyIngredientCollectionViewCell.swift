@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class MyIngredientCollectionViewCell: UICollectionViewCell {
     
@@ -70,7 +71,12 @@ class MyIngredientCollectionViewCell: UICollectionViewCell {
     // MARK: - Configuration
     
     func configure(with model: MyIngredientModel) {
-        ingredientImageView.image = model.ingredientImage
         ingredientNameLabel.text = model.ingredientName
+
+        if let imageUrl = model.ingredientImageUrl, let url = URL(string: imageUrl) {
+            ingredientImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+        } else {
+            ingredientImageView.image = UIImage(named: "placeholder")  // 기본 이미지 설정
+        }
     }
 }

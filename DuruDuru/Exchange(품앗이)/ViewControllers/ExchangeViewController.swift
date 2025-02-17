@@ -39,7 +39,11 @@ class ExchangeViewController: UIViewController {
         // API 요청
         getTown()
         getActiveTradeList()
-        getNearbyTradeList(tradeType: "SHARE")
+        if isShowingShareTrades {
+            getNearbyTradeList(tradeType: "SHARE")
+        } else {
+            getNearbyTradeList(tradeType: "EXCHANGE")
+        }
     }
     
     // MARK: - Functions

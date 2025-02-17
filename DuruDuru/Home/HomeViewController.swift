@@ -80,6 +80,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         setupButtonActions()
         
         fetchAndDisplayIngredients()
+        fetchAndDisplayTradeList()
     }
     
     // MARK: - Setup UI
@@ -132,6 +133,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         // 홈 화면 내 버튼 액션 (탭 전환 및 세그먼트 변경)
         myIngredientView.openFridgeButton.addTarget(self, action: #selector(didTapOpenFridgeButton), for: .touchUpInside)
         homeRecipeView.seeMoreButton.addTarget(self, action: #selector(didTapSeeMoreButton), for: .touchUpInside)
+        
+        
     }
     
     // MARK: - Button Actions
@@ -208,6 +211,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     // MARK: -- API
     
+    // 홈에서 식재료 가져오기
     func fetchHomeIngredients(completion: @escaping ([IngredientModel]) -> Void) {
         let baseUrl = "http://3.35.252.162:8080/fridge/recent"
 
@@ -234,6 +238,34 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
     }
 
+    private func fetchAndDisplayTradeList() {
+        fetchHomeTradeList { [weak self] trades in
+            DispatchQueue.main.async {
+                print("📌 나와 가까운 품앗이 데이터: \(trades)")
+                self?.nearbyView.updateTradeList(trades)
+            }
+        }
+    }
+
+    
+    // 홈에서 품앗이 가져오기
+    private func fetchHomeTradeList(completion: @escaping ([HomeTradeModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/trade/near/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<TradeListResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("홈 - 나와 가까운 품앗이 조회 성공!")
+
+                let trades = response.result.tradeList.map {HomeTradeModel(from: $0) }
+                completion(trades)
+
+            case .failure(let error):
+                print("홈 - 품앗이 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
 
     
     // MARK: - Setup Constraints

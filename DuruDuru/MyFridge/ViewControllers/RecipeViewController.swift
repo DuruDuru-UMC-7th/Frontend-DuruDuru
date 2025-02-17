@@ -167,9 +167,10 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let recipeDetailVC = RecipeDetailViewController()
-        // recipeDetailVC.recipe = recipes[indexPath.row] // 필요한 경우 데이터 전달
+        recipeDetailVC.recipeName = recipes[indexPath.row].recipeName
         navigationController?.pushViewController(recipeDetailVC, animated: true)
     }
+
 }
 
 // MARK: - UISearchBarDelegate
@@ -177,6 +178,6 @@ extension RecipeViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         recipeView.searchBar.resignFirstResponder()
-        // 검색 동작 구현 (예: API 호출 등)
+        
     }
 }

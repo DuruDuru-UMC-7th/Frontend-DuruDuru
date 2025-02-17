@@ -28,6 +28,7 @@ struct RecipeResult: Codable {
 
 /// 개별 레시피 데이터
 struct RecipeData: Codable {
+    //let recipeId: String
     let recipeName: String
     let imageUrl: String
     let favoriteCount: Int
@@ -36,17 +37,17 @@ struct RecipeData: Codable {
 
 /// 앱에서 사용할 레시피 모델
 struct RecipeModel {
-let titleImage: String
-let recipeName: String
-let favoriteCount: Int
-let tags: [String]
+    let titleImage: String
+    let recipeName: String
+    let favoriteCount: Int
+    let tags: [String]
 
-init(from apiRecipe: RecipeData) {
-    self.titleImage = apiRecipe.imageUrl
-    self.recipeName = apiRecipe.recipeName
-    self.favoriteCount = apiRecipe.favoriteCount
-    self.tags = RecipeModel.generateTags(from: apiRecipe.recipeName)
-}
+    init(from apiRecipe: RecipeData) {
+        self.titleImage = apiRecipe.imageUrl
+        self.recipeName = apiRecipe.recipeName
+        self.favoriteCount = apiRecipe.favoriteCount
+        self.tags = RecipeModel.generateTags(from: apiRecipe.recipeName)
+    }
 
 /// 태그를 생성하는 함수
 static func generateTags(from recipeName: String) -> [String] {

@@ -93,7 +93,6 @@ class IngredientTypeViewController: UIViewController {
     
     @objc private func didTapDateButton() {
         setIngredientType() // 종류 설정 API
-        setIngredientStorageType() // 보관 방식 설정 API
         let dateSelectionVC = DateSelectionViewController()
         dateSelectionVC.ingredientId = self.ingredientId
         navigationController?.pushViewController(dateSelectionVC, animated: true)
@@ -226,6 +225,7 @@ class IngredientTypeViewController: UIViewController {
                 switch result {
                 case .success(let response):
                     print("!!식재료 종류 등록 성공!! 식재료 아이디: \(response.result.ingredientId), 식재료 이름: \(response.result.ingredientName) 대분류: \(response.result.majorCategory), 소분류: \(response.result.minorCategory)")
+                    self.setIngredientStorageType()
                 case .failure(let error):
                     print("식재료 종류 네트워킹 오류: \(error)")
                 }

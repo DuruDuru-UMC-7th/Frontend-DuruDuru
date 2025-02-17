@@ -26,7 +26,7 @@ class MyIngredientView: UIView {
     }()
     
     /// "냉장고 열기" 버튼
-    private let openFridgeButton: UIButton = {
+    let openFridgeButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
         config.image = UIImage(named: "Right")

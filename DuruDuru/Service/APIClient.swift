@@ -13,7 +13,7 @@ final class APIClient {
     private let session: Session
     
     private init() {
-        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNzM5NzcyMzg1LCJleHAiOjE3Mzk3NzU5ODV9.gMkNd7QUY2YUvJ6KttbJIRrqJ_l09YdG9Xfbcp-snqs")
+        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNzM5NzgzMzY0LCJleHAiOjE3Mzk3ODY5NjR9.VcHgfFNuvotXfQaVgSL5F3RZkRG6jmLzN6mq0hLk4ZQ")
         session = Session(interceptor: interceptor)
     }
     
@@ -93,41 +93,4 @@ final class APIClient {
         
         return components.joined(separator: "&")
     }
-    
-//    /// 대분류에 따른 소분류 조회
-//    public func getIngredientCategories(
-//        majorCategory: String,
-//        completion: @escaping (Result<[String], Error>) -> Void
-//    ) {
-//        let baseUrl = "http://3.35.252.162:8080/ingredient/category/major-to-minor"
-//        
-//        let urlWithQuery = "\(baseUrl)?majorCategory=\(majorCategory.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
-//        
-//        print("Request URL: \(urlWithQuery)") // 디버깅용 출력
-//        
-//        session.request(urlWithQuery, method: .get)
-//            .validate()
-//            .responseDecodable(of: CategoryResponse.self) { response in
-//                switch response.result {
-//                case .success(let data):
-//                    if data.isSuccess {
-//                        completion(.success(data.result.minorCategoryList))
-//                    } else {
-//                        let error = NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: data.message])
-//                        completion(.failure(error))
-//                    }
-//                case .failure(let error):
-//                    print("오류 발생: \(error.localizedDescription)")
-//                    if let httpResponse = response.response {
-//                        print("Status Code: \(httpResponse.statusCode)")
-//                    }
-//                    if let data = response.data,
-//                       let errorMessage = String(data: data, encoding: .utf8) {
-//                        print("Response Data: \(errorMessage)")
-//                    }
-//                    completion(.failure(error))
-//                }
-//            }
-//    }
-    
 }

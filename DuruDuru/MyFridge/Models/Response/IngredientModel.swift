@@ -106,3 +106,16 @@ struct SetIngredientExpiryDateResult: Codable {
 }
 
 
+/// 앱에서 사용할 식재료 모델
+struct IngredientModel {
+    let ingredientId: Int
+    let name: String
+    var recipes: [RecipeModel]
+
+    init(from apiIngredient: MyIngredient) {
+        self.ingredientId = apiIngredient.ingredientId 
+        self.name = apiIngredient.ingredientName
+        self.recipes = []
+    }
+}
+

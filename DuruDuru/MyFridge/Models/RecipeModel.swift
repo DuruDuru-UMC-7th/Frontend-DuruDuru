@@ -6,48 +6,60 @@
 //
 
 import UIKit
+import Foundation
 
-/// 재료
-struct IngredientModel {
-    
-    let name: String
-    let recipes: [RecipeModel]
+
+/// API 응답을 위한 레시피 데이터 모델
+struct RecipeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: RecipeResult
 }
 
-/// 레시피
-struct RecipeModel {
-    
-    let titleImage: String
+/// 레시피 리스트의 페이지네이션 데이터 포함
+struct RecipeResult: Codable {
+    let page: Int
+    let size: Int
+    let totalPages: Int
+    let totalElements: Int
+    let recipes: [RecipeData]
+}
+
+/// 개별 레시피 데이터
+struct RecipeData: Codable {
     let recipeName: String
-    let tags: [String]
+    let imageUrl: String
+    let favoriteCount: Int
 }
 
-extension IngredientModel{
-    static func dummy() ->[IngredientModel]{
-        return[
-            IngredientModel(name:"계란", recipes: [
-                RecipeModel(titleImage: "계란 레시피1", recipeName: "황금계란볶음밥"
-                            ,tags: ["#초보", "#왕초보", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "계란 레시피2", recipeName: "계란조림"
-                            ,tags: ["#계란", "#양식", "쉬운요리", "한식"]),
-                RecipeModel(titleImage: "_계란 레시피3", recipeName: "폭탄계란찜"
-                            ,tags: ["#계란", "#양식", "쉬운요리", "한식"])
-            ]),
-            IngredientModel(name:"사과", recipes: [
-                RecipeModel(titleImage: "사과 레 1", recipeName: "사과 샌드위치"
-                            ,tags: ["#양식", "쉬운요리"]),
-                RecipeModel(titleImage: "사과 레 2", recipeName: "사과 토스트"
-                            ,tags: ["#양식", "쉬운요리"]),
-            ]),
-            IngredientModel(name:"돼지고기", recipes: [
-                RecipeModel(titleImage: "돼지 레 1", recipeName: "동파육"
-                            ,tags: ["#돼지", "#중식", "초보"]),
-                RecipeModel(titleImage: "돼지 레 2", recipeName: "삼겹살 덮밥"
-                            ,tags: ["#돼지", "한식"]),
-                RecipeModel(titleImage: "제육볶음", recipeName: "제육볶음"
-                            ,tags: ["#돼지", "제육볶음"])
-            ])
 
-        ]
+/// 앱에서 사용할 레시피 모델
+struct RecipeModel {
+let titleImage: String
+let recipeName: String
+let favoriteCount: Int
+let tags: [String]
+
+init(from apiRecipe: RecipeData) {
+    self.titleImage = apiRecipe.imageUrl
+    self.recipeName = apiRecipe.recipeName
+    self.favoriteCount = apiRecipe.favoriteCount
+    self.tags = RecipeModel.generateTags(from: apiRecipe.recipeName)
+}
+
+/// 태그를 생성하는 함수
+static func generateTags(from recipeName: String) -> [String] {
+    let keywords = ["찜", "국", "샐러드", "볶음", "구이", "김치"] // 대표적인 요리 키워드
+    var tags: [String] = []
+    
+    for keyword in keywords {
+        if recipeName.contains(keyword) {
+            tags.append("#\(keyword)")
+        }
     }
+    
+    return tags.isEmpty ? ["#요리"] : tags // 기본 태그 제공
 }
+}
+

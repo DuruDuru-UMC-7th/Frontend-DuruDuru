@@ -149,7 +149,7 @@ extension IngredientsTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeCollectionViewCell.identifier, for: indexPath) as! RecipeCollectionViewCell
         
-        let imageURL = recipes[indexPath.row].titleImage
+        let imageURL = recipes[indexPath.row].titleImage ?? ""
         cell.configure(imageURL: imageURL)
         
         return cell

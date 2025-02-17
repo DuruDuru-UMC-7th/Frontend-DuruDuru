@@ -14,6 +14,7 @@ class RecipeViewController: UIViewController {
     private var recipeView: RecipeView!
     var ingredientName: String?  // 전달 받은 재료 이름
     var recipes = [RecipeModel]()
+    var ingredient: IngredientModel!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -22,21 +23,24 @@ class RecipeViewController: UIViewController {
         recipeView = RecipeView(frame: self.view.bounds)
         self.view = recipeView
         
-        // 뒤로 가기 버튼 설정
         let backImage = UIImage(systemName: "chevron.left")
         let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
         self.navigationItem.leftBarButtonItem = backButton
         backButton.tintColor = .black
         
-        self.title = (ingredientName ?? "없음") + "을 사용하는 레시피"
+        self.title = (ingredient.name) + "을 사용하는 레시피"
         setupDelegate()
         setupOptionViewActions()
         
+        // 추천 레시피 가져오기
+        fetchRecipes()
+
         // 키보드 동작을 위한 제스처 추가
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
+
     
     // MARK: - Functions
     private func setupDelegate(){
@@ -118,6 +122,32 @@ class RecipeViewController: UIViewController {
         updateSelectedOrder(recipeView.recentFilter)
         // 추가 작업이 필요하면 여기에 구현
     }
+    
+    private func fetchRecipes() {
+        guard let ingredient = ingredient else { return }
+        
+        let baseUrl = "http://3.35.252.162:8080/recipes/recommend"
+        
+        let urlWithParams = "\(baseUrl)?ingredients=\(ingredient.ingredientId)&page=1&size=10"
+
+        APIClient.shared.request(urlWithParams, method: .get) { (result: Result<RecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("레시피 조회 성공: \(response)")
+                
+                // API 응답을 변환하여 RecipeModel 배열로 저장
+                self.recipes = response.result.recipes.map { RecipeModel(from: $0) }
+                
+                DispatchQueue.main.async {
+                    self.recipeView.recipeTableView.reloadData()
+                }
+                
+            case .failure(let error):
+                print("레시피 조회 실패: \(error)")
+            }
+        }
+    }
+    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate

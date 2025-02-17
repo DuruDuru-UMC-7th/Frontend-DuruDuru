@@ -12,7 +12,7 @@ class MyIngredientView: UIView {
     
     // MARK: - Properties
     
-    private let ingredients: [MyIngredientModel] = MyIngredientModel.dummyIngredient()
+    private var ingredients: [MyIngredientModel] = []
     
     // MARK: - UI Components
     
@@ -100,6 +100,13 @@ class MyIngredientView: UIView {
             $0.bottom.equalToSuperview().offset(-10)
         }
     }
+    
+    func updateIngredients(_ newIngredients: [MyIngredientModel]) {
+        self.ingredients = newIngredients
+        collectionView.reloadData() 
+    }
+    
+    
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
@@ -117,11 +124,13 @@ extension MyIngredientView: UICollectionViewDelegate, UICollectionViewDataSource
         ) as? MyIngredientCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: ingredients[indexPath.item])
+        
+        let ingredient = ingredients[indexPath.item]
+        cell.configure(with: ingredient)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 73, height: 103) // 셀 크기 조정
+        return CGSize(width: 73, height: 103)
     }
 }

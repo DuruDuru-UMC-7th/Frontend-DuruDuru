@@ -146,9 +146,9 @@ class RecipeTableViewCell: UITableViewCell {
     
     public func configure(recipe: RecipeModel) {
         if let imageURL = URL(string: recipe.titleImage) {
-             titleImage.kf.setImage(with: imageURL)  // ✅ Kingfisher로 URL 로드
+             titleImage.kf.setImage(with: imageURL)
          } else {
-             titleImage.image = UIImage(named: "placeholder")  // ✅ 기본 이미지 처리
+             titleImage.image = UIImage(named: "placeholder")
          }
          
         recipeName.text = recipe.recipeName

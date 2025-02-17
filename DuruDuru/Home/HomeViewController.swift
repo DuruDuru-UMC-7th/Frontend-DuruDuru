@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import Alamofire
 
 class HomeViewController: UIViewController, UISearchBarDelegate {
 
@@ -20,6 +21,11 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     private let myIngredientView = MyIngredientView()
     private let nearbyView = NearbyView()
     private let homeRecipeView = HomeRecipeView()
+    
+    private var ingredients: [MyIngredient] = []
+
+    
+    
     
     // 옵션 뷰 관련 (정렬 드롭다운 등)
     private let darkBackgroundView = UIView().then {
@@ -72,6 +78,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         setUpUIBar()
         setupDelegate()
         setupButtonActions()
+        
+        fetchAndDisplayIngredients()
     }
     
     // MARK: - Setup UI
@@ -196,6 +204,37 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             myFridgeVC.selectSegment(.cooking)
         }
     }
+    
+    
+    // MARK: -- API
+    
+    func fetchHomeIngredients(completion: @escaping ([IngredientModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/fridge/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("내 냉장고 식재료 조회 성공: \(response)")
+
+                let ingredients = response.result.ingredients.map { IngredientModel(from: $0) }
+                completion(ingredients)
+
+            case .failure(let error):
+                print("내 냉장고 식재료 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
+
+    private func fetchAndDisplayIngredients() {
+        fetchHomeIngredients { [weak self] ingredients in
+            DispatchQueue.main.async {
+                self?.myIngredientView.updateIngredients(ingredients.map { MyIngredientModel(from: $0) })
+            }
+        }
+    }
+
+
     
     // MARK: - Setup Constraints
     

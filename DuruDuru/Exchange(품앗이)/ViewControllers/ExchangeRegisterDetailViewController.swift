@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import PhotosUI
 
-class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate {
+class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
@@ -16,6 +17,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     private var selectedMethod: String? = nil
     private var isUnitDropDownView: Bool = false
     private var unitDropDownView: UnitDropdownView!
+    private var images: [UIImage]?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -26,9 +28,9 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
         detailView.configure(with: ingredient!)
         detailView.descriptionTextView.delegate = self
         // 키보드 동작을 위한 제스쳐
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
+        detailView.ingredientImageView.isUserInteractionEnabled = true
+        detailView.ingredientImageView.addGestureRecognizer(tapGesture)
     }
     
     override func loadView() {
@@ -64,7 +66,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
-
+    
     @objc private func didTapCloseButton() {
         if let presentingVC = presentingViewController {
             presentingVC.dismiss(animated: true, completion: nil)
@@ -108,14 +110,14 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
             // 드롭다운 선택 시 버튼 업데이트
             unitDropDownView?.didSelectUnit = { [weak self] (selectedUnit: String) in
                 guard let self = self else { return }
-
+                
                 self.detailView.unitButtonTitle.text = selectedUnit
                 self.hideDropdown(unitDropDownView)
                 self.unitDropDownView = nil
                 self.isUnitDropDownView = false
             }
         }
-
+        
         // 드롭다운이 이미 보이는지 확인
         if isUnitDropDownView {
             // 드롭다운이 보이면 숨김
@@ -140,7 +142,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
             isUnitDropDownView = true
         }
     }
-
+    
     // 드롭다운 숨기기 메서드
     private func hideDropdown(_ dropdownView: UnitDropdownView) {
         print("숨기기")
@@ -153,7 +155,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
             dropdownView.removeFromSuperview()
         }
     }
-
+    
     @objc private func didTapShareButton() {
         selectedMethod = "나눔"
         detailView.updateButtonStyle(
@@ -180,16 +182,26 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
             present(mainVC, animated: true, completion: nil)
         }
     }
-
+    
+    @objc private func imageViewTapped() {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 10 // 선택할 수 있는 이미지의 최대 개수 (0은 무제한)
+        configuration.filter = .images // 이미지만 선택 가능하도록 필터링
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
     // MARK: - UITextViewDelegate
     func textViewDidBeginEditing(_ textView: UITextView) {
         // 키보드가 나타날 때 추가 동작이 필요하면 여기에 작성
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         // 키보드가 사라질 때 추가 동작이 필요하면 여기에 작성
     }
-
+    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" { // Return 키가 눌렸을 때
             textView.resignFirstResponder() // 키보드 숨기기
@@ -197,10 +209,53 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
         }
         return true
     }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true) // 키보드 숨기기
-    }
 }
 
+extension ExchangeRegisterDetailViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        
+        // 선택된 이미지가 없으면 종료
+        guard !results.isEmpty else { return }
+        
+        // 임시 배열 초기화 (순서 보장을 위해)
+        var imagesTemp = [UIImage?](repeating: nil, count: results.count)
+        let dispatchGroup = DispatchGroup()
+        
+        // 모든 이미지 비동기 로드
+        for (index, result) in results.enumerated() {
+            dispatchGroup.enter()
+            let itemProvider = result.itemProvider
+            
+            // 이미지 로드 시작
+            if itemProvider.canLoadObject(ofClass: UIImage.self) {
+                itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+                    DispatchQueue.main.async {
+                        defer { dispatchGroup.leave() }
+                        guard let self = self, let image = image as? UIImage else { return }
+                        
+                        // 임시 배열에 저장 (순서 보장)
+                        imagesTemp[index] = image
+                        
+                        // 첫 번째 이미지는 즉시 표시
+                        if index == 0 {
+                            self.detailView.ingredientImageView.image = image
+                        }
+                    }
+                }
+            } else {
+                dispatchGroup.leave()
+            }
+        }
+        
+        // 모든 이미지 로드 완료 후 처리
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            
+            // nil 제거 후 images 배열에 저장
+            self.images = imagesTemp.compactMap { $0 }
+            print("모든 이미지 로드 완료: \(self.images?.count)장")
+        }
+    }
+}
 

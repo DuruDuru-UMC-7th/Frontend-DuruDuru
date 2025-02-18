@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import Alamofire
 
 class HomeViewController: UIViewController, UISearchBarDelegate {
 
@@ -20,6 +21,11 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     private let myIngredientView = MyIngredientView()
     private let nearbyView = NearbyView()
     private let homeRecipeView = HomeRecipeView()
+    
+    private var ingredients: [MyIngredient] = []
+
+    
+    
     
     // 옵션 뷰 관련 (정렬 드롭다운 등)
     private let darkBackgroundView = UIView().then {
@@ -72,6 +78,9 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         setUpUIBar()
         setupDelegate()
         setupButtonActions()
+        
+        fetchAndDisplayIngredients()
+        fetchAndDisplayTradeList()
     }
     
     // MARK: - Setup UI
@@ -196,6 +205,66 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             myFridgeVC.selectSegment(.cooking)
         }
     }
+    
+    
+    // MARK: -- API
+    
+    func fetchHomeIngredients(completion: @escaping ([IngredientModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/fridge/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<IngredientResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("내 냉장고 식재료 조회 성공: \(response)")
+
+                let ingredients = response.result.ingredients.map { IngredientModel(from: $0) }
+                completion(ingredients)
+
+            case .failure(let error):
+                print("내 냉장고 식재료 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
+
+    private func fetchAndDisplayIngredients() {
+        fetchHomeIngredients { [weak self] ingredients in
+            DispatchQueue.main.async {
+                self?.myIngredientView.updateIngredients(ingredients.map { MyIngredientModel(from: $0) })
+            }
+        }
+    }
+
+
+    // MARK: -- 나와 가까운 품앗이
+    
+    private func fetchAndDisplayTradeList() {
+        fetchHomeTradeList { [weak self] trades in
+            DispatchQueue.main.async {
+                print("나와 가까운 품앗이 데이터: \(trades)")
+                self?.nearbyView.updateTradeList(trades)
+            }
+        }
+    }
+
+    private func fetchHomeTradeList(completion: @escaping ([HomeTradeModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/trade/near/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<TradeListResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("홈 - 나와 가까운 품앗이 조회 성공!")
+
+                let trades = response.result.tradeList.map { HomeTradeModel(from: $0) }
+                completion(trades)
+
+            case .failure(let error):
+                print("홈 - 품앗이 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
+
     
     // MARK: - Setup Constraints
     

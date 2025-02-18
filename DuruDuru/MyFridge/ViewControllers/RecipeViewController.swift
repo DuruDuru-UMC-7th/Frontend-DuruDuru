@@ -127,8 +127,8 @@ class RecipeViewController: UIViewController {
         guard let ingredient = ingredient else { return }
         
         let baseUrl = "http://3.35.252.162:8080/recipes/recommend"
-        
-        let urlWithParams = "\(baseUrl)?ingredients=\(ingredient.ingredientId)&page=1&size=10"
+        let encodedIngredientName = ingredient.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlWithParams = "\(baseUrl)?ingredients=\(encodedIngredientName)&page=1&size=10"
 
         APIClient.shared.request(urlWithParams, method: .get) { (result: Result<RecipeResponse, Error>) in
             switch result {

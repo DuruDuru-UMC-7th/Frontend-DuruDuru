@@ -16,7 +16,7 @@ class RecipeDetailView: UIView {
         self.backgroundColor = .white
         addComponents()
         constraints()
-        configureData()
+        //configureData()
     }
     
     required init?(coder: NSCoder) {
@@ -336,49 +336,6 @@ class RecipeDetailView: UIView {
         }
         subIngredientCollectionView.snp.updateConstraints { make in
             make.height.equalTo(subContentHeight)
-        }
-    }
-    
-    private func configureData() {
-        recipeName.text = "황금계란볶음밥"
-        time.text = "15분"
-        likeCountLabel.text = "45"
-        
-        // 태그 설정
-        let tags = ["#간편한", "#한식", "#초보용"]
-        for tag in tags {
-            let tagLabel = createTagLabel(text: tag)
-            tagsStackView.addArrangedSubview(tagLabel)
-        }
-        
-        // 조리법 단계 설정
-        let instructions = [
-            """
-            계란 2개를 풀어 소금 1T을 넣고 잘 섞습니다.
-            양파 1/2개, 대파 1줄기, 당근 1/2개를 잘게 다집니다.
-            밥 1공기를 준비합니다.
-            """,
-            """
-            팬에 식용유를 두르고 중불로 달군 뒤, 풀어둔 계란을 넣습니다.
-            계란이 반쯤 익었을 때 젓가락으로 저어 스크램블을 만듭니다.
-            """,
-            """
-            식용유를 조금 더 두르고 다진 양파, 대파, 당근을 넣고 볶습니다.
-            야채가 부드러워질 때까지 중불에서 약 2~3분간 볶습니다.
-            """,
-            """
-            식용유를 조금 더 두르고 다진 양파, 대파, 당근을 넣고 볶습니다.
-            야채가 부드러워질 때까지 중불에서 약 2~3분간 볶습니다.
-            """,
-            """
-            식용유를 조금 더 두르고 다진 양파, 대파, 당근을 넣고 볶습니다.
-            야채가 부드러워질 때까지 중불에서 약 2~3분간 볶습니다.
-            """,
-        ]
-        
-        for (index, instruction) in instructions.enumerated() {
-            let instructionLabel = createInstructionLabel(text: instruction, index: index + 1)
-            instructionsStackView.addArrangedSubview(instructionLabel)
         }
     }
     

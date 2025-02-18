@@ -92,3 +92,35 @@ struct TradeLikeCountResult: Codable {
     let likeCount: Int
 }
 
+struct TradeListResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: TradeListResult
+}
+
+struct TradeListResult: Codable {
+    let totalCount: Int
+    let tradeList: [Trade]
+}
+
+struct Trade: Codable {
+    let tradeId: Int
+    let memberId: Int
+    let ingredientId: Int
+    let ingredientCount: Int
+    let expiryDate: String
+    let title: String
+    let eupmyeondong: String
+    let status: String
+    let tradeType: String
+    let likeCount: Int
+    let createdAt: String
+    let updatedAt: String
+    let thumbnailImgUrl: String?
+
+    var thumbnailImgURL: String? {
+        return thumbnailImgUrl
+    }
+}
+

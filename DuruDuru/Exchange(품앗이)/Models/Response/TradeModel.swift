@@ -117,10 +117,10 @@ struct Trade: Codable {
     let likeCount: Int
     let createdAt: String
     let updatedAt: String
-    let tradeImgs: [String]?
+    let thumbnailImgUrl: String?
 
     var thumbnailImgURL: String? {
-        return tradeImgs?.first // 첫 번째 이미지 URL을 대표 이미지로 사용
+        return thumbnailImgUrl
     }
 }
 

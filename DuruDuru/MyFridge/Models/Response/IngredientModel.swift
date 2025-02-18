@@ -110,12 +110,15 @@ struct SetIngredientExpiryDateResult: Codable {
 struct IngredientModel {
     let ingredientId: Int
     let name: String
+    var imageUrl: String?
     var recipes: [RecipeModel]
 
     init(from apiIngredient: MyIngredient) {
-        self.ingredientId = apiIngredient.ingredientId 
+        self.ingredientId = apiIngredient.ingredientId
         self.name = apiIngredient.ingredientName
+        self.imageUrl = apiIngredient.ingredientImageUrl 
         self.recipes = []
     }
 }
+
 

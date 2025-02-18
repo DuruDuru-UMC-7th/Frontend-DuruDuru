@@ -12,25 +12,32 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
-    var ingredient: MyIngredient? // 선택된 식재료
+    var ingredient: MyIngredient! // 선택된 식재료
     private var quantity: Int = 0
-    private var selectedMethod: String? = nil
+    private var tradeType: String = "SHARE"
     private var isUnitDropDownView: Bool = false
     private var unitDropDownView: UnitDropdownView!
-    private var images: [UIImage]?
+    private var images: [UIImage]!
+    private var selectedUnit: String?
+    private let placeholderText = "품앗이 할 식재료의 상태를 자세히 설명해주세요.\n건강하고 알뜰한 품앗이 문화를 함께 만들어나가요!"
+    private var tradeId: Int! = nil
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationItem.hidesBackButton = true
         setupActions() // 버튼 동작 설정
         setUpUI()
         detailView.configure(with: ingredient!)
         detailView.descriptionTextView.delegate = self
+        
         // 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         detailView.ingredientImageView.isUserInteractionEnabled = true
         detailView.ingredientImageView.addGestureRecognizer(tapGesture)
+        
+        checkNextButtonActivation()
     }
     
     override func loadView() {
@@ -89,6 +96,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     private func updateQuantityLabel() {
         detailView.quantityValueLabel.text = "\(quantity)"
+        checkNextButtonActivation()
     }
     
     // 단위버튼
@@ -112,9 +120,11 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
                 guard let self = self else { return }
                 
                 self.detailView.unitButtonTitle.text = selectedUnit
+                self.selectedUnit = selectedUnit
                 self.hideDropdown(unitDropDownView)
                 self.unitDropDownView = nil
                 self.isUnitDropDownView = false
+                self.checkNextButtonActivation()
             }
         }
         
@@ -145,7 +155,6 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     // 드롭다운 숨기기 메서드
     private func hideDropdown(_ dropdownView: UnitDropdownView) {
-        print("숨기기")
         detailView.unitButton.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         detailView.line2.isHidden = true
         dropdownView.removeFromSuperview()
@@ -157,7 +166,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     }
     
     @objc private func didTapShareButton() {
-        selectedMethod = "나눔"
+        tradeType = "SHARE"
         detailView.updateButtonStyle(
             selectedButton: detailView.shareButton,
             deselectedButton: detailView.exchangeButton
@@ -165,7 +174,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     }
     
     @objc private func didTapExchangeButton() {
-        selectedMethod = "교환"
+        tradeType = "EXCHANGE"
         detailView.updateButtonStyle(
             selectedButton: detailView.exchangeButton,
             deselectedButton: detailView.shareButton
@@ -174,12 +183,21 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     // 품앗이 등록 완료
     @objc private func didTapCompleteButton() {
-        if let navigationController = self.navigationController {
-            navigationController.popToRootViewController(animated: true)
-        } else {
-            let mainVC = ExchangeViewController()
-            mainVC.modalPresentationStyle = .fullScreen
-            present(mainVC, animated: true, completion: nil)
+        setTrade { [weak self] tradeId in
+            guard let self = self else { return }
+            
+            if let tradeId = tradeId {
+                let exchangeDetailVC = ExchangeDetailViewController()
+                exchangeDetailVC.tradeId = tradeId // tradeId를 ExchangeDetailViewController에 전달
+                
+                // 화면 전환
+                DispatchQueue.main.async {
+                    self.navigationController?.pushViewController(exchangeDetailVC, animated: true)
+                }
+            } else {
+                // 에러 처리 (예: 알림 표시)
+                print("tradeId를 가져오는 데 실패했습니다.")
+            }
         }
     }
     
@@ -194,12 +212,21 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     }
     
     // MARK: - UITextViewDelegate
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        // 키보드가 나타날 때 추가 동작이 필요하면 여기에 작성
-    }
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        // 플레이스홀더 텍스트일 때 초기화
+        if textView.text == placeholderText && textView.textColor == UIColor(hex: 0xB3B3B3, alpha: 1.0) {
+            textView.text = ""
+            textView.textColor = .black // 실제 입력 텍스트 색상
+        }
+    }
+
     func textViewDidEndEditing(_ textView: UITextView) {
-        // 키보드가 사라질 때 추가 동작이 필요하면 여기에 작성
+        // 텍스트가 비어있으면 플레이스홀더 표시
+        if textView.text.isEmpty {
+            textView.text = placeholderText
+            textView.textColor = UIColor(hex: 0xB3B3B3, alpha: 1.0)
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -208,6 +235,50 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
             return false // 기본 동작 방지
         }
         return true
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        checkNextButtonActivation()
+    }
+    
+    // nextButton 활성화 조건 체크
+    private func checkNextButtonActivation() {
+        let isImageSelected = (images?.count ?? 0) >= 1
+        let isQuantityValid = quantity > 0
+        let isUnitSelected = selectedUnit != nil
+        let isDescriptionValid = !detailView.descriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        
+        let isAllValid = isImageSelected && isQuantityValid && isUnitSelected && isDescriptionValid
+        
+        detailView.updateNextButtonState(isEnabled: isAllValid)
+    }
+    
+    // MARK: - API 관련
+    
+    // 품앗이 등록 API
+    func setTrade(completion: @escaping (Int?) -> Void) {
+        let url = "http://3.35.252.162:8080/trade/"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "ingredientId": ingredient.ingredientId
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // multipart/form-data 요청
+        APIClient.shared.uploadTrade(url: urlWithQuery, ingredientCount: self.quantity, body: self.detailView.descriptionTextView.text, tradeType: self.tradeType, images: self.images) { (result: Result<TradeResponse, Error>) in
+                switch result {
+                case .success(let response):
+                    let tradeId = response.result.tradeId
+                    completion(tradeId)
+                    print("품앗이 등록 성공 \n tradeId: \(response.result.tradeId) \n title: \(response.result.title) \n ingredientCount: \(response.result.ingredientCount) \n tradeType: \(response.result.tradeType)")
+                case .failure(let error):
+                    print("식재료 이미지 등록 네트워킹 오류: \(error)")
+                    completion(nil)
+                }
+            }
     }
 }
 
@@ -255,6 +326,7 @@ extension ExchangeRegisterDetailViewController: PHPickerViewControllerDelegate {
             // nil 제거 후 images 배열에 저장
             self.images = imagesTemp.compactMap { $0 }
             print("모든 이미지 로드 완료: \(self.images?.count)장")
+            self.checkNextButtonActivation()
         }
     }
 }

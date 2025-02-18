@@ -15,7 +15,7 @@ class ExchangeRegisterView: UIView {
     /// 상단 구분선
     let topSeparator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.systemGreen
+        view.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
         return view
     }()
     

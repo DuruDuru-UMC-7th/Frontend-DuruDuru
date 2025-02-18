@@ -30,7 +30,12 @@ struct TradeResult: Codable {
     let likeCount: Int
     let createdAt: String
     let updatedAt: String
-    let tradeImgs: [String]?
+    let tradeImgs: [TredeImage]?
+}
+
+struct TredeImage: Codable {
+    let tradeImgId: Int
+    let tradeImgUrl: String
 }
 
 struct OtherTradeResponse: Codable {

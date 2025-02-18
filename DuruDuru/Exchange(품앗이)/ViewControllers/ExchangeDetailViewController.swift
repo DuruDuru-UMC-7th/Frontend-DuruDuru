@@ -70,7 +70,12 @@ class ExchangeDetailViewController: UIViewController {
     }
     
     @objc func backButtonTapped() {
-        self.navigationController?.popViewController(animated: true)
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: true, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+        }
     }
     
     @objc func imageButtonTapped() {

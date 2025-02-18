@@ -13,7 +13,7 @@ class ExchangeRegisterDetailView: UIView {
     // MARK: - UI 컴포넌트
     
     let topSeparator = UIView().then {
-        $0.backgroundColor = UIColor.systemGreen
+        $0.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
     }
     
     let topSeparator2 = UIView().then {
@@ -135,12 +135,12 @@ class ExchangeRegisterDetailView: UIView {
     let descriptionTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = UIColor.lightGray.cgColor
-        textView.layer.cornerRadius = 8
+        textView.layer.borderColor = UIColor(hex: 0xDCDCDC, alpha: 1.0).cgColor
+        textView.layer.cornerRadius = 5
         textView.font = .systemFont(ofSize: 14)
         textView.text = "품앗이 할 식재료의 상태를 자세히 설명해주세요.\n건강하고 알뜰한 품앗이 문화를 함께 만들어나가요!"
-        textView.textColor = .systemGray
-        textView.textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 10, right: 10)
+        textView.textColor = UIColor(hex: 0xB3B3B3, alpha: 1.0)
+        textView.textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
 
         return textView
     }()
@@ -158,10 +158,11 @@ class ExchangeRegisterDetailView: UIView {
     let shareButton: UIButton = {
         let button = UIButton()
         button.setTitle("나눔", for: .normal)
-        button.setTitleColor(.systemGray, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
+        button.layer.borderColor = UIColor(hex: 0x00C269, alpha: 1.0).cgColor
         button.layer.cornerRadius = 6
         return button
     }()
@@ -170,10 +171,10 @@ class ExchangeRegisterDetailView: UIView {
     let exchangeButton: UIButton = {
         let button = UIButton()
         button.setTitle("교환", for: .normal)
-        button.setTitleColor(.systemGray, for: .normal)
+        button.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderColor = UIColor(hex: 0x70737C, alpha: 0.22).cgColor
         button.layer.cornerRadius = 6
         return button
     }()
@@ -368,12 +369,12 @@ class ExchangeRegisterDetailView: UIView {
     // MARK: - 버튼 스타일 업데이트
     func updateButtonStyle(selectedButton: UIButton, deselectedButton: UIButton) {
         selectedButton.setTitleColor(.white, for: .normal)
-        selectedButton.backgroundColor = .systemGreen
-        selectedButton.layer.borderColor = UIColor.systemGreen.cgColor
+        selectedButton.backgroundColor = UIColor(hex: 0x00C269, alpha: 1.0)
+        selectedButton.layer.borderColor = UIColor(hex: 0x00C269, alpha: 1.0).cgColor
         
-        deselectedButton.setTitleColor(.systemGray, for: .normal)
+        deselectedButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
         deselectedButton.backgroundColor = .white
-        deselectedButton.layer.borderColor = UIColor.lightGray.cgColor
+        deselectedButton.layer.borderColor = UIColor(hex: 0x70737C, alpha: 0.22).cgColor
     }
     
     func configure(with ingredient: MyIngredient) {

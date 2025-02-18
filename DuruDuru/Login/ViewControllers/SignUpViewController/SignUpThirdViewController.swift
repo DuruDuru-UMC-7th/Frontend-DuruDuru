@@ -15,7 +15,6 @@ class SignUpThirdViewController: UIViewController {
     }
     
     // MARK: - Property
-    
     private lazy var signUpThirdView: SignUpThirdView = {
         let view = SignUpThirdView()
         view.backButton.addTarget(self, action: #selector(backFunction), for: .touchUpInside)
@@ -23,7 +22,6 @@ class SignUpThirdViewController: UIViewController {
     }()
     
     // MARK: - Functions
-    
     @objc private func backFunction() {
         navigationController?.popViewController(animated: true)
     }

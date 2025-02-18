@@ -9,23 +9,17 @@ import UIKit
 
 class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
-    
-    /// 아이디, 비번 지정 변수
-    let userInfo: UserInfo = UserInfo(id: "1234", pwd: "1234")
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = loginView
-        
         setupDelegate()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        /// 이메일 텍스트 필드에 포커스
+        super.viewDidAppear(animated)
         loginView.emailTextField.becomeFirstResponder()
     }
     
-    /// 커스텀으로 작성한 로그인 뷰
     private lazy var loginView: EmailLoginView = {
         let view = EmailLoginView()
         view.backButton.addTarget(self, action: #selector(backFunction), for: .touchUpInside)
@@ -33,79 +27,84 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
         view.signUpButton.addTarget(self, action: #selector(toSignUpFunction), for: .touchUpInside)
         return view
     }()
-
-    // MARK: - Function
     
-    /// delegate
     private func setupDelegate() {
         loginView.emailTextField.delegate = self
         loginView.passwordTextField.delegate = self
     }
     
-    //키보드 delegate
+    // MARK: - UITextField Delegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if(textField.isEqual(loginView.emailTextField)){ /// emailTextField에서 리턴 누르면
-            loginView.passwordTextField.becomeFirstResponder() /// passwordTextField로 포커스 이동
+        if textField == loginView.emailTextField {
+            loginView.passwordTextField.becomeFirstResponder()
         }
         endEdit()
         return true
     }
     
-    func endEdit(){
-        loginView.passwordTextField.resignFirstResponder()//키보드 숨기기
+    func endEdit() {
+        loginView.passwordTextField.resignFirstResponder()
     }
     
-    /// 데이터 모델에 지정한 아이디, 비밀번호에 해당 할 경우 로그인 가능하도록 하는 함수
+    // MARK: - 로그인 API 연결
     @objc private func loginFunction() {
-        guard let inputId = loginView.emailTextField.text,
-              let inputPwd = loginView.passwordTextField.text,
-              !inputId.isEmpty, !inputPwd.isEmpty else {
+        guard let email = loginView.emailTextField.text, !email.isEmpty,
+              let password = loginView.passwordTextField.text, !password.isEmpty else {
             print("아이디와 비밀번호를 입력해주세요")
+            showAlert(message: "아이디와 비밀번호를 입력해주세요")
             return
         }
         
-        if let storedUserInfo = UserInfo.loadUserDefaults() {
-            if storedUserInfo.id == inputId && storedUserInfo.pwd == inputPwd {
-                print("기존 사용자 로그인 성공")
-                changeRootView()
-            } else {
-                print("아이디 또는 비밀번호 불일치")
+        print("입력한 이메일: \(email), 비밀번호: \(password)")
+        
+        // 로그인 API 호출 (Alamofire 사용)
+        EmailLoginService.shared.login(email: email, password: password) { [weak self] success, message in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                if success {
+                    print("로그인 API 호출 성공")
+                    self.changeRootView()
+                } else {
+                    print("로그인 API 호출 실패 - 메시지: \(message ?? "알 수 없는 오류")")
+                    self.showAlert(message: message ?? "로그인에 실패했습니다.")
+                }
             }
-        } else {
-            let newUserInfo = UserInfo(id: inputId, pwd: inputPwd)
-            newUserInfo.saveUserDefaults()
-            print("아이디 비밀번호 새롭게 갱신 및 로그인 성공")
-            changeRootView()
         }
     }
     
-    /// 로그인 뷰 -> TabBarController 루트 뷰 전환 함수
     private func changeRootView() {
         let rootVC = MainTabBarController()
-        
-        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene, let sceneDelegate = window.delegate as? SceneDelegate, let window = sceneDelegate.window {
+        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = window.delegate as? SceneDelegate,
+           let window = sceneDelegate.window {
             window.rootViewController = rootVC
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
         }
     }
     
-    /// 뒤로가기 함수
     @objc private func backFunction() {
-        let VC = LoginViewController()
-        
-        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene, let sceneDelegate = window.delegate as? SceneDelegate, let window = sceneDelegate.window {
-            window.rootViewController = VC
+        let vc = LoginViewController()
+        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = window.delegate as? SceneDelegate,
+           let window = sceneDelegate.window {
+            window.rootViewController = vc
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
         }
     }
     
-    /// 회원가입으로 이동 함수
     @objc private func toSignUpFunction() {
-        let VC = SignUpFirstViewController()
-        
-        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene, let sceneDelegate = window.delegate as? SceneDelegate, let window = sceneDelegate.window {
-            window.rootViewController = VC
+        let vc = SignUpFirstViewController()
+        if let window = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = window.delegate as? SceneDelegate,
+           let window = sceneDelegate.window {
+            window.rootViewController = vc
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
         }
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
 }

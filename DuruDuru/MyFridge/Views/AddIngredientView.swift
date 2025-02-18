@@ -65,26 +65,20 @@ class AddIngredientView: UIView {
     }()
     
     /// 수량 감소 버튼
-    let minusButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("−", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
-        button.backgroundColor = UIColor.systemGray6
-        button.layer.cornerRadius = 8
-        return button
-    }()
+    let minusButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "minus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        $0.tintColor = .black
+    }
     
     /// 수량 증가 버튼
-    let plusButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("+", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
-        button.backgroundColor = UIColor.systemGray6
-        button.layer.cornerRadius = 8
-        return button
-    }()
+    let plusButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        $0.tintColor = .black
+    }
     
     /// 수량 표시 레이블
     let quantityValueLabel: UILabel = {
@@ -99,16 +93,18 @@ class AddIngredientView: UIView {
     let nextButton = UIButton().then {
         $0.setTitle("종류 설정하러 가기", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        $0.backgroundColor = .systemGray4
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.cornerRadius = 8
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        $0.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        $0.layer.cornerRadius = 10
         $0.isEnabled = false
     }
 
     func updateNextButtonState(isEnabled: Bool) {
         nextButton.isEnabled = isEnabled
-        nextButton.backgroundColor = isEnabled ? .systemGreen : .systemGray4
+        nextButton.backgroundColor = isEnabled ? UIColor(hex: 0x00C269) : UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        nextButton.setTitleColor(isEnabled ? .white : UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
     }
+    
     // MARK: - Init
     
     override init(frame: CGRect) {

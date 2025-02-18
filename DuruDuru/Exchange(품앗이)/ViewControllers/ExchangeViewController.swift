@@ -58,8 +58,6 @@ class ExchangeViewController: UIViewController {
     
     private func setupActions() {
         exchangeView.floatingButton.addTarget(self, action: #selector(didTapFloatingButton), for: .touchUpInside)
-        exchangeView.registerPoomButton.addTarget(self, action: #selector(didTapRegisterPoom), for: .touchUpInside)
-        exchangeView.registerTogetherButton.addTarget(self, action: #selector(didTapRegisterTogether), for: .touchUpInside)
         exchangeView.shareButton.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
         exchangeView.exchangeButton.addTarget(self, action: #selector(didTapExchangeButton), for: .touchUpInside)
     }
@@ -79,24 +77,9 @@ class ExchangeViewController: UIViewController {
     
     /// 플로팅 버튼 클릭 시 동작
     @objc private func didTapFloatingButton() {
-        isFloatingExpanded.toggle()
-        
-        UIView.animate(withDuration: 0.3) {
-            self.exchangeView.updateFloatingButtons(isExpanded: self.isFloatingExpanded)
-        }
-    }
-    
-    /// "품앗이 등록하기" 버튼 클릭 시 동작
-    @objc private func didTapRegisterPoom() {
         let registerVC = ExchangeRegisterViewController()
         registerVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(registerVC, animated: true)
-    }
-    
-    /// "함께 먹자 등록하기" 버튼 클릭 시 동작
-    @objc private func didTapRegisterTogether() {
-        let togetherVC = ExchangeRegisterDetailViewController()
-        navigationController?.pushViewController(togetherVC, animated: true)
     }
     
     @objc private func didTapLocationButton() {

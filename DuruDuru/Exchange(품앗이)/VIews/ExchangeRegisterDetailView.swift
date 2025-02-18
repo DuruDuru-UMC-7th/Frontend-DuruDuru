@@ -44,6 +44,7 @@ class ExchangeRegisterDetailView: UIView {
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .black
         label.textAlignment = .center
+        label.text = "남은 소비기한"
         return label
     }()
     
@@ -65,26 +66,20 @@ class ExchangeRegisterDetailView: UIView {
     }()
     
     /// 수량 감소 버튼
-    let minusButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("−", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
-        button.backgroundColor = UIColor.systemGray6
-        button.layer.cornerRadius = 8
-        return button
-    }()
+    let minusButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "minus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        $0.tintColor = .black
+    }
     
     /// 수량 증가 버튼
-    let plusButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("+", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
-        button.backgroundColor = UIColor.systemGray6
-        button.layer.cornerRadius = 8
-        return button
-    }()
+    let plusButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.layer.cornerRadius = 8.91
+        $0.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        $0.tintColor = .black
+    }
     
     /// 수량 표시 레이블
     let quantityValueLabel: UILabel = {
@@ -98,17 +93,33 @@ class ExchangeRegisterDetailView: UIView {
     
     /// 단위 버튼 (UILabel + UIImageView 조합)
     let unitButton = UIButton().then {
-        let configuration = UIButton.Configuration.plain()
-        $0.configuration = configuration
-        $0.configuration?.image = UIImage(named: "Arrow")
-        $0.configuration?.imagePlacement = .trailing // 화살표를 텍스트 오른쪽에 배치
-        $0.configuration?.imagePadding = 37 // 텍스트와 이미지 간격
-        $0.configuration?.baseForegroundColor = .gray
-        $0.configuration?.attributedTitle = AttributedString("단위", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14)]))
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(hex: 0x70737C85).cgColor
+        $0.layer.borderColor = UIColor(hex: 0x70737C, alpha: 0.52).cgColor
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true
+        $0.backgroundColor = .white
+    }
+    
+    let unitButtonTitle = UILabel().then {
+        $0.text = "단위"
+        $0.textColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        $0.font = UIFont.systemFont(ofSize: 14)
+        $0.textAlignment = .center
+    }
+    
+    let unitButtonImage = UIImageView().then {
+        $0.image = UIImage(systemName: "chevron.down")?.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        $0.contentMode = .scaleAspectFill
+    }
+    
+    let line = UIView().then {
+        $0.backgroundColor = .white
+    }
+    
+    let line2 = UIView().then {
+        $0.backgroundColor = .white
+        $0.isHidden = true
     }
 
     /// 설명 라벨
@@ -172,11 +183,18 @@ class ExchangeRegisterDetailView: UIView {
         let button = UIButton(type: .system)
         button.setTitle("품앗이 등록 완료", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemGreen
+        button.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        button.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
         button.layer.cornerRadius = 10
+        button.isEnabled = false
         return button
     }()
+    
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        nextButton.backgroundColor = isEnabled ? UIColor(hex: 0x00C269) : UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        nextButton.setTitleColor(isEnabled ? .white : UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+    }
     
     // MARK: - 초기화
     
@@ -205,6 +223,9 @@ class ExchangeRegisterDetailView: UIView {
         addSubview(quantityValueLabel)
         addSubview(plusButton)
         addSubview(unitButton)
+        unitButton.addSubview(unitButtonTitle)
+        unitButton.addSubview(unitButtonImage)
+        addSubview(line2)
         addSubview(descriptionLabel)
         addSubview(descriptionTextView)
         addSubview(methodLabel)
@@ -269,14 +290,14 @@ class ExchangeRegisterDetailView: UIView {
         
         quantityValueLabel.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(minusButton.snp.trailing).offset(17)
-            $0.width.equalTo(22)
+            $0.leading.equalTo(minusButton.snp.trailing).offset(12)
+            $0.width.equalTo(32)
             $0.height.equalTo(22)
         }
         
         plusButton.snp.makeConstraints {
             $0.centerY.equalTo(minusButton)
-            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(17)
+            $0.leading.equalTo(quantityValueLabel.snp.trailing).offset(12)
             $0.width.height.equalTo(26)
         }
         
@@ -285,6 +306,25 @@ class ExchangeRegisterDetailView: UIView {
             $0.leading.equalTo(plusButton.snp.trailing).offset(10)
             $0.width.equalTo(94)
             $0.height.equalTo(36)
+        }
+        
+        unitButtonTitle.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(15)
+            $0.height.equalTo(22)
+        }
+        
+        unitButtonImage.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-15)
+            $0.height.width.equalTo(14)
+        }
+        
+        line2.snp.makeConstraints {
+            $0.bottom.equalTo(unitButton.snp.bottom)
+            $0.centerX.equalTo(unitButton)
+            $0.width.equalTo(92)
+            $0.height.equalTo(1)
         }
         
         descriptionLabel.snp.makeConstraints {
@@ -297,7 +337,6 @@ class ExchangeRegisterDetailView: UIView {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(186)
-            $0.width.equalTo(370)
         }
         
         methodLabel.snp.makeConstraints {
@@ -336,6 +375,48 @@ class ExchangeRegisterDetailView: UIView {
         deselectedButton.backgroundColor = .white
         deselectedButton.layer.borderColor = UIColor.lightGray.cgColor
     }
+    
+    func configure(with ingredient: MyIngredient) {
+        ingredientNameLabel.text = ingredient.ingredientName
+        if let expiryDate = expiryDateFormatter.date(from: ingredient.expiryDate) {
+            expiryValueLabel.text = dDay(from: expiryDate)
+        } else {
+            expiryValueLabel.text = "만료일 형식 오류"
+        }
+    }
+    
+    func dDay(from date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+
+        let components = calendar.dateComponents([.year, .month, .day], from: now, to: date)
+        
+        // 연도, 월, 일 추출
+        let years = components.year ?? 0
+        let months = components.month ?? 0
+        let days = components.day ?? 0
+
+        // 결과 문자열을 구성
+        if years > 0 {
+            return "\(years)년 \(months)개월"
+        } else if months > 0 {
+            if days > 15 {
+                return "\(months + 1)개월"
+            } else {
+                return "\(months)개월"
+            }
+        } else if days >= 0 {
+            return "\(days)일"
+        } else {
+            return "지났습니다"
+        }
+    }
+    
+    let expiryDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 }
 
 

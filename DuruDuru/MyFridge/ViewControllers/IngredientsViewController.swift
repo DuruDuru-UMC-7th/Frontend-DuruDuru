@@ -147,7 +147,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         } else if selectedFilter == "search" {
             getByIngredientName(ingredientName: searchText ?? "", orderBy: "recent")
         } else {
-            getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "recent")
+            getByMajorCategoryOrderBy(majorCategory: selectedFilter, order: "recent")
         }
     }
     
@@ -159,7 +159,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         } else if selectedFilter == "search" {
             getByIngredientName(ingredientName: searchText ?? "", orderBy: "near-expiry")
         } else {
-            getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "near-expiry")
+            getByMajorCategoryOrderBy(majorCategory: selectedFilter, order: "near-expiry")
         }
     }
     
@@ -171,7 +171,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         } else if selectedFilter == "search" {
             getByIngredientName(ingredientName: searchText ?? "", orderBy: "far-expiry")
         } else {
-            getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "far-expiry")
+            getByMajorCategoryOrderBy(majorCategory: selectedFilter, order: "far-expiry")
         }
     }
     
@@ -353,7 +353,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
     }
     
     // 식재료 대분류 카테고리로 조회후 정렬
-    func getByIngredientNameOrderBy(majorCategory: String, order: String) {
+    func getByMajorCategoryOrderBy(majorCategory: String, order: String) {
         let url = "http://3.35.252.162:8080/fridge/majorCategory/\(order)"
     
         // 쿼리 파라미터
@@ -449,7 +449,7 @@ extension IngredientsViewController: UICollectionViewDelegate {
             ingredientsView.searchBar.text = ""
             selectedFilter = categoryData[indexPath.item].categoryName
             updateSelectedOrder(ingredientsView.nearExpiryDateFilter)
-            getByIngredientNameOrderBy(majorCategory: selectedFilter, order: "near-expiry")
+            getByMajorCategoryOrderBy(majorCategory: selectedFilter, order: "near-expiry")
         } else if collectionView == ingredientsView.ingredientsCircleCollectionView {
             selectedCircleCellIndex = indexPath
             collectionView.reloadData()

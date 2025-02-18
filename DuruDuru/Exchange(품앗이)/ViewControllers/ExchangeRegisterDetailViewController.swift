@@ -11,9 +11,11 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     // MARK: - Properties
     private let detailView = ExchangeRegisterDetailView() // 커스텀 뷰
-    private var ingredient: IngredientsModel? // 선택된 식재료
+    var ingredient: MyIngredient? // 선택된 식재료
     private var quantity: Int = 0
     private var selectedMethod: String? = nil
+    private var isUnitDropDownView: Bool = false
+    private var unitDropDownView: UnitDropdownView!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -21,7 +23,7 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
         navigationItem.hidesBackButton = true
         setupActions() // 버튼 동작 설정
         setUpUI()
-        
+        detailView.configure(with: ingredient!)
         detailView.descriptionTextView.delegate = self
         // 키보드 동작을 위한 제스쳐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -31,16 +33,6 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     
     override func loadView() {
         self.view = detailView // 커스텀 뷰 설정
-    }
-    
-    // MARK: - Configure
-    func configure(with ingredient: IngredientsModel) {
-        self.ingredient = ingredient
-        
-        // 전달받은 데이터를 뷰에 반영
-        detailView.ingredientNameLabel.text = ingredient.name
-        let daysRemaining = ingredient.daysRemaining.replacingOccurrences(of: "D-", with: "")
-        detailView.expiryLabel.text = "남은 소비기한 \(daysRemaining)일"
     }
     
     // MARK: - Actions
@@ -101,53 +93,62 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
     @objc private func didTapUnitButton() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return }
-
-        let dropdownView = UnitDropdownView()
-
+        
+        detailView.unitButton.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         let buttonFrame = detailView.unitButton.convert(detailView.unitButton.bounds, to: window)
+        if unitDropDownView == nil {
+            unitDropDownView = UnitDropdownView()
+            unitDropDownView?.frame = CGRect(
+                x: buttonFrame.origin.x,
+                y: buttonFrame.origin.y + buttonFrame.height,
+                width: buttonFrame.width,
+                height: 0
+            )
+            
+            // 드롭다운 선택 시 버튼 업데이트
+            unitDropDownView?.didSelectUnit = { [weak self] (selectedUnit: String) in
+                guard let self = self else { return }
 
-        dropdownView.frame = CGRect(
-            x: buttonFrame.origin.x,
-            y: buttonFrame.origin.y + buttonFrame.height + 5,
-            width: buttonFrame.width,
-            height: 0
-        )
-
-        // 단위 선택 시 버튼 업데이트 + 드롭다운 닫기
-        dropdownView.didSelectUnit = { [weak self] selectedUnit in
-            guard let self = self else { return }
-
-            self.detailView.unitButton.setTitle("", for: .normal)
-            self.detailView.unitButton.setImage(nil, for: .normal)
-           
-            let unitLabel = UILabel()
-            unitLabel.text = selectedUnit
-            unitLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-            unitLabel.textColor = .black
-            unitLabel.textAlignment = .center
-
-            // 기존 서브뷰 제거 후 새롭게 추가
-            self.detailView.unitButton.subviews.forEach { $0.removeFromSuperview() }
-            self.detailView.unitButton.addSubview(unitLabel)
-
-            unitLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
+                self.detailView.unitButtonTitle.text = selectedUnit
+                self.hideDropdown(unitDropDownView)
+                self.unitDropDownView = nil
+                self.isUnitDropDownView = false
             }
-
-            self.hideDropdown(dropdownView)
         }
 
-        // 윈도우에 추가 후 애니메이션 적용
-        window.addSubview(dropdownView)
-        UIView.animate(withDuration: 0.2) {
-            dropdownView.frame.size.height = 150
+        // 드롭다운이 이미 보이는지 확인
+        if isUnitDropDownView {
+            // 드롭다운이 보이면 숨김
+            self.hideDropdown(unitDropDownView)
+            isUnitDropDownView = false
+        } else {
+            // 드롭다운 추가
+            detailView.addSubview(unitDropDownView)
+            UIView.animate(withDuration: 0.2) {
+                self.unitDropDownView.frame.size.height = 150
+                self.unitDropDownView.backgroundColor = UIColor.white
+            }
+            
+            detailView.addSubview(detailView.line)
+            detailView.line.snp.makeConstraints {
+                $0.top.equalTo(detailView.unitButton.snp.bottom)
+                $0.centerX.equalTo(detailView.unitButton)
+                $0.width.equalTo(92)
+                $0.height.equalTo(1)
+            }
+            detailView.line2.isHidden = false
+            isUnitDropDownView = true
         }
     }
 
-    // 드롭다운 숨기기
+    // 드롭다운 숨기기 메서드
     private func hideDropdown(_ dropdownView: UnitDropdownView) {
+        print("숨기기")
+        detailView.unitButton.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        detailView.line2.isHidden = true
+        dropdownView.removeFromSuperview()
         UIView.animate(withDuration: 0.2, animations: {
-            dropdownView.alpha = 0
+            dropdownView.frame.size.height = 0
         }) { _ in
             dropdownView.removeFromSuperview()
         }
@@ -201,3 +202,5 @@ class ExchangeRegisterDetailViewController: UIViewController, UITextViewDelegate
         view.endEditing(true) // 키보드 숨기기
     }
 }
+
+

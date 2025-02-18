@@ -418,16 +418,27 @@ class ExchangeDetailView: UIView {
         let calendar = Calendar.current
         let now = Date()
 
-        if let daysDifference = calendar.dateComponents([.day], from: now, to: date).day {
-            if daysDifference > 0 {
-                return "\(daysDifference)일"
-            } else if daysDifference == 0 {
-                return "0일"
+        let components = calendar.dateComponents([.year, .month, .day], from: now, to: date)
+        
+        // 연도, 월, 일 추출
+        let years = components.year ?? 0
+        let months = components.month ?? 0
+        let days = components.day ?? 0
+
+        // 결과 문자열을 구성
+        if years > 0 {
+            return "\(years)년 \(months)개월"
+        } else if months > 0 {
+            if days > 15 {
+                return "\(months + 1)개월"
             } else {
-                return "지났습니다"
+                return "\(months)개월"
             }
+        } else if days >= 0 {
+            return "\(days)일"
+        } else {
+            return "지났습니다"
         }
-        return "계산 오류"
     }
     
     let createdAtDateFormatter: DateFormatter = {

@@ -67,11 +67,18 @@ class ExchangeRegisterView: UIView {
         let button = UIButton(type: .system)
         button.setTitle("다음으로", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemGreen
-        button.layer.cornerRadius = 8
+        button.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+        button.backgroundColor = UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        button.layer.cornerRadius = 10
+        button.isEnabled = false
         return button
     }()
+    
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        nextButton.backgroundColor = isEnabled ? UIColor(hex: 0x00C269) : UIColor(hex: 0xF4F4F5, alpha: 1.0)
+        nextButton.setTitleColor(isEnabled ? .white : UIColor(hex: 0x37383C, alpha: 0.61), for: .normal)
+    }
     
     // MARK: - 초기화
     
@@ -141,7 +148,7 @@ class ExchangeRegisterView: UIView {
         nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(47)
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-40)
+            $0.bottom.equalToSuperview().offset(-40)
         }
     }
 }

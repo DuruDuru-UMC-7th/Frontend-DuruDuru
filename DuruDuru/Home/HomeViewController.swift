@@ -80,6 +80,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         setupButtonActions()
         
         fetchAndDisplayIngredients()
+        fetchAndDisplayTradeList()
     }
     
     // MARK: - Setup UI
@@ -234,6 +235,35 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
     }
 
+
+    // MARK: -- 나와 가까운 품앗이
+    
+    private func fetchAndDisplayTradeList() {
+        fetchHomeTradeList { [weak self] trades in
+            DispatchQueue.main.async {
+                print("나와 가까운 품앗이 데이터: \(trades)")
+                self?.nearbyView.updateTradeList(trades)
+            }
+        }
+    }
+
+    private func fetchHomeTradeList(completion: @escaping ([HomeTradeModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/trade/near/recent"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<TradeListResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("홈 - 나와 가까운 품앗이 조회 성공!")
+
+                let trades = response.result.tradeList.map { HomeTradeModel(from: $0) }
+                completion(trades)
+
+            case .failure(let error):
+                print("홈 - 품앗이 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
 
     
     // MARK: - Setup Constraints

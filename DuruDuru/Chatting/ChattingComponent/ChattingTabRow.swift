@@ -23,20 +23,20 @@ struct ChatRow: View {
             .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(chatRoom.otherNickname)
+                Text(chatRoom.username)
                     .fontWeight(.bold)
-                Text(chatRoom.lastMessage)
+                Text(chatRoom.lastMessage ?? "아직 없음")
                     .foregroundColor(.gray)
                     .font(.subheadline)
             }
             Spacer()
 
             VStack {
-                Text(chatRoom.lastMessageDate)
+                Text(chatRoom.lastMessageDate ?? "날짜 없음")
                     .font(.footnote)
                     .foregroundColor(.gray)
                 if chatRoom.unreadCount > 0 {
-                    Text("\(chatRoom.unreadCount)+")
+                    Text("\(chatRoom.unreadCount)+") 
                         .font(.footnote)
                         .bold()
                         .foregroundColor(.white)

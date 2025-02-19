@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class ExchangeDetailViewController: UIViewController {
     
@@ -29,6 +30,7 @@ class ExchangeDetailViewController: UIViewController {
         setUpdelegate()
         exchangeDetailView.pageControl.numberOfPages = images.count /// 이미지 pageControl
         exchangeDetailView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        exchangeDetailView.actionButton.addTarget(self, action: #selector(requestTradeTapped), for: .touchUpInside)
         
         // API 요청
         getTrade(tradeId: tradeId)
@@ -84,6 +86,24 @@ class ExchangeDetailViewController: UIViewController {
     
     @objc func moreButtonTapped() {
         print("더보기 버튼 눌림")
+    }
+    
+    /// 품앗이 요청: 채팅방 접속
+    @objc func requestTradeTapped() {
+        ChattingRoomMakeAPI.shared.createChatRoom(tradeId: self.tradeId) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let chatRoomId):
+                    print("채팅방 생성 성공: \(chatRoomId)")
+                    let chatView = ChatView(chatRoomId: chatRoomId,
+                                            username: self.exchangeDetailView.profileName.text ?? "")
+                    let hostingController = UIHostingController(rootView: chatView)
+                    self.navigationController?.pushViewController(hostingController, animated: true)
+                case .failure(let error):
+                    print("채팅방 생성 실패: \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     @objc func likeButtonTapped() {

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SignUpFirstViewController: UIViewController {
+class SignUpFirstViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Property
     private lazy var signUpFirstView: SignUpFirstView = {
@@ -21,6 +21,11 @@ class SignUpFirstViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = signUpFirstView
+        
+        // 텍스트필드 delegate 설정
+        signUpFirstView.nameTextField.delegate = self
+        signUpFirstView.emailTextField.delegate = self
+        signUpFirstView.passwordTextField.delegate = self
     }
     
     // MARK: - Functions
@@ -31,7 +36,11 @@ class SignUpFirstViewController: UIViewController {
            let sceneDelegate = windowScene.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
             window.rootViewController = vc
-            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
         }
     }
     
@@ -91,10 +100,26 @@ class SignUpFirstViewController: UIViewController {
     }
     
     // MARK: - Alert
-    
     private func showAlert(message: String) {
         let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
+    }
+    
+    // MARK: - UITextField Delegate Methods
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // 이름 텍스트필드이면 이메일 텍스트필드로 포커스 이동
+        if textField == signUpFirstView.nameTextField {
+            signUpFirstView.emailTextField.becomeFirstResponder()
+        }
+        // 이메일 텍스트필드이면 비밀번호 텍스트필드로 포커스 이동
+        else if textField == signUpFirstView.emailTextField {
+            signUpFirstView.passwordTextField.becomeFirstResponder()
+        }
+        // 비밀번호 텍스트필드이면 키보드 내리기
+        else if textField == signUpFirstView.passwordTextField {
+            textField.resignFirstResponder()
+        }
+        return true
     }
 }

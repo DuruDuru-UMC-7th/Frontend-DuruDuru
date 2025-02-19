@@ -8,14 +8,19 @@
 import Foundation
 import Alamofire
 import UIKit
+
 final class APIClient {
     static let shared = APIClient()
     
-    private let session: Session
+    private var session: Session
     
     private init() {
-
-        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiaWF0IjoxNzM5ODg3MjA3LCJleHAiOjE3Mzk4OTA4MDd9.mF6nOY0SJBrFh7EsQTfM7UGdmCg6JCwsw3XXLdDN9Lw")
+        let interceptor = AuthorizationInterceptor(accessToken: TokenSave.shared.accessToken ?? "")
+        session = Session(interceptor: interceptor)
+    }
+    
+    // 토큰 업데이트
+    public func updateAuthorizationToken(interceptor: AuthorizationInterceptor) {
         session = Session(interceptor: interceptor)
     }
     

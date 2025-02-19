@@ -28,10 +28,17 @@ class EmailLoginService {
                 case .success(let loginResponse):
                     if loginResponse.isSuccess {
                         print("로그인 성공: \(loginResponse)")
-                        completion(true, nil)
+                        if let accessToken = loginResponse.result?.accessToken,
+                           let refreshToken = loginResponse.result?.refreshToken {
+                            TokenSave.shared.accessToken = accessToken
+                            TokenSave.shared.refreshToken = refreshToken
+                            // Update interceptor with new accessToken
+                            let interceptor = AuthorizationInterceptor(accessToken: accessToken)
+                            APIClient.shared.updateAuthorizationToken(interceptor: interceptor)
+                        }
+                        completion(true, loginResponse.result?.accessToken)
                     } else {
                         print("로그인 실패: \(loginResponse)")
-                        // 오류 코드에 따라 에러 메시지 출력
                         if loginResponse.code == "MEMBER_1007" {
                             completion(false, "이메일 형식이 올바르지 않습니다.")
                         } else if loginResponse.code == "MEMBER_1008" {

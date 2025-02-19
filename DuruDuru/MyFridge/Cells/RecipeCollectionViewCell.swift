@@ -77,6 +77,12 @@ class RecipeCollectionViewCell: UICollectionViewCell {
 //            titleImage.image = nil 
 //            return
 //        }
-        titleImage.image = UIImage(named: imageURL)
+        if let imageURL = URL(string: imageURL) {
+            titleImage.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            titleImage.image = UIImage(named: "imageNotFound")
+        }
     }
+    
+    
 }

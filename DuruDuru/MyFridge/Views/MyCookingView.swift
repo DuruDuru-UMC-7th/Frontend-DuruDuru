@@ -43,15 +43,16 @@ class MyCookingView: UIView {
     }
     
     let allButton = UIButton().then {
-        $0.setImage(.allCategory, for: .normal)
+        $0.setImage(UIImage(systemName: "line.horizontal.3")?.withRenderingMode(.alwaysTemplate), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
-        $0.backgroundColor = UIColor(hex: 0xF7F7F8, alpha: 1.0)
+        $0.backgroundColor = UIColor(hex: 0x474747, alpha: 1.0)
+        $0.tintColor = .white
         $0.layer.cornerRadius = 4
     }
     
     let ingredientCategoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
-        $0.estimatedItemSize = .init(width: 66, height: 26)
+        $0.estimatedItemSize = .init(width: 60, height: 26)
         $0.minimumInteritemSpacing = 4
     }).then {
         $0.backgroundColor = .clear

@@ -318,7 +318,7 @@ class IngredientsViewController: UIViewController, UISearchBarDelegate {
         APIClient.shared.request(url, method: .get) { (result: Result<IngredientResponse, Error>) in
             switch result {
             case .success(let response):
-                print("!!식재료 조회 정렬 성공!!")
+                print("!!ingredientVC: 식재료 조회 정렬 성공!!")
                 self.ingredients = response.result.ingredients
                 self.ingredientsView.ingredientsCircleCollectionView.reloadData()
             case .failure(let error):

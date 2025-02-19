@@ -8,26 +8,9 @@ struct ChattingTabView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
                 VStack {
                     // 헤더
-                    HStack {
-                        Text("품앗이")
-                            .foregroundColor(.green)
-                            .bold()
-                        Text("함께 먹자")
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .font(.title2)
-                    .padding(.horizontal)
-
-                    // 상단 배너 자리
-                    Rectangle()
-                        .fill(Color(UIColor.systemGray5))
-                        .frame(height: 100)
-                        .cornerRadius(10)
-                        .padding()
+                    headerAndBanner
 
                     // 채팅방 목록
                     List(viewModel.chatRooms) { chatRoom in
@@ -50,24 +33,6 @@ struct ChattingTabView: View {
                 }
                 .navigationBarHidden(true)
 
-                // 채팅방 추가 버튼
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            createChatRoom()
-                        }) {
-                            Image(systemName: "plus.message.fill")
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.green)
-                                .clipShape(Circle())
-                                .shadow(radius: 4)
-                        }
-                        .padding()
-                    }
-                }
 
                 // 로딩중
                 if isCreatingChatRoom {
@@ -78,27 +43,43 @@ struct ChattingTabView: View {
                         .background(Color.white)
                         .cornerRadius(10)
                         .shadow(radius: 4)
-                }
+                
             }
         }
     }
+    ///헤더와 배너 Vstack
+    private var headerAndBanner: some View {
+           VStack(alignment: .leading, spacing: 10) {
+               
+               // 헤더 영역 (HStack)
+               HStack(spacing: 8) {
+                   Text("품앗이")
+                       .foregroundColor(.black)
+                       .font(.system(size: 20, weight: .bold))
+                   
+                   Text("함께 먹자")
+                       .foregroundColor(.gray)
+                       .font(.system(size: 20, weight: .bold))
+               }
+               .padding(.top, 16)
+               .padding(.bottom, 8) // 헤더 아래 여백
+               
+               // 배너 영역
+               Image("BannerImage")
+                   .resizable()
+                   .renderingMode(.original) // 템플릿 모드 해제
+                   .aspectRatio(contentMode: .fit)
+                   .frame(width: 370, height: 90)
+                   
+           }
+       }
+    
+    ///List로 채팅방 나열하기
+    
+    
+}
 
-    /// 새로운 채팅방 생성
-    private func createChatRoom() {
-        isCreatingChatRoom = true
 
-        let tradeId = 1
-        ChattingRoomMakeAPI.shared.createChatRoom(tradeId: tradeId) { result in
-            DispatchQueue.main.async {
-                isCreatingChatRoom = false
-                switch result {
-                case .success(let chattingRoomId):
-                    print("✅ 채팅방 생성 성공: \(chattingRoomId)")
-                    viewModel.loadChatRooms()
-                case .failure(let error):
-                    print("❌ 채팅방 생성 실패: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
+#Preview {
+    ChattingTabView()
 }

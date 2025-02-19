@@ -10,6 +10,8 @@ import SnapKit
 
 class HomeRecipeView: UIView {
     
+    private var recipes: [HomeRecipeModel] = []
+    
     // MARK: - Components
     
     /// 제목 레이블
@@ -52,7 +54,7 @@ class HomeRecipeView: UIView {
     }()
     
     /// 더미 데이터 (HomeRecipeModel에서 관리)
-    private let recipes = HomeRecipeModel.dummyRecipe()
+    //private let recipes = HomeRecipeModel.dummyRecipe()
     
     // MARK: - Init
     
@@ -101,6 +103,31 @@ class HomeRecipeView: UIView {
 
 extension HomeRecipeView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return recipes.count
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        guard let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: HomeRecipeCollectionViewCell.identifier,
+//            for: indexPath
+//        ) as? HomeRecipeCollectionViewCell else {
+//            return UICollectionViewCell()
+//        }
+//        cell.configure(with: recipes[indexPath.item])
+//        return cell
+//    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 144, height: 176) // 셀 크기
+    }
+    
+    func updateRecipes(_ newRecipes: [HomeRecipeModel]) {
+        self.recipes = newRecipes
+        self.collectionView.reloadData()
+    }
+    
+    // MARK: - UICollectionView DataSource 수정
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return recipes.count
     }
@@ -116,9 +143,6 @@ extension HomeRecipeView: UICollectionViewDelegate, UICollectionViewDataSource, 
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 144, height: 176) // 셀 크기
-    }
 }
 
 // MARK: - SwiftUI Preview

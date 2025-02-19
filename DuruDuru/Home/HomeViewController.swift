@@ -81,6 +81,7 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         
         fetchAndDisplayIngredients()
         fetchAndDisplayTradeList()
+        fetchAndDisplayRecipes()
     }
     
     // MARK: - Setup UI
@@ -265,6 +266,33 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
     }
 
+    
+    private func fetchHomeRecipes(completion: @escaping ([HomeRecipeModel]) -> Void) {
+        let baseUrl = "http://3.35.252.162:8080/recipes/remaining?page=1&size=10"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<HomeRecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("남은 재료로 뚝딱 한끼 레시피 조회 성공: \(response)")
+
+                let recipes = response.result.recipes.map { HomeRecipeModel(from: $0) }
+                completion(recipes)
+
+            case .failure(let error):
+                print("레시피 조회 실패: \(error)")
+                completion([])
+            }
+        }
+    }
+    //MARK: -- 남은 재료로 뚝딱 한끼
+    
+    private func fetchAndDisplayRecipes() {
+        fetchHomeRecipes { [weak self] recipes in
+            DispatchQueue.main.async {
+                self?.homeRecipeView.updateRecipes(recipes)
+            }
+        }
+    }
     
     // MARK: - Setup Constraints
     

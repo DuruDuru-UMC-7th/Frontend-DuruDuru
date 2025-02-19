@@ -24,9 +24,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     
     private var ingredients: [MyIngredient] = []
 
-    
-    
-    
     // 옵션 뷰 관련 (정렬 드롭다운 등)
     private let darkBackgroundView = UIView().then {
         $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -81,7 +78,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         
         fetchAndDisplayIngredients()
         fetchAndDisplayTradeList()
-        fetchAndDisplayRecipes()
     }
     
     // MARK: - Setup UI
@@ -207,7 +203,6 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         }
     }
     
-    
     // MARK: -- API
     
     func fetchHomeIngredients(completion: @escaping ([IngredientModel]) -> Void) {
@@ -217,10 +212,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             switch result {
             case .success(let response):
                 print("내 냉장고 식재료 조회 성공: \(response)")
-
                 let ingredients = response.result.ingredients.map { IngredientModel(from: $0) }
                 completion(ingredients)
-
             case .failure(let error):
                 print("내 냉장고 식재료 조회 실패: \(error)")
                 completion([])
@@ -255,43 +248,19 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             switch result {
             case .success(let response):
                 print("홈 - 나와 가까운 품앗이 조회 성공!")
-
                 let trades = response.result.tradeList.map { HomeTradeModel(from: $0) }
                 completion(trades)
-
             case .failure(let error):
                 print("홈 - 품앗이 조회 실패: \(error)")
                 completion([])
             }
         }
     }
-
     
-    private func fetchHomeRecipes(completion: @escaping ([HomeRecipeModel]) -> Void) {
-        let baseUrl = "http://3.35.252.162:8080/recipes/remaining?page=1&size=10"
-
-        APIClient.shared.request(baseUrl, method: .get) { (result: Result<HomeRecipeResponse, Error>) in
-            switch result {
-            case .success(let response):
-                print("남은 재료로 뚝딱 한끼 레시피 조회 성공: \(response)")
-
-                let recipes = response.result.recipes.map { HomeRecipeModel(from: $0) }
-                completion(recipes)
-
-            case .failure(let error):
-                print("레시피 조회 실패: \(error)")
-                completion([])
-            }
-        }
-    }
-    //MARK: -- 남은 재료로 뚝딱 한끼
+    // MARK: -- UISearchBarDelegate Method
     
-    private func fetchAndDisplayRecipes() {
-        fetchHomeRecipes { [weak self] recipes in
-            DispatchQueue.main.async {
-                self?.homeRecipeView.updateRecipes(recipes)
-            }
-        }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
     
     // MARK: - Setup Constraints

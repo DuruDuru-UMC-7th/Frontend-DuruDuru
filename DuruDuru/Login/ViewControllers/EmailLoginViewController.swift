@@ -33,17 +33,16 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
         loginView.passwordTextField.delegate = self
     }
     
-    // MARK: - UITextField Delegate
+    // MARK: - UITextField Delegate Methods
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // 만약 이메일 텍스트필드라면 비밀번호 텍스트필드로 포커스 이동
         if textField == loginView.emailTextField {
             loginView.passwordTextField.becomeFirstResponder()
+        } else {
+            // 비밀번호 텍스트필드인 경우 키보드 내리기
+            loginView.passwordTextField.resignFirstResponder()
         }
-        endEdit()
         return true
-    }
-    
-    func endEdit() {
-        loginView.passwordTextField.resignFirstResponder()
     }
     
     // MARK: - 로그인 API 연결
@@ -78,7 +77,11 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
            let sceneDelegate = window.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
             window.rootViewController = rootVC
-            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
         }
     }
     
@@ -88,7 +91,11 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
            let sceneDelegate = window.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
             window.rootViewController = vc
-            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
         }
     }
     
@@ -98,7 +105,11 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate, UITextVie
            let sceneDelegate = window.delegate as? SceneDelegate,
            let window = sceneDelegate.window {
             window.rootViewController = vc
-            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
         }
     }
     

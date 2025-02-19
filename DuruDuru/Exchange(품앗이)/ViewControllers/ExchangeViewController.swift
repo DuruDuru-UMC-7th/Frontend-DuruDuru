@@ -15,9 +15,6 @@ class ExchangeViewController: UIViewController {
     private var isFloatingExpanded = false
     var isTownRegistered = false // 동네 등록 여부 변수
     private var tradeItems: [MyTradeModel] = []
-    
-    //private var tradeItems: [MyTradeModel] = MyTradeModel.dummy()
-    private var otherTradeItems: [OtherTradeModel] = OtherTradeModel.dummy()
     private var nearByTrades: [NearbyTradeItem] = []
     private var isShowingShareTrades = true
     
@@ -117,7 +114,6 @@ class ExchangeViewController: UIViewController {
             exchangeView.exchangeButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
             exchangeView.exchangeButton.layer.borderColor = UIColor(hex: 0x37383C, alpha: 0.16).cgColor
 
-            otherTradeItems = OtherTradeModel.getDummyData(for: "나눔")
         } else {
             exchangeView.exchangeButton.backgroundColor = UIColor(hex: 0x00C269)
             exchangeView.exchangeButton.setTitleColor(.white, for: .normal)
@@ -126,8 +122,6 @@ class ExchangeViewController: UIViewController {
             exchangeView.shareButton.backgroundColor = .white
             exchangeView.shareButton.setTitleColor(UIColor(hex: 0x37383C, alpha: 0.16), for: .normal)
             exchangeView.shareButton.layer.borderColor = UIColor(hex: 0x37383C, alpha: 0.16).cgColor
-
-            otherTradeItems = OtherTradeModel.getDummyData(for: "교환")
         }
         exchangeView.exchangeTableView.reloadData()
     }

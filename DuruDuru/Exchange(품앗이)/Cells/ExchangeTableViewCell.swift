@@ -233,11 +233,11 @@ class ExchangeTableViewCell: UITableViewCell {
     // MARK: - Configure Cell
     
     func configure(nearbyTradeItem: NearbyTradeItem) {
-//        if let imageURL = URL(string: nearbyTradeItem.thumbnailImgURl!) {
-//            titleImage.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
-//        } else {
-//            titleImage.image = UIImage(named: "imageNotFound")
-//        }
+        if let imageURL = URL(string: nearbyTradeItem.thumbnailImgUrl!) {
+            titleImage.kf.setImage(with: imageURL, placeholder: UIImage(named: "imageNotFound"))
+        } else {
+            titleImage.image = UIImage(named: "imageNotFound")
+        }
         
         name.text = nearbyTradeItem.title
         location.text = nearbyTradeItem.eupmyeondong

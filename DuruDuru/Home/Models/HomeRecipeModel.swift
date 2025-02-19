@@ -7,30 +7,40 @@
 
 import Foundation
 
-struct HomeRecipeModel {
-    let imageName: String      // 음식 이미지 이름
-    let title: String          // 음식 제목
-    let ingredients: [String] // 재료 리스트
+struct HomeRecipeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: HomeRecipeResult
 }
 
-extension HomeRecipeModel {
-    static func dummyRecipe() -> [HomeRecipeModel] {
-        return [
-            HomeRecipeModel(
-                imageName: "_계란 레시피3",
-                title: "폭탄계란찜",
-                ingredients: ["계란", "대파", "우유", "치즈", "버터"]
-            ),
-            HomeRecipeModel(
-                imageName: "계란 레시피1",
-                title: "양파덮밥",
-                ingredients: ["양파", "계란", "대파", "연어"]
-            ),
-            HomeRecipeModel(
-                imageName: "어묵우동",
-                title: "어묵우동",
-                ingredients: ["어묵", "우동사리", "버섯",]
-            )
-        ]
+struct HomeRecipeResult: Codable {
+    let page: Int
+    let size: Int
+    let totalPages: Int
+    let totalElements: Int
+    let recipes: [HomeRecipeData]
+}
+
+struct HomeRecipeData: Codable {
+    let recipeName: String
+    let imageUrl: String
+    let favoriteCount: Int
+    let availableIngredients: [String]
+    let missingIngredients: [String]
+}
+
+/// UI에서 사용할 모델 변환
+struct HomeRecipeModel {
+    let imageUrl: String
+    let title: String
+    let availableIngredients: [String]
+    let missingIngredients: [String]
+    
+    init(from apiRecipe: HomeRecipeData) {
+        self.imageUrl = apiRecipe.imageUrl
+        self.title = apiRecipe.recipeName
+        self.availableIngredients = apiRecipe.availableIngredients
+        self.missingIngredients = apiRecipe.missingIngredients
     }
 }

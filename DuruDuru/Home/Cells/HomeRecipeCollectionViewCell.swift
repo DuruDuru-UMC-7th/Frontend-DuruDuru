@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class HomeRecipeCollectionViewCell: UICollectionViewCell {
     
@@ -50,7 +51,7 @@ class HomeRecipeCollectionViewCell: UICollectionViewCell {
         stackView.axis = .horizontal
         stackView.spacing = 4
         stackView.alignment = .fill
-        stackView.distribution = .fill // 가로 너비 맞춤
+        stackView.distribution = .fillProportionally 
         return stackView
     }()
     
@@ -88,42 +89,57 @@ class HomeRecipeCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
-    
+
     public func configure(with model: HomeRecipeModel) {
-        foodImageView.image = UIImage(named: model.imageName)
+        if let url = URL(string: model.imageUrl) {
+            foodImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+        } else {
+            foodImageView.image = UIImage(named: "placeholder")
+        }
+        
         foodTitleLabel.text = model.title
-        setupIngredients(ingredients: model.ingredients)
+
+        setupIngredients(availableIngredients: model.availableIngredients, missingIngredients: model.missingIngredients)
     }
+
     
-    private func setupIngredients(ingredients: [String]) {
-        // 기존 태그 뷰 제거
+    private func setupIngredients(availableIngredients: [String], missingIngredients: [String]) {
+        // 기존 태그 제거
         ingredientsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        // 최대 3개의 재료를 표시
-        let maxVisibleIngredients = 3
-        let visibleIngredients = Array(ingredients.prefix(maxVisibleIngredients))
-        let additionalCount = ingredients.count - visibleIngredients.count
+        // 없는 재료 --> 불필요한 텍스트 제거
+        let cleanedMissingIngredients = missingIngredients.map { ingredient in
+            ingredient.replacingOccurrences(of: "[ 인분 ]", with: "")
+                      .replacingOccurrences(of: "재료 ", with: "")
+                      .trimmingCharacters(in: .whitespaces)
+        }
         
-        // 첫 2개의 재료 태그 (초록색)
-        for (index, ingredient) in visibleIngredients.enumerated() {
-            let label: UILabel
-            if index < 2 {
-                label = createIngredientLabel(
-                    with: ingredient,
-                    textColor: UIColor(hex: 0x00C269),
-                    backgroundColor: UIColor(hex: 0x00C269, alpha: 0.2)
-                )
-            } else {
-                label = createIngredientLabel(
-                    with: ingredient,
-                    textColor: UIColor(hex: 0xA0A0A0),
-                    backgroundColor: UIColor(hex: 0xE0E0E0, alpha: 0.5)
-                )
-            }
+        //let maxVisibleIngredients = 3
+        let visibleAvailable = Array(availableIngredients.prefix(2))
+        let visibleMissing = Array(cleanedMissingIngredients.prefix(1))
+
+        // 있는 재료
+        for ingredient in visibleAvailable {
+            let label = createIngredientLabel(
+                with: ingredient,
+                textColor: UIColor(hex: 0x00C269),
+                backgroundColor: UIColor(hex: 0x00C269, alpha: 0.2)
+            )
             ingredientsStackView.addArrangedSubview(label)
         }
         
-        // 추가 재료가 있다면 "+N" 태그 추가 (회색)
+        // 없는 재료
+        for ingredient in visibleMissing {
+            let label = createIngredientLabel(
+                with: ingredient,
+                textColor: UIColor(hex: 0xA0A0A0),
+                backgroundColor: UIColor(hex: 0xE0E0E0, alpha: 0.5)
+            )
+            ingredientsStackView.addArrangedSubview(label)
+        }
+
+        // 추가 재료 개수
+        let additionalCount = availableIngredients.count + cleanedMissingIngredients.count - (visibleAvailable.count + visibleMissing.count)
         if additionalCount > 0 {
             let moreLabel = createIngredientLabel(
                 with: "+\(additionalCount)",
@@ -133,6 +149,8 @@ class HomeRecipeCollectionViewCell: UICollectionViewCell {
             ingredientsStackView.addArrangedSubview(moreLabel)
         }
     }
+
+
     
     // 재료 태그 레이블 생성 (크기 자동 조절)
     private func createIngredientLabel(with text: String, textColor: UIColor, backgroundColor: UIColor) -> UILabel {
@@ -146,10 +164,10 @@ class HomeRecipeCollectionViewCell: UICollectionViewCell {
         label.clipsToBounds = true
         
         // 최소 크기 지정 & 자동 크기 조정
-        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.snp.makeConstraints { make in
-            make.height.equalTo(14) // 높이는 고정
+            make.height.equalTo(20)
         }
         
         return label

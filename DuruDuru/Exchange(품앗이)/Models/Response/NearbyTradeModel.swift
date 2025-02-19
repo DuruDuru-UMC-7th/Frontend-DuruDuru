@@ -33,5 +33,10 @@ struct NearbyTradeItem: Codable {
     let likeCount: Int?
     let createdAt: String
     let updatedAt: String
-    let thumbnailImgURl: String?
+    let thumbnailImgUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case tradeId, memberId, ingredientId, ingredientCount, expiryDate, title, eupmyeondong, status, tradeType, likeCount, createdAt, updatedAt
+        case thumbnailImgUrl = "thumbnailImgUrl"
+    }
 }

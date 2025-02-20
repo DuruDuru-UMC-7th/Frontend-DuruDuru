@@ -188,7 +188,7 @@ class SettingView: UIView {
     
     private let versionContentView = UIView()
     
-    private let logOutLabel = UILabel().then {
+    public let logOutLabel = UILabel().then {
         $0.text = "로그아웃"
         $0.font = UIFont.systemFont(ofSize: 12)
         $0.textColor = UIColor(hex: 0x2E2F33, alpha: 0.88)

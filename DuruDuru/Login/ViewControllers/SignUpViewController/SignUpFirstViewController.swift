@@ -70,6 +70,7 @@ class SignUpFirstViewController: UIViewController, UITextFieldDelegate {
                 if success {
                     print("회원가입 API 호출 성공")
                     let thirdVC = SignUpThirdViewController()
+                    thirdVC.nickName = self.signUpFirstView.nameTextField.text! 
                     // 네비게이션 컨트롤러가 있다면 push, 없다면 모달로 전환
                     if let nav = self.navigationController {
                         nav.pushViewController(thirdVC, animated: true)

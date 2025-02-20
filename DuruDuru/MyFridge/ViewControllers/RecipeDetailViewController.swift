@@ -12,10 +12,11 @@ class RecipeDetailViewController: UIViewController {
     
     private var recipeDetailView: RecipeDetailView!
     var recipeName: String!
-    var recipeDetail: RecipeDetail?
+    var recipeDetail: RecipeDetail!
     
-    var mainIngredients = [String]()
-    var subIngredients = [String]()
+    var mainIngredients: [String] = []
+    var subIngredients: [String] = []
+    var isLiked: Bool = false
     
     // MARK: - Lifecycle
     
@@ -23,8 +24,10 @@ class RecipeDetailViewController: UIViewController {
         super.viewDidLoad()
         recipeDetailView = RecipeDetailView(frame: self.view.bounds)
         self.view = recipeDetailView
-        self.title = "레시피 상세"
-
+        setupDelegate()
+        fetchRecipeDetail()
+        //        self.title = "레시피 상세"
+        
         /// 뒤로 가기 버튼
         let backImage = UIImage(systemName: "chevron.left")
         let backButton = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(backButtonTapped))
@@ -37,8 +40,7 @@ class RecipeDetailViewController: UIViewController {
         imageButton.tintColor = .black
         self.navigationItem.rightBarButtonItem = imageButton
         
-        setupDelegate()
-        fetchRecipeDetail()
+        recipeDetailView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Function
@@ -49,6 +51,20 @@ class RecipeDetailViewController: UIViewController {
     
     @objc func imageButtonTapped() {
         print("내보내기 버튼 눌림")
+    }
+    
+    @objc func likeButtonTapped() {
+        if isLiked {
+            recipeDetailView.likeButton.tintColor = .lightGray
+            isLiked = false
+            likeRecipe(recipeName: self.recipeName)
+            self.recipeDetailView.updateLikeCount(data: -1)
+        } else {
+            recipeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
+            isLiked = true
+            likeRecipe(recipeName: self.recipeName)
+            self.recipeDetailView.updateLikeCount(data: +1)
+        }
     }
     
     private func setupDelegate(){
@@ -65,71 +81,75 @@ class RecipeDetailViewController: UIViewController {
             print("레시피 이름이 없음")
             return
         }
-
+        
         let baseUrl = "http://3.35.252.162:8080/recipes/\(recipeName)"
-
+        
         APIClient.shared.request(baseUrl, method: .get) { (result: Result<RecipeDetailResponse, Error>) in
             switch result {
             case .success(let response):
                 print("레시피 상세 조회 성공: \(response)")
                 self.recipeDetail = response.result
                 
-                DispatchQueue.main.async {
-                    self.updateUI()
-                }
+                self.recipeDetailView.configure(recipe: self.recipeDetail)
+                self.mainIngredients = response.result.ingredientList
+                self.subIngredients = response.result.ingredientList
+                print(self.mainIngredients)
+                self.recipeDetailView.mainIngredientCollectionView.reloadData()
+                self.recipeDetailView.subIngredientCollectionView.reloadData()
+                self.recipeDetailView.updateCollectionViewHeight()
+                self.title = response.result.recipeType
                 
             case .failure(let error):
                 print("레시피 상세 조회 실패: \(error)")
+                // 더미 데이터 설정
+                self.recipeDetail = self.getDummyRecipeDetail() // 더미 데이터 할당
+                
+                self.recipeDetailView.configure(recipe: self.recipeDetail)
+                self.mainIngredients = self.recipeDetail.ingredientList
+                self.subIngredients = self.recipeDetail.ingredientList
+                self.recipeDetailView.mainIngredientCollectionView.reloadData()
+                self.recipeDetailView.subIngredientCollectionView.reloadData()
+                self.recipeDetailView.updateCollectionViewHeight()
+                self.title = self.recipeDetail.recipeType // 기본값으로 설정
             }
         }
     }
-
-    private func updateUI() {
-        guard let detail = recipeDetail else { return }
-        
-        if let imageURL = URL(string: detail.imageUrl) {
-            recipeDetailView.titleImageView.kf.setImage(with: imageURL)
-        } else {
-            recipeDetailView.titleImageView.image = UIImage(named: "placeholder")
-        }
-        
-        recipeDetailView.recipeName.text = detail.recipeName
-        recipeDetailView.likeCountLabel.text = "\(detail.favoriteCount)"
-        
-        recipeDetailView.instructionsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for (index, step) in detail.manualSteps.enumerated() {
-            let stepLabel = createInstructionLabel(text: step, index: index + 1)
-            recipeDetailView.instructionsStackView.addArrangedSubview(stepLabel)
-        }
-        
-        recipeDetailView.mainIngredientCollectionView.reloadData()
-        recipeDetailView.subIngredientCollectionView.reloadData()
+    
+    private func getDummyRecipeDetail() -> RecipeDetail {
+        return RecipeDetail(
+            favoriteCount: 0,
+            recipeName: "달걀오픈샌드위치",
+            cookingMethod: "더미 조리 방법",
+            recipeType: "식사",
+            ingredients: "달걀 1개, 소금 1스푼, 호밀빵, 통후추, 타르타르 소스, 딜",
+            imageUrl: "https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/ehYN/image/wXf3V8jBbmjK-ihvXKusrBpuhzI.jpg",
+            manualSteps: ["달갈 하나를 소금물에 10분 동안 삶는다.",
+                          "달갈 껍질을 벗겨 얹게 쓴다.",
+                          "달갈을 얹고 통후추를 갈아 뿌린다.",
+                          "딜을 얹어 마무리한다."]
+        )
     }
     
-    // 조리법 라벨 생성
-    private func createInstructionLabel(text: String, index: Int) -> UIView {
-        let containerView = UIView()
-        let indexLabel = UILabel()
-        let contentLabel = UILabel()
-
-        indexLabel.text = "\(index)."
-        indexLabel.font = .boldSystemFont(ofSize: 16)
-        indexLabel.textColor = .black
-
-        contentLabel.text = text
-        contentLabel.font = .systemFont(ofSize: 14)
-        contentLabel.numberOfLines = 0
-
-        containerView.addSubview(indexLabel)
-        containerView.addSubview(contentLabel)
-
-        indexLabel.snp.makeConstraints { $0.leading.top.equalToSuperview().offset(10) }
-        contentLabel.snp.makeConstraints {
-            $0.leading.equalTo(indexLabel.snp.trailing).offset(8)
-            $0.trailing.top.bottom.equalToSuperview().inset(10)
+    // 레시피 찜하기
+    private func likeRecipe(recipeName: String) {
+        let url = "http://3.35.252.162:8080/recipes/{recipeName}/favorite"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "recipeName": recipeName
+        ]
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        APIClient.shared.request(queryString, method: .post) { (result: Result<LikeRecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("레시피 좋아요 성공")
+                self.recipeDetailView.updateLikeCount(data: 1)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
         }
-
-        return containerView
     }
 }
 
@@ -149,14 +169,32 @@ extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == recipeDetailView.mainIngredientCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
-            cell.tagLabel.text = mainIngredients[indexPath.item]
+            cell.configure(tag: mainIngredients[indexPath.item])
             return cell
         } else if collectionView == recipeDetailView.subIngredientCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeDetailIngredientsCollectionViewCell.identifier, for: indexPath) as! RecipeDetailIngredientsCollectionViewCell
-            cell.tagLabel.text = subIngredients[indexPath.item]
+            cell.configure(tag: subIngredients[indexPath.item])
             return cell
         }
         return UICollectionViewCell()
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == recipeDetailView.mainIngredientCollectionView {
+            let text = mainIngredients[indexPath.item]
+            let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
+            return CGSize(width: width, height: 26) // 높이는 고정
+        } else if collectionView == recipeDetailView.subIngredientCollectionView {
+            let text = subIngredients[indexPath.item]
+            let width = text.size(withAttributes: [.font: UIFont.systemFont(ofSize: 11)]).width
+            return CGSize(width: width, height: 26)
+        }
+        return CGSize(width: 45, height: 26)
+    }
 }
+
+
+
+
+
 

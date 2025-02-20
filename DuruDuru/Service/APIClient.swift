@@ -30,8 +30,8 @@ final class APIClient {
         parameters: Parameters? = nil,
         completion: @escaping (Result<T, Error>) -> Void) {
             var headers: HTTPHeaders = [:]
-            headers["Content-Type"] = "application/json"
-            
+            headers["Accept"] = "application/json"
+        
             session.request(url, method: method, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 .validate()
                 .responseDecodable(of: T.self) { response in

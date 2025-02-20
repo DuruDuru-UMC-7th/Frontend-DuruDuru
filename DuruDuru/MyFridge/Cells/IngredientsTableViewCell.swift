@@ -14,7 +14,7 @@ class IngredientsTableViewCell: UITableViewCell {
     static let identifier: String = "IngredientsTableViewCell"
     weak var cellDelegate: IngredientsTableViewCellDelegate?
     var indexPath: IndexPath?  /// 셀 인덱스
-    var recipes: [RecipeModel] = [] /// 레시피 데이터 변수
+    var recipes: [Recipe] = [] /// 레시피 데이터 변수
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -130,11 +130,15 @@ class IngredientsTableViewCell: UITableViewCell {
     
     // MARK: - Configuration
     
-    public func configure(model: IngredientModel) {
-        self.recipes = model.recipes
-        self.ingredientName.text = model.name
+    public func configure(model: MyIngredient, indexPath: IndexPath) {
+        self.indexPath = indexPath
+        self.ingredientName.text = model.ingredientName
     }
     
+    public func updateRecipes(recipes: [Recipe]) {
+        self.recipes = recipes
+        self.recipeCollectionView.reloadData()
+    }
 }
 
 protocol IngredientsTableViewCellDelegate: AnyObject {
@@ -149,7 +153,7 @@ extension IngredientsTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeCollectionViewCell.identifier, for: indexPath) as! RecipeCollectionViewCell
         
-        let imageURL = recipes[indexPath.row].titleImage ?? ""
+        let imageURL = recipes[indexPath.row].imageUrl ?? ""
         cell.configure(imageURL: imageURL)
         
         return cell

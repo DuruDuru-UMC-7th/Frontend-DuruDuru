@@ -14,7 +14,7 @@ class ExchangeDetailViewController: UIViewController {
     
     private var exchangeDetailView: ExchangeDetailView!
     private var pageControl: UIPageControl!
-    private var images: [UIImage] = [UIImage(named: "자른미역") ?? UIImage(), .duruDuru, .duruDuruLogo, .kakaoLogo, .thumbnail, .thumbnail]
+    private var images: [TredeImage] = []
     var tradeId: Int!
     var otherTradeList: [OtherTrade] = []
     var isLiked: Bool = false
@@ -28,7 +28,7 @@ class ExchangeDetailViewController: UIViewController {
         
         setUpUIBar()
         setUpdelegate()
-        exchangeDetailView.pageControl.numberOfPages = images.count /// 이미지 pageControl
+    
         exchangeDetailView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         exchangeDetailView.actionButton.addTarget(self, action: #selector(requestTradeTapped), for: .touchUpInside)
         
@@ -138,6 +138,9 @@ class ExchangeDetailViewController: UIViewController {
             case .success(let response):
                 self.exchangeDetailView.configure(trade: response.result)
                 self.isLiked = response.result.liked
+                self.images = response.result.tradeImgs ?? []
+                self.exchangeDetailView.imageCollectionView.reloadData()
+                self.exchangeDetailView.pageControl.numberOfPages = self.images.count /// 이미지 pageControl
                 if self.isLiked {
                     self.exchangeDetailView.likeButton.setImage(UIImage(systemName: "heart.fill")?.withRenderingMode(.alwaysTemplate), for: .normal)
                     self.exchangeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
@@ -245,13 +248,18 @@ class ExchangeDetailViewController: UIViewController {
                 
                 cell.contentView.subviews.forEach { $0.removeFromSuperview() }
                 
-                _ = UIImageView(image: images[indexPath.item]).then {
-                    $0.contentMode = .scaleAspectFill
-                    $0.clipsToBounds = true
-                    cell.contentView.addSubview($0)
-                    $0.snp.makeConstraints { make in
+                let imageUrlString = images[indexPath.item]
+                if let url = URL(string: imageUrlString.tradeImgUrl) {
+                    let imageView = UIImageView()
+                    imageView.contentMode = .scaleAspectFill
+                    imageView.clipsToBounds = true
+                    cell.contentView.addSubview(imageView)
+                    imageView.snp.makeConstraints { make in
                         make.edges.equalToSuperview()
                     }
+                    
+                    // Kingfisher를 사용하여 이미지 로드
+                    imageView.kf.setImage(with: url)
                 }
                 
                 return cell

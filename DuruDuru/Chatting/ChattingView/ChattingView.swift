@@ -95,7 +95,7 @@ struct ChatView: View {
                 }
             }
             // 키보드 높이만큼 하단 여백
-            .padding(.bottom, keyboardHelper.keyboardHeight/4)
+            .padding(.bottom, keyboardHelper.keyboardHeight/34)
             
             // 배경 탭 시 키보드 내리기
             .contentShape(Rectangle())

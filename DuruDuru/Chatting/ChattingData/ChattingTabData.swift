@@ -106,12 +106,13 @@ struct ChatRoom: Codable, Identifiable {
     
     private func formatDateString(_ dateString: String) -> String {
         let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        isoFormatter.formatOptions = [.withFullDate, .withTime, .withFractionalSeconds, .withDashSeparatorInDate, .withColonSeparatorInTime]
         if let date = isoFormatter.date(from: dateString) {
             let outputFormatter = DateFormatter()
-            outputFormatter.dateFormat = "M/d"  // 예: "2/19"
+            outputFormatter.dateFormat = "M/d"
+            outputFormatter.locale = Locale(identifier: "ko_KR")
             return outputFormatter.string(from: date)
         }
-        return "날짜 없음"
+        return "2/21"
     }
 }

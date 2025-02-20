@@ -326,6 +326,7 @@ class RecipeDetailView: UIView {
     }
     
     func updateCollectionViewHeight() {
+        
         // UICollectionView의 콘텐츠 높이에 맞추어 높이를 업데이트
         mainIngredientCollectionView.layoutIfNeeded() // 레이아웃을 즉시 계산
         subIngredientCollectionView.layoutIfNeeded()
@@ -339,6 +340,8 @@ class RecipeDetailView: UIView {
         subIngredientCollectionView.snp.updateConstraints { make in
             make.height.equalTo(subContentHeight)
         }
+        
+        self.layoutIfNeeded()
     }
     
     /// 태그 라벨
@@ -444,9 +447,9 @@ class RecipeDetailView: UIView {
         }
     }
     
-    public func updateLikeCount() {
+    public func updateLikeCount(data: Int) {
         if let currentCountText = likeCountLabel.text, let currentCount = Int(currentCountText) {
-            let newCount = currentCount + 1
+            let newCount = currentCount + data
             likeCountLabel.text = "\(newCount)"
         }
     }

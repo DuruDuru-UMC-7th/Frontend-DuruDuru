@@ -219,15 +219,63 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate, UISea
         APIClient.shared.request(urlWithParams, method: .get) { (result: Result<RecommandedRecipeResponse, Error>) in
             switch result {
             case .success(let response):
-                let recipes = response.result.recipes
-                // 2. 캐시 저장
+                var recipes: [Recipe]
+                
+                // 2. recipes가 nil이거나 빈 배열인 경우 더미 데이터 설정
+                if response.result.recipes.isEmpty {
+                    // 더미 데이터 생성
+                    recipes = self.getDummyRecipes(for: ingredientName)
+                } else {
+                    recipes = response.result.recipes
+                }
+                
+                // 3. 캐시 저장
                 RecipeCache.setRecipes(recipes, for: ingredientName)
                 self.allRecipeData[index] = recipes
                 completion()
+                
             case .failure(let error):
                 print("\(ingredientName) 조회 실패: \(error)")
                 completion()
             }
+        }
+    }
+    
+    private func getDummyRecipes(for ingredientName: String) -> [Recipe] {
+        // 더미 데이터를 생성하여 반환
+        switch ingredientName {
+        case "계란":
+            return [
+                Recipe(recipeName: "달걀오픈샌드위치", imageUrl: "https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/ehYN/image/wXf3V8jBbmjK-ihvXKusrBpuhzI.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "오믈렛", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/FoodOmelete.jpg/800px-FoodOmelete.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "달걀국", imageUrl: "https://i.namu.wiki/i/Z0p61mfiMtBIsT3y4rD2_ueGIg64PQisulOIZlua_I8XhaP53AiNVVkqRIAEC7haddW3RXpwKmTV5-pqpHLJCw.webp", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "달걀샐러드", imageUrl: "https://homecuisine.co.kr/files/attach/images/140/923/036/edfba9f65a399f403bf9c73c0048c851.JPG", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "오야꼬동", imageUrl: "https://i.namu.wiki/i/U8htfAXjEtI1CxACEMsMhT-FmdAP83bRIttnbGXzczQLR0hHsPfsmE6WdvpsYExPry5ACpp40t6dHnTCKtgyhQ.webp", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "수란", imageUrl: "https://i.namu.wiki/i/5SD8BMs7hRI8ujm3YtRHvABDkgxXaRHxGzFjppxGJSuzXp-jTBDbJGl7hLSkR1B3GrT7IHUZPrFjks111kXMlQ.webp", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+            
+        case "양배추":
+            return [
+                Recipe(recipeName: "양배추전", imageUrl: "https://static.wtable.co.kr/image/production/service/recipe/1001/7a01733d-8296-470e-80cd-c12223282dad.jpg?size=1050x1050", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "양배추어묵볶음", imageUrl: "https://static.wtable.co.kr/image/production/service/recipe/2188/3a4a5125-722d-42f3-a4d1-2bc4242ea2b6.jpg?size=800x800", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "해물 볶음우동", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2021/04/22/e4063e6497c23aea505f2772999874651.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+            
+        case "멜론":
+            return [
+                Recipe(recipeName: "비타민이유식", imageUrl: "http://www.foodsafetykorea.go.kr/uploadimg/cook/10_00316_2.png", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "멜론스프", imageUrl: "http://www.foodsafetykorea.go.kr/uploadimg/20141117/20141117053554_1416213354184.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "과일 요구르트 샐러드", imageUrl: "http://www.foodsafetykorea.go.kr/uploadimg/20141117/20141117053621_1416213381018.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+            
+        case "사과":
+            return [
+                Recipe(recipeName: "사과버터구이", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2019/10/01/e053e5ec6b4ed48b4601592f23956ec01.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "또띠아사과피자", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2018/01/31/b8c9874c31a01617df6ced8d2f0a4e1b1.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+            
+        default:
+            return [] // 기본적으로 빈 배열 반환
         }
     }
 }

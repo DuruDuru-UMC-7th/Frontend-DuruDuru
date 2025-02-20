@@ -18,6 +18,7 @@ struct ChattingRoomMakeResponse: Codable {
 /// 채팅방 생성 결과 모델
 struct ChattingRoomMakeResult: Codable {
     let chattingRoomId: Int
+    let myNickname: String
     let otherNickname: String
     let tradeImgUrl: String?
     let tradeType: String

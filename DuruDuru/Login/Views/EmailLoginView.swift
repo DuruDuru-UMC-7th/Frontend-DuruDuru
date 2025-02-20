@@ -229,12 +229,12 @@ class EmailLoginView: UIView {
         notMemberLabel.snp.makeConstraints {
             let bottomOffset = screenHeight < 700 ? 50 : 197  // 여백 조정
             $0.top.equalTo(passwordTextField.snp.bottom).offset(bottomOffset)
-            $0.centerX.equalToSuperview()
+            $0.left.equalToSuperview().offset(106)
         }
         
         signUpButton.snp.makeConstraints {
             $0.centerY.equalTo(notMemberLabel.snp.centerY)
-            $0.left.equalTo(notMemberLabel.snp.right).offset(5)
+            $0.left.equalTo(notMemberLabel.snp.right)
         }
         
         searchLabel.snp.makeConstraints {

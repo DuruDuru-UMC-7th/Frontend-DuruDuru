@@ -144,8 +144,8 @@ class RecipeTableViewCell: UITableViewCell {
 //        }
 //    }
     
-    public func configure(recipe: RecipeModel) {
-        if let imageURL = URL(string: recipe.titleImage) {
+    public func configure(recipe: Recipe) {
+        if let imageURL = URL(string: recipe.imageUrl) {
              titleImage.kf.setImage(with: imageURL)
          } else {
              titleImage.image = UIImage(named: "placeholder")

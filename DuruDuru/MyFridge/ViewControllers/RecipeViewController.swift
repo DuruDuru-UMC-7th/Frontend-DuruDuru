@@ -13,7 +13,7 @@ class RecipeViewController: UIViewController {
     // MARK: - Properties
     private var recipeView: RecipeView!
     var ingredientName: String?  // 전달 받은 재료 이름
-    var recipes = [RecipeModel]()
+    var recipes = [Recipe]()
     var ingredient: MyIngredient!
     
     // MARK: - Lifecycle
@@ -32,15 +32,34 @@ class RecipeViewController: UIViewController {
         setupDelegate()
         setupOptionViewActions()
         
-        // 추천 레시피 가져오기
-//        fetchRecipes()
-
+        // 캐시에서 레시피 불러오기
+        loadRecipesFromCache()
+        
         // 키보드 동작을 위한 제스처 추가
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-
+    
+    // MARK: - 캐시에서 레시피 로드
+    
+    private func loadRecipesFromCache() {
+        guard let ingredientName = ingredient?.ingredientName else {
+            print("식재료 정보 없음")
+            return
+        }
+        
+        // 캐시에서 레시피 조회
+        if let cachedRecipes = RecipeCache.getRecipes(for: ingredientName) {
+            self.recipes = cachedRecipes
+            self.title = "\(ingredientName)을 사용하는 레시피"
+            recipeView.recipeTableView.reloadData()
+        } else {
+            print("캐시에 레시피 정보 없음")
+            self.title = "\(ingredientName)을 사용하는 레시피 (0)"
+        }
+    }
+    
     
     // MARK: - Functions
     private func setupDelegate(){
@@ -122,32 +141,6 @@ class RecipeViewController: UIViewController {
         updateSelectedOrder(recipeView.recentFilter)
         // 추가 작업이 필요하면 여기에 구현
     }
-    
-//    private func fetchRecipes() {
-//        guard let ingredient = ingredient else { return }
-//        
-//        let baseUrl = "http://3.35.252.162:8080/recipes/recommend"
-//        let encodedIngredientName = ingredient.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-//        let urlWithParams = "\(baseUrl)?ingredients=\(encodedIngredientName)&page=1&size=10"
-//
-//        APIClient.shared.request(urlWithParams, method: .get) { (result: Result<RecipeResponse, Error>) in
-//            switch result {
-//            case .success(let response):
-//                print("레시피 조회 성공: \(response)")
-//                
-//                // API 응답을 변환하여 RecipeModel 배열로 저장
-//                self.recipes = response.result.recipes.map { RecipeModel(from: $0) }
-//                
-//                DispatchQueue.main.async {
-//                    self.recipeView.recipeTableView.reloadData()
-//                }
-//                
-//            case .failure(let error):
-//                print("레시피 조회 실패: \(error)")
-//            }
-//        }
-//    }
-    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -170,7 +163,7 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         recipeDetailVC.recipeName = recipes[indexPath.row].recipeName
         navigationController?.pushViewController(recipeDetailVC, animated: true)
     }
-
+    
 }
 
 // MARK: - UISearchBarDelegate

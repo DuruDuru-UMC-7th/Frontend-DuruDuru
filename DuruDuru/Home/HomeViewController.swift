@@ -130,6 +130,10 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
         // 홈 화면 내 버튼 액션 (탭 전환 및 세그먼트 변경)
         myIngredientView.openFridgeButton.addTarget(self, action: #selector(didTapOpenFridgeButton), for: .touchUpInside)
         homeRecipeView.seeMoreButton.addTarget(self, action: #selector(didTapSeeMoreButton), for: .touchUpInside)
+        
+        // 여기서 moreButton(품앗이 더 보기 버튼) 타겟 추가
+        // (만약 nearbyView의 moreButton이 private이라면 접근제한을 해제하거나, 외부에 노출되도록 수정하세요)
+        nearbyView.moreButton.addTarget(self, action: #selector(didTapMoreButton), for: .touchUpInside)
     }
     
     // MARK: - Button Actions
@@ -200,6 +204,13 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
            let myFridgeVC = fridgeNav.topViewController as? MyFridgeViewController {
             tabBarController.selectedIndex = 1
             myFridgeVC.selectSegment(.cooking)
+        }
+    }
+    
+    /// moreButton(품앗이 더 보기)를 누르면 "품앗이" 탭으로 전환
+    @objc private func didTapMoreButton() {
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 2
         }
     }
     

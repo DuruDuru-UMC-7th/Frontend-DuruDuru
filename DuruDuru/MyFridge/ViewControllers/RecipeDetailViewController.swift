@@ -58,12 +58,12 @@ class RecipeDetailViewController: UIViewController {
             recipeDetailView.likeButton.tintColor = .lightGray
             isLiked = false
             likeRecipe(recipeName: self.recipeName)
-            self.recipeDetailView.updateLikeCount(data: -1)
+            recipeDetailView.updateLikeCount(data: -1)
         } else {
             recipeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
             isLiked = true
             likeRecipe(recipeName: self.recipeName)
-            self.recipeDetailView.updateLikeCount(data: +1)
+            recipeDetailView.updateLikeCount(data: 1)
         }
     }
     
@@ -88,60 +88,32 @@ class RecipeDetailViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("레시피 상세 조회 성공: \(response)")
-                if response.result.ingredientList.isEmpty {
-                    print("레시피 더미데이터로 변경")
-                    // 더미 데이터 설정
-                    self.recipeDetail = self.getDummyRecipeDetail() // 더미 데이터 할당
-                    
-                    self.recipeDetailView.configure(recipe: self.recipeDetail)
-                    self.mainIngredients = self.recipeDetail.ingredientList
-                    self.subIngredients = self.recipeDetail.ingredientList
-                    self.recipeDetailView.mainIngredientCollectionView.reloadData()
-                    self.recipeDetailView.subIngredientCollectionView.reloadData()
-                    self.recipeDetailView.updateCollectionViewHeight()
-                    self.title = self.recipeDetail.recipeType // 기본값으로 설정
-                } else {
-                    self.recipeDetail = response.result
-                    
-                    self.recipeDetailView.configure(recipe: self.recipeDetail)
-                    self.mainIngredients = response.result.ingredientList
-                    self.subIngredients = response.result.ingredientList
-                    print(self.mainIngredients)
-                    self.recipeDetailView.mainIngredientCollectionView.reloadData()
-                    self.recipeDetailView.subIngredientCollectionView.reloadData()
-                    self.recipeDetailView.updateCollectionViewHeight()
-                    self.title = response.result.recipeType
-                }
+                self.recipeDetail = response.result
                 
-            case .failure(let error):
-                print("레시피 상세 조회 실패: \(error)")
-                // 더미 데이터 설정
-                self.recipeDetail = self.getDummyRecipeDetail() // 더미 데이터 할당
-                
+                // 레시피 정보를 UI에 적용
                 self.recipeDetailView.configure(recipe: self.recipeDetail)
-                self.mainIngredients = self.recipeDetail.ingredientList
-                self.subIngredients = self.recipeDetail.ingredientList
+                
+                // ingredientList를 절반으로 나누기
+                let ingredients = self.recipeDetail.ingredientList
+                let midIndex = ingredients.count / 2
+                
+                self.mainIngredients = Array(ingredients.prefix(midIndex)) // 첫 절반
+                self.subIngredients = Array(ingredients.suffix(from: midIndex)) // 나머지 절반
+                
+                // UICollectionView 업데이트
                 self.recipeDetailView.mainIngredientCollectionView.reloadData()
                 self.recipeDetailView.subIngredientCollectionView.reloadData()
                 self.recipeDetailView.updateCollectionViewHeight()
-                self.title = self.recipeDetail.recipeType // 기본값으로 설정
+                self.title = self.recipeDetail.recipeType
+                
+                // 즐겨찾기 상태 설정
+                self.isLiked = self.recipeDetail.favorite
+                self.recipeDetailView.likeButton.tintColor = self.isLiked ? UIColor(hex: 0x00C269, alpha: 1.0) : .lightGray
+                
+            case .failure(let error):
+                print("레시피 상세 조회 실패: \(error)")
             }
         }
-    }
-    
-    private func getDummyRecipeDetail() -> RecipeDetail {
-        return RecipeDetail(
-            favoriteCount: 0,
-            recipeName: "달걀오픈샌드위치",
-            cookingMethod: "더미 조리 방법",
-            recipeType: "식사",
-            ingredients: "달걀 1개, 소금 1스푼, 호밀빵, 통후추, 타르타르 소스, 딜",
-            imageUrl: "https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/ehYN/image/wXf3V8jBbmjK-ihvXKusrBpuhzI.jpg",
-            manualSteps: ["달갈 하나를 소금물에 10분 동안 삶는다.",
-                          "달갈 껍질을 벗겨 얹게 쓴다.",
-                          "달갈을 얹고 통후추를 갈아 뿌린다.",
-                          "딜을 얹어 마무리한다."]
-        )
     }
     
     // 레시피 찜하기
@@ -155,11 +127,10 @@ class RecipeDetailViewController: UIViewController {
         let queryString = APIClient.shared.createQueryString(from: queryParameters)
         let urlWithQuery = "\(url)?\(queryString)"
         
-        APIClient.shared.request(queryString, method: .post) { (result: Result<LikeRecipeResponse, Error>) in
+        APIClient.shared.request(urlWithQuery, method: .post) { (result: Result<LikeRecipeResponse, Error>) in
             switch result {
             case .success(let response):
                 print("레시피 좋아요 성공")
-                self.recipeDetailView.updateLikeCount(data: 1)
             case .failure(let error):
                 print("네트워킹 오류: \(error)")
             }

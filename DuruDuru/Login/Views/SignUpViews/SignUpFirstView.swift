@@ -52,6 +52,13 @@ class SignUpFirstView: UIView {
         return view
     }()
     
+    private lazy var borderLine2: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: 0x37383C
+                                       , alpha: 0.16)
+        return view
+    }()
+    
     /// "이름" 라벨
     private lazy var nameLabel: UILabel = makeLabel(title: "이름")
     
@@ -138,6 +145,7 @@ class SignUpFirstView: UIView {
         self.addSubview(backButton)
         self.addSubview(titleLabel)
         self.addSubview(borderLine)
+        self.addSubview(borderLine2)
         self.addSubview(nameLabel)
         self.addSubview(emailLabel)
         self.addSubview(passwordLabel)
@@ -166,56 +174,56 @@ class SignUpFirstView: UIView {
         borderLine.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(9)
             $0.left.equalToSuperview()
-            $0.width.equalTo(402)
+            $0.width.equalTo(UIScreen.main.bounds.width * (1 / 3))
             $0.height.equalTo(2)
+        }
+        
+        borderLine2.snp.makeConstraints {
+            $0.top.equalTo(backButton.snp.bottom).offset(9)
+            $0.left.equalTo(borderLine.snp.right)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
         }
         
         nameLabel.snp.makeConstraints {
             $0.top.equalTo(borderLine.snp.bottom).offset(40)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(22)
         }
         
         nameTextField.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
         
         emailLabel.snp.makeConstraints {
             $0.top.equalTo(nameTextField.snp.bottom).offset(32)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(22)
         }
         
         emailTextField.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
         
         passwordLabel.snp.makeConstraints {
             $0.top.equalTo(emailTextField.snp.bottom).offset(32)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(22)
         }
         
         passwordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
         
         nextBtn.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(787)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(361)
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(47)
         }
     }

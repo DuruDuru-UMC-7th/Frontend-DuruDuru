@@ -53,11 +53,47 @@ class SignUpThirdView: UIView {
         return view
     }()
     
-    private lazy var welcomeImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "WelcomeLabel")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    private lazy var borderLine2: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: 0x37383C
+                                       , alpha: 0.16)
+        return view
+    }()
+    
+    private lazy var welcome1: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(hex: 0x00C269)
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "두루두루"
+        return label
+    }()
+    
+    private lazy var welcome2: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "의 새식구,"
+        return label
+    }()
+    
+    lazy var nickName: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "길동님을 환영해요!"
+        return label
+    }()
+    
+    private lazy var discription: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        label.font = .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.text = "약관에 동의하고 두루두루를 시작해보세요."
+        return label
     }()
     
     lazy var firstCheckButton: CheckButton = {
@@ -159,7 +195,7 @@ class SignUpThirdView: UIView {
     
     private lazy var bottomBorderLine: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = UIColor(hex: 0xCACACA)
         return view
     }()
     
@@ -243,7 +279,11 @@ class SignUpThirdView: UIView {
         self.addSubview(backButton)
         self.addSubview(titleLabel)
         self.addSubview(borderLine)
-        self.addSubview(welcomeImage)
+        self.addSubview(borderLine2)
+        self.addSubview(welcome1)
+        self.addSubview(welcome2)
+        self.addSubview(nickName)
+        self.addSubview(discription)
         
         self.addSubview(firstCheckButton)
         self.addSubview(firstAgree)
@@ -287,121 +327,143 @@ class SignUpThirdView: UIView {
         borderLine.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(9)
             $0.left.equalToSuperview()
-            $0.width.equalTo(402)
+            $0.width.equalTo(UIScreen.main.bounds.width * (9 / 10))
             $0.height.equalTo(2)
         }
         
-        welcomeImage.snp.makeConstraints {
-            $0.top.equalTo(borderLine.snp.bottom)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(371)
-            $0.height.equalTo(182)
+        borderLine2.snp.makeConstraints {
+            $0.top.equalTo(backButton.snp.bottom).offset(9)
+            $0.left.equalTo(borderLine.snp.right)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
+        }
+        
+        welcome1.snp.makeConstraints {
+            $0.top.equalTo(borderLine.snp.bottom).offset(40)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(35)
+        }
+        
+        welcome2.snp.makeConstraints {
+            $0.top.equalTo(borderLine.snp.bottom).offset(40)
+            $0.left.equalTo(welcome1.snp.right)
+            $0.height.equalTo(35)
+        }
+        
+        nickName.snp.makeConstraints {
+            $0.top.equalTo(welcome2.snp.bottom)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(35)
+        }
+        
+        discription.snp.makeConstraints {
+            $0.top.equalTo(nickName.snp.bottom).offset(9)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(22)
         }
         
         firstCheckButton.snp.makeConstraints {
-            $0.top.equalTo(welcomeImage.snp.bottom).offset(200)
+            $0.bottom.equalTo(secondCheckButton.snp.top).offset(-11)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         firstAgree.snp.makeConstraints {
-            $0.top.equalTo(welcomeImage.snp.bottom).offset(200)
+            $0.bottom.equalTo(secondCheckButton.snp.top).offset(-11)
             $0.left.equalTo(firstCheckButton.snp.right).offset(2)
             $0.height.equalTo(24)
         }
         
         firstNext.snp.makeConstraints {
-            $0.top.equalTo(welcomeImage.snp.bottom).offset(200)
+            $0.bottom.equalTo(secondCheckButton.snp.top).offset(-11)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(24)
             $0.width.equalTo(24)
         }
         
         secondCheckButton.snp.makeConstraints {
-            $0.top.equalTo(firstCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(thirdCheckButton.snp.top).offset(-11)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         secondAgree.snp.makeConstraints {
-            $0.top.equalTo(firstCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(thirdCheckButton.snp.top).offset(-11)
             $0.left.equalTo(secondCheckButton.snp.right).offset(2)
             $0.height.equalTo(24)
         }
         
         secondNext.snp.makeConstraints {
-            $0.top.equalTo(firstNext.snp.bottom).offset(15)
+            $0.bottom.equalTo(thirdCheckButton.snp.top).offset(-11)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(24)
             $0.width.equalTo(24)
         }
         
         thirdCheckButton.snp.makeConstraints {
-            $0.top.equalTo(secondCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(fourthCheckButton.snp.top).offset(-11)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         thirdAgree.snp.makeConstraints {
-            $0.top.equalTo(secondCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(fourthCheckButton.snp.top).offset(-11)
             $0.left.equalTo(thirdCheckButton.snp.right).offset(2)
             $0.height.equalTo(24)
         }
         
         thirdNext.snp.makeConstraints {
-            $0.top.equalTo(secondNext.snp.bottom).offset(15)
+            $0.bottom.equalTo(fourthCheckButton.snp.top).offset(-11)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(24)
             $0.width.equalTo(24)
         }
         
         fourthCheckButton.snp.makeConstraints {
-            $0.top.equalTo(thirdCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(bottomBorderLine.snp.top).offset(-40)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         fourthAgree.snp.makeConstraints {
-            $0.top.equalTo(thirdCheckButton.snp.bottom).offset(15)
+            $0.bottom.equalTo(bottomBorderLine.snp.top).offset(-40)
             $0.left.equalTo(fourthCheckButton.snp.right).offset(2)
             $0.height.equalTo(24)
         }
         
         fourthNext.snp.makeConstraints {
-            $0.top.equalTo(thirdNext.snp.bottom).offset(15)
+            $0.bottom.equalTo(bottomBorderLine.snp.top).offset(-40)
             $0.right.equalToSuperview().offset(-16)
             $0.height.equalTo(24)
             $0.width.equalTo(24)
         }
         
         bottomBorderLine.snp.makeConstraints {
-            $0.top.equalTo(fourthAgree.snp.bottom).offset(40)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.bottom.equalTo(allCheckButton.snp.top).offset(-26)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
         
         allCheckButton.snp.makeConstraints {
-            $0.top.equalTo(bottomBorderLine.snp.bottom).offset(26)
+            $0.bottom.equalTo(startBtn.snp.top).offset(-74)
             $0.left.equalToSuperview().offset(16)
             $0.width.equalTo(24)
             $0.height.equalTo(24)
         }
         
         allAgree.snp.makeConstraints {
-            $0.top.equalTo(bottomBorderLine.snp.bottom).offset(26)
+            $0.centerY.equalTo(allCheckButton)
             $0.left.equalTo(fourthCheckButton.snp.right).offset(2)
             $0.height.equalTo(24)
         }
         
         startBtn.snp.makeConstraints {
-            $0.top.equalTo(allAgree.snp.bottom).offset(75)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(370)
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(47)
         }
     }

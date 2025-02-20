@@ -52,6 +52,13 @@ class SignUpSecondView: UIView {
         return view
     }()
     
+    private lazy var borderLine2: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: 0x37383C
+                                       , alpha: 0.16)
+        return view
+    }()
+    
     /// "휴대폰 번호" 라벨
     private lazy var phoneLabel: UILabel = {
         let label = UILabel()
@@ -167,6 +174,7 @@ class SignUpSecondView: UIView {
         self.addSubview(backButton)
         self.addSubview(titleLabel)
         self.addSubview(borderLine)
+        self.addSubview(borderLine2)
         self.addSubview(phoneLabel)
         self.addSubview(phoneTextField)
         self.addSubview(applyBtn)
@@ -194,42 +202,46 @@ class SignUpSecondView: UIView {
         borderLine.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(9)
             $0.left.equalToSuperview()
-            $0.width.equalTo(402)
+            $0.width.equalTo(UIScreen.main.bounds.width * (1 / 3))
             $0.height.equalTo(2)
+        }
+        
+        borderLine2.snp.makeConstraints {
+            $0.top.equalTo(backButton.snp.bottom).offset(9)
+            $0.left.equalTo(borderLine.snp.right)
+            $0.height.equalTo(2)
+            $0.trailing.equalToSuperview()
         }
         
         phoneLabel.snp.makeConstraints {
             $0.top.equalTo(borderLine.snp.bottom).offset(259.5)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(22)
         }
         
         phoneTextField.snp.makeConstraints {
             $0.top.equalTo(phoneLabel.snp.bottom).offset(11)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(237)
+            $0.left.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
         
         applyBtn.snp.makeConstraints {
             $0.top.equalTo(phoneLabel.snp.bottom).offset(11)
             $0.left.equalTo(phoneTextField.snp.right).offset(8)
+            $0.right.equalToSuperview().inset(16)
             $0.width.equalTo(116)
             $0.height.equalTo(52)
         }
         
         numberTextField.snp.makeConstraints{
             $0.top.equalTo(phoneTextField.snp.bottom).offset(11)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(52)
         }
         
         nextBtn.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(787)
-            $0.left.equalToSuperview().offset(16)
-            $0.width.equalTo(370)
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.left.right.equalToSuperview().inset(16)
             $0.height.equalTo(47)
         }
         

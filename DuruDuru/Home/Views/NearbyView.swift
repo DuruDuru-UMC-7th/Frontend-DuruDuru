@@ -60,7 +60,7 @@ class NearbyView: UIView {
     }()
     
     /// "품앗이 더 보기" 버튼
-    private let moreButton: UIButton = {
+    let moreButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("품앗이 더 보기 ", for: .normal)
         button.setTitleColor(.white, for: .normal)

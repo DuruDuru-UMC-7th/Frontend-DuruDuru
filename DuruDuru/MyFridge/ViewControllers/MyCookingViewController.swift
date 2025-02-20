@@ -273,6 +273,16 @@ class MyCookingViewController: UIViewController, UICollectionViewDelegate, UISea
                 Recipe(recipeName: "사과버터구이", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2019/10/01/e053e5ec6b4ed48b4601592f23956ec01.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
                 Recipe(recipeName: "또띠아사과피자", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2018/01/31/b8c9874c31a01617df6ced8d2f0a4e1b1.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
             ]
+        case "감자":
+            return [
+                Recipe(recipeName: "감자조림", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2019/07/05/0cdc93296eba865fe0ff312234d050471.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "감자볶음", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2016/09/22/9bc83930096393ce25a764708d3f43811.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+        case "우유":
+            return [
+                Recipe(recipeName: "까르보나라", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2020/08/09/b53479e644967fdb26161f95fa0d74531.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "우유카레", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2020/12/16/c48f6209dd1b6fc5a1f0998eb466ed6d1.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
             
         default:
             return [] // 기본적으로 빈 배열 반환

@@ -49,7 +49,12 @@ class IngredientDetailViewController: UIViewController {
             ingredientDetailView.recipeTableView.reloadData()
         } else {
             print("캐시에 레시피 정보 없음")
-            self.title = "\(ingredientName)을 사용하는 레시피 (0)"
+            recipes = [
+                Recipe(recipeName: "양배추전", imageUrl: "https://static.wtable.co.kr/image/production/service/recipe/1001/7a01733d-8296-470e-80cd-c12223282dad.jpg?size=1050x1050", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "양배추어묵볶음", imageUrl: "https://static.wtable.co.kr/image/production/service/recipe/2188/3a4a5125-722d-42f3-a4d1-2bc4242ea2b6.jpg?size=800x800", favoriteCount: 0, availableIngredients: [], missingIngredients: []),
+                Recipe(recipeName: "해물 볶음우동", imageUrl: "https://recipe1.ezmember.co.kr/cache/recipe/2021/04/22/e4063e6497c23aea505f2772999874651.jpg", favoriteCount: 0, availableIngredients: [], missingIngredients: [])
+            ]
+                    
         }
     }
     

@@ -60,11 +60,40 @@ class SignUpThirdView: UIView {
         return view
     }()
     
-    private lazy var welcomeImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "WelcomeLabel")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    private lazy var welcome1: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(hex: 0x00C269)
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "두루두루"
+        return label
+    }()
+    
+    private lazy var welcome2: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "의 새식구,"
+        return label
+    }()
+    
+    lazy var nickName: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 28)
+        label.textAlignment = .center
+        label.text = "길동님을 환영해요!"
+        return label
+    }()
+    
+    private lazy var discription: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(hex: 0x37383C, alpha: 0.61)
+        label.font = .systemFont(ofSize: 14)
+        label.textAlignment = .center
+        label.text = "약관에 동의하고 두루두루를 시작해보세요."
+        return label
     }()
     
     lazy var firstCheckButton: CheckButton = {
@@ -251,7 +280,10 @@ class SignUpThirdView: UIView {
         self.addSubview(titleLabel)
         self.addSubview(borderLine)
         self.addSubview(borderLine2)
-        self.addSubview(welcomeImage)
+        self.addSubview(welcome1)
+        self.addSubview(welcome2)
+        self.addSubview(nickName)
+        self.addSubview(discription)
         
         self.addSubview(firstCheckButton)
         self.addSubview(firstAgree)
@@ -306,10 +338,28 @@ class SignUpThirdView: UIView {
             $0.trailing.equalToSuperview()
         }
         
-        welcomeImage.snp.makeConstraints {
-            $0.top.equalTo(borderLine.snp.bottom)
-            $0.left.right.equalToSuperview().inset(16)
-            $0.height.equalTo(182)
+        welcome1.snp.makeConstraints {
+            $0.top.equalTo(borderLine.snp.bottom).offset(40)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(35)
+        }
+        
+        welcome2.snp.makeConstraints {
+            $0.top.equalTo(borderLine.snp.bottom).offset(40)
+            $0.left.equalTo(welcome1.snp.right)
+            $0.height.equalTo(35)
+        }
+        
+        nickName.snp.makeConstraints {
+            $0.top.equalTo(welcome2.snp.bottom)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(35)
+        }
+        
+        discription.snp.makeConstraints {
+            $0.top.equalTo(nickName.snp.bottom).offset(9)
+            $0.left.equalToSuperview().inset(16)
+            $0.height.equalTo(22)
         }
         
         firstCheckButton.snp.makeConstraints {

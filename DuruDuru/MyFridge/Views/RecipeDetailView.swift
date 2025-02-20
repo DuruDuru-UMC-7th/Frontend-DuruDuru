@@ -443,4 +443,11 @@ class RecipeDetailView: UIView {
             instructionsStackView.addArrangedSubview(instructionLabel)
         }
     }
+    
+    public func updateLikeCount() {
+        if let currentCountText = likeCountLabel.text, let currentCount = Int(currentCountText) {
+            let newCount = currentCount + 1
+            likeCountLabel.text = "\(newCount)"
+        }
+    }
 }

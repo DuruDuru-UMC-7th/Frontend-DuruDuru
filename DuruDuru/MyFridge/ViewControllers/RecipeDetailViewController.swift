@@ -16,6 +16,7 @@ class RecipeDetailViewController: UIViewController {
     
     var mainIngredients: [String] = []
     var subIngredients: [String] = []
+    var isLiked: Bool = false
     
     // MARK: - Lifecycle
     
@@ -38,6 +39,8 @@ class RecipeDetailViewController: UIViewController {
         let imageButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(imageButtonTapped))
         imageButton.tintColor = .black
         self.navigationItem.rightBarButtonItem = imageButton
+        
+        recipeDetailView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Function
@@ -48,6 +51,18 @@ class RecipeDetailViewController: UIViewController {
     
     @objc func imageButtonTapped() {
         print("내보내기 버튼 눌림")
+    }
+    
+    @objc func likeButtonTapped() {
+        if isLiked {
+            recipeDetailView.likeButton.tintColor = .lightGray
+            isLiked = false
+            likeRecipe(recipeName: self.recipeName)
+        } else {
+            recipeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
+            isLiked = true
+            likeRecipe(recipeName: self.recipeName)
+        }
     }
     
     private func setupDelegate(){
@@ -83,6 +98,28 @@ class RecipeDetailViewController: UIViewController {
                 
             case .failure(let error):
                 print("레시피 상세 조회 실패: \(error)")
+            }
+        }
+    }
+    
+    // 레시피 찜하기
+    private func likeRecipe(recipeName: String) {
+        let url = "http://3.35.252.162:8080/recipes/{recipeName}/favorite"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "recipeName": recipeName
+        ]
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        APIClient.shared.request(queryString, method: .post) { (result: Result<LikeRecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("레시피 좋아요 성공")
+                self.recipeDetailView.updateLikeCount()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
             }
         }
     }

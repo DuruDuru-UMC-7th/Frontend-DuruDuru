@@ -88,16 +88,30 @@ class RecipeDetailViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("레시피 상세 조회 성공: \(response)")
-                self.recipeDetail = response.result
-                
-                self.recipeDetailView.configure(recipe: self.recipeDetail)
-                self.mainIngredients = response.result.ingredientList
-                self.subIngredients = response.result.ingredientList
-                print(self.mainIngredients)
-                self.recipeDetailView.mainIngredientCollectionView.reloadData()
-                self.recipeDetailView.subIngredientCollectionView.reloadData()
-                self.recipeDetailView.updateCollectionViewHeight()
-                self.title = response.result.recipeType
+                if response.result.ingredientList.isEmpty {
+                    print("레시피 더미데이터로 변경")
+                    // 더미 데이터 설정
+                    self.recipeDetail = self.getDummyRecipeDetail() // 더미 데이터 할당
+                    
+                    self.recipeDetailView.configure(recipe: self.recipeDetail)
+                    self.mainIngredients = self.recipeDetail.ingredientList
+                    self.subIngredients = self.recipeDetail.ingredientList
+                    self.recipeDetailView.mainIngredientCollectionView.reloadData()
+                    self.recipeDetailView.subIngredientCollectionView.reloadData()
+                    self.recipeDetailView.updateCollectionViewHeight()
+                    self.title = self.recipeDetail.recipeType // 기본값으로 설정
+                } else {
+                    self.recipeDetail = response.result
+                    
+                    self.recipeDetailView.configure(recipe: self.recipeDetail)
+                    self.mainIngredients = response.result.ingredientList
+                    self.subIngredients = response.result.ingredientList
+                    print(self.mainIngredients)
+                    self.recipeDetailView.mainIngredientCollectionView.reloadData()
+                    self.recipeDetailView.subIngredientCollectionView.reloadData()
+                    self.recipeDetailView.updateCollectionViewHeight()
+                    self.title = response.result.recipeType
+                }
                 
             case .failure(let error):
                 print("레시피 상세 조회 실패: \(error)")

@@ -14,7 +14,7 @@ class ChattingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //  SwiftUI 뷰를 UIHostingController로 감싸기
+        // SwiftUI 뷰를 UIHostingController로 감싸기
         let swiftUIView = ChattingTabView()
         let hostingController = UIHostingController(rootView: swiftUIView)
 

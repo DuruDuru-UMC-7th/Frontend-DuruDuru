@@ -94,13 +94,14 @@ class ChatWebSocketManager: NSObject, ObservableObject, StompClientLibDelegate {
     }
 
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String: String]?, withDestination destination: String) {
-        print("DEBUG: 메시지 수신: \(stringBody ?? "nil") on destination: \(destination)")
+        print("DEBUG: 수신된 원시 메시지 (destination: \(destination)): \(stringBody ?? "nil")")
         if let stringBody = stringBody,
            let data = stringBody.data(using: .utf8),
            let chatMessage = try? JSONDecoder().decode(ChatMessageResponse.self, from: data) {
             DispatchQueue.main.async {
                 self.messages.append(chatMessage)
-                print("DEBUG: messages count: \(self.messages.count)")
+                print("DEBUG: 디코딩 후 수신 메시지: \(chatMessage)")
+                print("DEBUG: 전체 메시지 개수: \(self.messages.count)")
             }
         } else {
             print("⚠️ 메시지 디코딩 실패")

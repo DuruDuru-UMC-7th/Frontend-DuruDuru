@@ -38,7 +38,8 @@ class ExchangeDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+
         // API 요청
         getOtherTrade(tradeId: self.tradeId)
     }
@@ -93,14 +94,19 @@ class ExchangeDetailViewController: UIViewController {
         ChattingRoomMakeAPI.shared.createChatRoom(tradeId: self.tradeId) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let chatRoomId):
-                    print("채팅방 생성 성공: \(chatRoomId)")
-                    let chatView = ChatView(chatRoomId: chatRoomId,
-                                            username: self.exchangeDetailView.profileName.text ?? "")
+                case .success(let chatRoomResponse):
+                    print("채팅방 생성 성공: \(chatRoomResponse.chattingRoomId)")
+
+                    UserDefaults.standard.set(chatRoomResponse.myNickname, forKey: "myNickname")
+
+                    // 저장된 내 닉네임을 사용하여 ChatView로 이동
+                    let chatView = ChatView(chatRoomId: chatRoomResponse.chattingRoomId,
+                                            username: chatRoomResponse.myNickname)
                     let hostingController = UIHostingController(rootView: chatView)
                     self.navigationController?.pushViewController(hostingController, animated: true)
+                    
                 case .failure(let error):
-                    print("채팅방 생성 실패: \(error.localizedDescription)")
+                    print("❌ 채팅방 생성 실패: \(error.localizedDescription)")
                 }
             }
         }

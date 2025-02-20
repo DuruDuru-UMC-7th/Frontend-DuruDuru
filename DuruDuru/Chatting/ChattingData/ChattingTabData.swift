@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// 채팅방 목록 응답 모델
+// MARK: - 서버 응답 모델
 struct ChatRoomListResponse: Codable {
     let isSuccess: Bool
     let code: String
@@ -20,72 +20,98 @@ struct ChatRoomListResult: Codable {
     let chatRooms: [ChatRoom]
 }
 
+// MARK: - 채팅방 목록 조회용 모델
 struct ChatRoom: Codable, Identifiable {
     let id: Int
-    let username: String
-    let tradeImgUrl: String?
+    let myNickname: String
+    let otherNickname: String        
     let tradeType: String?
+    let location: String?
     let lastMessage: String?
     let lastMessageDate: String?
     let unreadCount: Int
     let sentTime: String?
-
+    let memberImgUrl: String?
+    
     enum CodingKeys: String, CodingKey {
         case id = "chatRoomId"
-        case username, tradeImgUrl, tradeType, lastMessage, lastMessageDate, unreadCount, sentTime
+        case myNickname
+        case otherNickname
+        case tradeType
+        case location
+        case lastMessage
+        case lastMessageDate
+        case unreadCount
+        case sentTime
+        case memberImgUrl
     }
-
-    // MARK: - JSON 디코딩용
+    
+    // JSON 디코딩용 (옵셔널 필드에 기본값 할당)
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
-        username = try container.decode(String.self, forKey: .username)
-        tradeImgUrl = try container.decodeIfPresent(String.self, forKey: .tradeImgUrl)
+        myNickname = try container.decodeIfPresent(String.self, forKey: .myNickname) ?? "알 수 없음"
+        otherNickname = try container.decodeIfPresent(String.self, forKey: .otherNickname) ?? "알 수 없음"
         tradeType = try container.decodeIfPresent(String.self, forKey: .tradeType) ?? "알 수 없음"
+        location = try container.decodeIfPresent(String.self, forKey: .location)
         lastMessage = try container.decodeIfPresent(String.self, forKey: .lastMessage) ?? "아직 없음"
         lastMessageDate = try container.decodeIfPresent(String.self, forKey: .lastMessageDate)
         unreadCount = try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0
         sentTime = try container.decodeIfPresent(String.self, forKey: .sentTime)
+        memberImgUrl = try container.decodeIfPresent(String.self, forKey: .memberImgUrl)
     }
-
-    // MARK: - Preview 등을 위한 편의 이니셜라이저
+    
+    // Preview/테스트용 이니셜라이저
     init(
         id: Int,
-        username: String,
-        tradeImgUrl: String? = nil,
+        myNickname: String,
+        otherNickname: String,
         tradeType: String? = nil,
+        location: String? = nil,
         lastMessage: String? = nil,
         lastMessageDate: String? = nil,
         unreadCount: Int = 0,
-        sentTime: String? = nil
+        sentTime: String? = nil,
+        memberImgUrl: String? = nil
     ) {
         self.id = id
-        self.username = username
-        self.tradeImgUrl = tradeImgUrl
+        self.myNickname = myNickname
+        self.otherNickname = otherNickname
         self.tradeType = tradeType ?? "알 수 없음"
+        self.location = location
         self.lastMessage = lastMessage ?? "아직 없음"
         self.lastMessageDate = lastMessageDate
         self.unreadCount = unreadCount
         self.sentTime = sentTime
+        self.memberImgUrl = memberImgUrl
     }
-
-    /// API에서 받은 날짜 문자열을 `M/d` 형식으로 변환
+    
+   
+    var tradeTypeDisplay: String {
+        switch tradeType {
+        case "SHARE":
+            return "나눔"
+        case "EXCHANGE":
+            return "교환"
+        default:
+            return "알 수 없음"
+        }
+    }
+    
+    // 날짜 포맷팅: ISO8601 문자열 → "M/d" 형식
     var formattedLastMessageDate: String {
-        guard let lastMessageDate = lastMessageDate else { return "날짜 없음" }
-        return formatDateString(lastMessageDate)
+        guard let dateString = lastMessageDate else { return "날짜 없음" }
+        return formatDateString(dateString)
     }
-
-    /// 날짜 변환 함수
+    
     private func formatDateString(_ dateString: String) -> String {
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
         if let date = isoFormatter.date(from: dateString) {
             let outputFormatter = DateFormatter()
-            outputFormatter.dateFormat = "M/d"
+            outputFormatter.dateFormat = "M/d"  // 예: "2/19"
             return outputFormatter.string(from: date)
         }
-
         return "날짜 없음"
     }
 }

@@ -63,12 +63,27 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     @objc func settingButtonTapped() {
         if isTownRegistered {
             // 동네 수정 API 호출
-            updateTown(setTownRequest: self.setTownRequest)
+            updateTown(setTownRequest: self.setTownRequest) { [weak self] success in
+                guard let self = self else { return }
+                if success {
+                    // 수정 성공 시 화면 이동
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    print("동네 수정 실패")
+                }
+            }
         } else {
             // 동네 등록 API 호출
-            setTown(setTownRequest: self.setTownRequest)
+            setTown(setTownRequest: self.setTownRequest) { [weak self] success in
+                guard let self = self else { return }
+                if success {
+                    // 등록 성공 시 화면 이동
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    print("동네 등록 실패")
+                }
+            }
         }
-        self.navigationController?.popViewController(animated: true)
     }
     
     // 위치 업데이트 메서드
@@ -150,7 +165,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     // MARK: - API 관련
     
     // 동네 등록 API
-    func setTown(setTownRequest: SetTownRequest) {
+    func setTown(setTownRequest: SetTownRequest, completion: @escaping (Bool) -> Void) {
         let url = "http://3.35.252.162:8080/town/"
         
         /// requestBody
@@ -166,9 +181,10 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
                 switch result {
                 case .success(let response):
                     print("!!동네 등록 성공!!")
-                    print(response)
+                    completion(true)
                 case .failure(let error):
                     print("네트워킹 오류: \(error)")
+                    completion(false)
                 }
             }
         } catch {
@@ -177,7 +193,7 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     // 동네 수정 API
-    func updateTown(setTownRequest: SetTownRequest) {
+    func updateTown(setTownRequest: SetTownRequest, completion: @escaping (Bool) -> Void) {
         let url = "http://3.35.252.162:8080/town/"
         
         /// requestBody
@@ -193,9 +209,10 @@ class SettingTownViewController: UIViewController, CLLocationManagerDelegate {
                 switch result {
                 case .success(let response):
                     print("!!동네 수정 성공!!")
-                    print(response)
+                    completion(true)
                 case .failure(let error):
                     print("네트워킹 오류: \(error)")
+                    completion(false)
                 }
             }
         } catch {

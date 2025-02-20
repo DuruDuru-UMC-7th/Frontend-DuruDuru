@@ -15,6 +15,8 @@ class RecipeViewController: UIViewController {
     var ingredientName: String?  // 전달 받은 재료 이름
     var recipes = [Recipe]()
     var ingredient: MyIngredient!
+    var recipesOrderByLike: [Recipe] = []
+    var recipesOrderByRecent: [Recipe] = []
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -54,6 +56,9 @@ class RecipeViewController: UIViewController {
             self.recipes = cachedRecipes
             self.title = "\(ingredientName)을 사용하는 레시피"
             recipeView.recipeTableView.reloadData()
+            self.recipesOrderByRecent = cachedRecipes
+            let sortedRecipes = recipes.sorted { $0.favoriteCount > $1.favoriteCount }
+            self.recipesOrderByLike = sortedRecipes
         } else {
             print("캐시에 레시피 정보 없음")
             self.title = "\(ingredientName)을 사용하는 레시피 (0)"
@@ -132,14 +137,44 @@ class RecipeViewController: UIViewController {
     @objc private func didSelectMoreFilter() {
         print("찜 많은 순 선택")
         updateSelectedOrder(recipeView.moreFilter)
-        // 추가 작업이 필요하면 여기에 구현
+        self.recipes = self.recipesOrderByLike
+        self.recipeView.recipeTableView.reloadData()
     }
     
     /// "최신 등록순" 필터 선택 시 호출
     @objc private func didSelectRecentFilter() {
         print("최신 등록순 선택")
         updateSelectedOrder(recipeView.recentFilter)
-        // 추가 작업이 필요하면 여기에 구현
+        self.recipes = self.recipesOrderByRecent
+        self.recipeView.recipeTableView.reloadData()
+    }
+    
+    // 레시피 검색 API
+    func getByIngredientName(ingredientName: String) {
+        let url = "http://3.35.252.162:8080/recipes/search)"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "query": ingredientName,
+            "page": 1,
+            "size": 10,
+        ]
+        
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        // API 요청
+        APIClient.shared.request(urlWithQuery, method: .get) { (result: Result<RecommandedRecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("!!이름: \(ingredientName) 레시피 조회 성공!!")
+                self.recipes = response.result.recipes
+                self.updateSelectedOrder(self.recipeView.recentFilter)
+                self.recipeView.recipeTableView.reloadData()
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
+            }
+        }
     }
 }
 

@@ -17,8 +17,8 @@ struct RecipeDetailResponse: Codable {
 
 /// 특정 레시피 상세 정보
 struct RecipeDetail: Codable {
-    let recipeName: String
     let favoriteCount: Int
+    let recipeName: String
     let cookingMethod: String
     let recipeType: String
     let ingredients: String

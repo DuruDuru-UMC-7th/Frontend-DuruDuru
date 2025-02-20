@@ -9,6 +9,8 @@ import UIKit
 
 class RecipeDetailView: UIView {
     
+    private var ingredinetList: [String] = []
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -416,5 +418,29 @@ class RecipeDetailView: UIView {
         }
         
         return containerView
+    }
+    
+    public func configure(recipe: RecipeDetail) {
+        if let imageURL = URL(string: recipe.imageUrl) {
+            titleImageView.kf.setImage(with: imageURL)
+         } else {
+             titleImageView.image = UIImage(named: "placeholder")
+         }
+         
+        recipeName.text = recipe.recipeName
+        likeCountLabel.text = String(recipe.favoriteCount)
+        time.text = "15분"
+        
+        let tags = ["#간편한", "#초보용"]
+        for tag in tags {
+            let tagLabel = createTagLabel(text: tag)
+            tagsStackView.addArrangedSubview(tagLabel)
+        }
+        
+        let instructions = recipe.manualSteps
+        for (index, instruction) in instructions.enumerated() {
+            let instructionLabel = createInstructionLabel(text: instruction, index: index + 1)
+            instructionsStackView.addArrangedSubview(instructionLabel)
+        }
     }
 }

@@ -130,16 +130,13 @@ class IngredientsTableViewCell: UITableViewCell {
     
     // MARK: - Configuration
     
-    public func configure(model: MyIngredient) {
+    public func configure(model: MyIngredient, indexPath: IndexPath) {
+        self.indexPath = indexPath
         self.ingredientName.text = model.ingredientName
-//        self.recipes = recipes
-        self.recipeCollectionView.reloadData()
-//        print("tableViewCell: ",  recipes.count)
     }
     
     public func updateRecipes(recipes: [Recipe]) {
         self.recipes = recipes
-        print("tableViewCell: updateRecipes",  recipes.count)
         self.recipeCollectionView.reloadData()
     }
 }

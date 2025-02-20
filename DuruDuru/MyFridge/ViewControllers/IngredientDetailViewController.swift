@@ -16,7 +16,7 @@ class IngredientDetailViewController: UIViewController {
             recipes = [] 
         }
     }
-    var recipes: [RecipeModel] = []
+    var recipes: [Recipe] = []
     
     // MARK: - Lifecycle
     
@@ -27,9 +27,30 @@ class IngredientDetailViewController: UIViewController {
         self.view = ingredientDetailView
         ingredientDetailView.config(ingredient: self.ingredient)
         
+        // 캐시에서 레시피 불러오기
+        loadRecipesFromCache()
+        
         setUpUIBar()
         setupDelegate()
         setUpActions()
+    }
+    
+    // MARK: - 캐시에서 레시피 로드
+    
+    private func loadRecipesFromCache() {
+        guard let ingredientName = ingredient?.ingredientName else {
+            print("식재료 정보 없음")
+            return
+        }
+        
+        // 캐시에서 레시피 조회
+        if let cachedRecipes = RecipeCache.getRecipes(for: ingredientName) {
+            self.recipes = cachedRecipes
+            ingredientDetailView.recipeTableView.reloadData()
+        } else {
+            print("캐시에 레시피 정보 없음")
+            self.title = "\(ingredientName)을 사용하는 레시피 (0)"
+        }
     }
     
     // MARK: - Funtions

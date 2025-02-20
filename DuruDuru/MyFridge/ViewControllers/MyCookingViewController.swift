@@ -299,7 +299,7 @@ extension MyCookingViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         let ingredient = ingredients[indexPath.row]
-        cell.configure(model: ingredient)
+        cell.configure(model: ingredient, indexPath: indexPath)
         
         // 캐시 체크
         if let cachedRecipes = RecipeCache.getRecipes(for: ingredient.ingredientName) {

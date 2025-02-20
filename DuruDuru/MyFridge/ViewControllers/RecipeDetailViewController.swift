@@ -16,6 +16,7 @@ class RecipeDetailViewController: UIViewController {
     
     var mainIngredients: [String] = []
     var subIngredients: [String] = []
+    var isLiked: Bool = false
     
     // MARK: - Lifecycle
     
@@ -25,7 +26,7 @@ class RecipeDetailViewController: UIViewController {
         self.view = recipeDetailView
         setupDelegate()
         fetchRecipeDetail()
-//        self.title = "레시피 상세"
+        //        self.title = "레시피 상세"
         
         /// 뒤로 가기 버튼
         let backImage = UIImage(systemName: "chevron.left")
@@ -38,6 +39,8 @@ class RecipeDetailViewController: UIViewController {
         let imageButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(imageButtonTapped))
         imageButton.tintColor = .black
         self.navigationItem.rightBarButtonItem = imageButton
+        
+        recipeDetailView.likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Function
@@ -48,6 +51,20 @@ class RecipeDetailViewController: UIViewController {
     
     @objc func imageButtonTapped() {
         print("내보내기 버튼 눌림")
+    }
+    
+    @objc func likeButtonTapped() {
+        if isLiked {
+            recipeDetailView.likeButton.tintColor = .lightGray
+            isLiked = false
+            likeRecipe(recipeName: self.recipeName)
+            self.recipeDetailView.updateLikeCount(data: -1)
+        } else {
+            recipeDetailView.likeButton.tintColor = UIColor(hex: 0x00C269, alpha: 1.0)
+            isLiked = true
+            likeRecipe(recipeName: self.recipeName)
+            self.recipeDetailView.updateLikeCount(data: +1)
+        }
     }
     
     private func setupDelegate(){
@@ -79,10 +96,58 @@ class RecipeDetailViewController: UIViewController {
                 print(self.mainIngredients)
                 self.recipeDetailView.mainIngredientCollectionView.reloadData()
                 self.recipeDetailView.subIngredientCollectionView.reloadData()
+                self.recipeDetailView.updateCollectionViewHeight()
                 self.title = response.result.recipeType
                 
             case .failure(let error):
                 print("레시피 상세 조회 실패: \(error)")
+                // 더미 데이터 설정
+                self.recipeDetail = self.getDummyRecipeDetail() // 더미 데이터 할당
+                
+                self.recipeDetailView.configure(recipe: self.recipeDetail)
+                self.mainIngredients = self.recipeDetail.ingredientList
+                self.subIngredients = self.recipeDetail.ingredientList
+                self.recipeDetailView.mainIngredientCollectionView.reloadData()
+                self.recipeDetailView.subIngredientCollectionView.reloadData()
+                self.recipeDetailView.updateCollectionViewHeight()
+                self.title = self.recipeDetail.recipeType // 기본값으로 설정
+            }
+        }
+    }
+    
+    private func getDummyRecipeDetail() -> RecipeDetail {
+        return RecipeDetail(
+            favoriteCount: 0,
+            recipeName: "달걀오픈샌드위치",
+            cookingMethod: "더미 조리 방법",
+            recipeType: "식사",
+            ingredients: "달걀 1개, 소금 1스푼, 호밀빵, 통후추, 타르타르 소스, 딜",
+            imageUrl: "https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/ehYN/image/wXf3V8jBbmjK-ihvXKusrBpuhzI.jpg",
+            manualSteps: ["달갈 하나를 소금물에 10분 동안 삶는다.",
+                          "달갈 껍질을 벗겨 얹게 쓴다.",
+                          "달갈을 얹고 통후추를 갈아 뿌린다.",
+                          "딜을 얹어 마무리한다."]
+        )
+    }
+    
+    // 레시피 찜하기
+    private func likeRecipe(recipeName: String) {
+        let url = "http://3.35.252.162:8080/recipes/{recipeName}/favorite"
+        
+        // 쿼리 파라미터
+        let queryParameters: [String: Any] = [
+            "recipeName": recipeName
+        ]
+        let queryString = APIClient.shared.createQueryString(from: queryParameters)
+        let urlWithQuery = "\(url)?\(queryString)"
+        
+        APIClient.shared.request(queryString, method: .post) { (result: Result<LikeRecipeResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("레시피 좋아요 성공")
+                self.recipeDetailView.updateLikeCount(data: 1)
+            case .failure(let error):
+                print("네트워킹 오류: \(error)")
             }
         }
     }
@@ -94,7 +159,6 @@ extension RecipeDetailViewController: UICollectionViewDelegate, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == recipeDetailView.mainIngredientCollectionView {
-            print(mainIngredients.count)
             return mainIngredients.count
         } else if collectionView == recipeDetailView.subIngredientCollectionView {
             return subIngredients.count

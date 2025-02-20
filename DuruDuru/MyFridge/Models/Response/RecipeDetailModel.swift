@@ -29,3 +29,11 @@ struct RecipeDetail: Codable {
         return ingredients.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
     }
 }
+
+// 레시피 즐겨찾기 결과
+struct LikeRecipeResponse: Codable {
+    let isSuccess: Bool
+    let code: String
+    let message: String
+    let result: String?
+}

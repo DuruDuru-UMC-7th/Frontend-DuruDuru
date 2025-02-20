@@ -48,7 +48,6 @@ class RecipeDetailIngredientsCollectionViewCell: UICollectionViewCell {
     }
     
     public func configure(tag: String) {
-        print("CELL: ", tag)
         tagLabel.text = tag
     }
 }

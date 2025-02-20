@@ -8,6 +8,9 @@
 import UIKit
 import Kingfisher
 
+import UIKit
+import Kingfisher
+
 class RecipeViewController: UIViewController {
     
     // MARK: - Properties
@@ -44,7 +47,6 @@ class RecipeViewController: UIViewController {
     }
     
     // MARK: - 캐시에서 레시피 로드
-    
     private func loadRecipesFromCache() {
         guard let ingredientName = ingredient?.ingredientName else {
             print("식재료 정보 없음")
@@ -64,7 +66,6 @@ class RecipeViewController: UIViewController {
             self.title = "\(ingredientName)을 사용하는 레시피 (0)"
         }
     }
-    
     
     // MARK: - Functions
     private func setupDelegate(){
@@ -98,6 +99,7 @@ class RecipeViewController: UIViewController {
     @objc private func dismissKeyboard() {
         if recipeView.searchBar.isFirstResponder {
             recipeView.searchBar.resignFirstResponder()
+            loadRecipesFromCache()
         }
     }
     
@@ -198,14 +200,32 @@ extension RecipeViewController: UITableViewDataSource, UITableViewDelegate {
         recipeDetailVC.recipeName = recipes[indexPath.row].recipeName
         navigationController?.pushViewController(recipeDetailVC, animated: true)
     }
-    
 }
 
 // MARK: - UISearchBarDelegate
 extension RecipeViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        recipeView.searchBar.resignFirstResponder()
+        guard let searchText = searchBar.text else {
+            return
+        }
         
+        if searchText.isEmpty {
+            // 검색 텍스트가 비어있을 경우 원래의 레시피 리스트로 복원
+            loadRecipesFromCache() // 캐시에서 원래 레시피 로드
+        } else {
+            // 검색 결과를 필터링
+            filterRecipes(by: searchText)
+        }
+        
+        searchBar.resignFirstResponder()
+    }
+    
+    private func filterRecipes(by query: String) {
+        // recipeName에 대해 대소문자를 구분하지 않고 필터링
+        self.recipes = recipes.filter { recipe in
+            return recipe.recipeName.lowercased().contains(query.lowercased())
+        }
+        self.recipeView.recipeTableView.reloadData()
     }
 }

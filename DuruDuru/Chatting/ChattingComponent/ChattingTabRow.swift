@@ -17,7 +17,7 @@ struct ChatRow: View {
             .clipShape(Circle())
             
             // 2) 중앙 텍스트 영역
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 
                 // 🔹 상대방 닉네임 표시
                 HStack {

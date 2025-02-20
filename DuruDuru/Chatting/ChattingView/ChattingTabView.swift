@@ -13,24 +13,28 @@ struct ChattingTabView: View {
                     // 헤더 + 배너
                     headerAndBanner
                     
-                    // 채팅방 목록 (Pull-to-Refresh 추가)
-                    List(viewModel.chatRooms) { chatRoom in
-                        NavigationLink(destination: ChatView(
-                            chatRoomId: chatRoom.id,
-                            username: UserDefaults.standard.string(forKey: "myNickname") ?? "알 수 없음"
-                        )) {
-                            ChatRow(chatRoom: chatRoom)
+                    // 채팅방 목록
+                    List {
+                        // MARK: - ForEach + onDelete
+                        ForEach(viewModel.chatRooms) { chatRoom in
+                            NavigationLink(destination: ChatView(
+                                chatRoomId: chatRoom.id,
+                                username: UserDefaults.standard.string(forKey: "myNickname") ?? "알 수 없음"
+                            )) {
+                                ChatRow(chatRoom: chatRoom)
+                            }
+                            .listRowSeparator(.hidden)
                         }
-                        .listRowSeparator(.hidden)
+                        .onDelete(perform: deleteChatRooms)
                     }
                     .listStyle(.plain)
-                    .refreshable { // Pull-to-Refresh 추가
+                    .refreshable {
                         refreshChatRooms()
                     }
-                    .frame(maxHeight: UIScreen.main.bounds.height * 0.8)
                     .onAppear {
                         refreshChatRooms()
                     }
+                    
                     Spacer()
                 }
                 .navigationBarHidden(true)
@@ -46,11 +50,14 @@ struct ChattingTabView: View {
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ChattingTabViewRefresh"))) { _ in
-                refreshChatRooms() // ✅ ViewController에서 새로고침 요청 시 동작
+                refreshChatRooms()
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
+    // MARK: - 헤더 + 배너
     private var headerAndBanner: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
@@ -73,20 +80,28 @@ struct ChattingTabView: View {
         }
     }
     
-    /// ✅ 닉네임과 채팅 목록 새로고침
+    // MARK: - 닉네임/목록 새로고침
     private func refreshChatRooms() {
         loadMyNickname()
         viewModel.loadChatRooms()
         print("🔄 채팅 목록과 닉네임을 새로고침 완료!")
     }
     
-    /// ✅ `UserDefaults`에서 닉네임을 가져오거나 기본값 설정
     private func loadMyNickname() {
         if let savedNickname = UserDefaults.standard.string(forKey: "myNickname") {
             myNickname = savedNickname
         } else {
-            myNickname = "알 수 없음" // 기본값 설정
+            myNickname = "공릉심청이"
         }
         print("🔹 닉네임 설정 완료: \(myNickname)")
+    }
+    
+    // MARK: - 스와이프 삭제 동작
+    private func deleteChatRooms(offsets: IndexSet) {
+        // offsets에는 사용자가 스와이프한 셀의 인덱스가 들어옵니다.
+        offsets.forEach { index in
+            let chatRoom = viewModel.chatRooms[index]
+            viewModel.deleteChatRoom(chatRoom.id)
+        }
     }
 }

@@ -161,15 +161,25 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
     // 정렬 옵션 버튼 액션 (예시)
     @objc private func didTapRecentFilter() {
         updateSelectedFilter(recentFilter)
+        nearbyView.recentButton.configuration?.attributedTitle = AttributedString("최신 등록순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+
+        fetchTradeList(endpoint: "/trade/near/recent")
     }
-    
+
     @objc private func didTapNearExpiryFilter() {
         updateSelectedFilter(nearExpiryDateFilter)
+        nearbyView.recentButton.configuration?.attributedTitle = AttributedString("소비기한 임박순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+
+        fetchTradeList(endpoint: "/trade/near/near-expiry")
     }
-    
+
     @objc private func didTapFarExpiryFilter() {
         updateSelectedFilter(farExpiryFilter)
+        nearbyView.recentButton.configuration?.attributedTitle = AttributedString("소비기한 여유순", attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 12)]))
+
+        fetchTradeList(endpoint: "/trade/near/far-expiry")
     }
+
     
     private func updateSelectedFilter(_ selectedButton: UIButton) {
         // 모든 버튼 기본 스타일 복원
@@ -213,6 +223,8 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             tabBarController.selectedIndex = 2
         }
     }
+    
+    
     
     // MARK: -- API
     
@@ -267,6 +279,24 @@ class HomeViewController: UIViewController, UISearchBarDelegate {
             }
         }
     }
+    
+    private func fetchTradeList(endpoint: String) {
+        let baseUrl = "http://3.35.252.162:8080\(endpoint)"
+
+        APIClient.shared.request(baseUrl, method: .get) { (result: Result<TradeListResponse, Error>) in
+            switch result {
+            case .success(let response):
+                print("정렬된 품앗이 조회 성공!")
+                let trades = response.result.tradeList.map { HomeTradeModel(from: $0) }
+                DispatchQueue.main.async {
+                    self.nearbyView.updateTradeList(trades)
+                }
+            case .failure(let error):
+                print("정렬된 품앗이 조회 실패: \(error)")
+            }
+        }
+    }
+
     
     // MARK: -- UISearchBarDelegate Method
     

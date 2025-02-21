@@ -66,7 +66,6 @@ struct ChatView: View {
                                         .id(message.id)
                                 }
                             }
-                            .padding(.horizontal)
                             .padding(.vertical, 10)
                             .onAppear {
                                 self.scrollViewProxy = proxy
@@ -104,6 +103,25 @@ struct ChatView: View {
                 isKeyboardActive = false
             }
         }
+        .gesture(
+
+        DragGesture(minimumDistance: 50)
+
+            .onEnded { value in
+                
+                if value.translation.width > 100 {
+                    
+                    UIApplication.shared.endEditing(true)
+                    
+                    dismiss()
+                    
+                    print("오른쪽 스와이프 감지 – ChattingTabView로 복귀")
+                    
+                }
+
+        }
+
+        )
         .onAppear {
             setupWebSocket()
         }

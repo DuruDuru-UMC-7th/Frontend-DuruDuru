@@ -454,7 +454,11 @@ extension IngredientsViewController: UICollectionViewDelegate {
             selectedCircleCellIndex = indexPath
             collectionView.reloadData()
             let selectedIngredient = ingredients[indexPath.item]
-            showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출
+//            showDeletePopup(for: selectedIngredient, at: indexPath) // 셀 선택 시 팝업 호출
+            let ingredientDetailVC = IngredientDetailViewController()
+            ingredientDetailVC.ingredient = selectedIngredient
+            ingredientDetailVC.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(ingredientDetailVC, animated: true)
         }
     }
 }

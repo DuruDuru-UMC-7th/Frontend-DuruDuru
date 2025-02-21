@@ -186,7 +186,7 @@ class NearbyView: UIView {
         quantityLabel.textColor = .black
         
         let expirationLabel = UILabel()
-        expirationLabel.text = "남은 소비기한 \(trade.dday)일"
+        expirationLabel.text = "\(trade.dday)"
         expirationLabel.font = .systemFont(ofSize: 11)
         expirationLabel.textColor = .black
         
